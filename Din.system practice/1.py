@@ -16,7 +16,7 @@ def calc_phase_point(x0,y0,lambd,h,N):
         for i in range(N):
                 y0 = method_euler(x0, y0, f, h, lambd)
                 x0 = x0 + h * g(x0, y0, lambd)
-                print(x0, y0)
+                #print(x0, y0)
                 if (type(y0) is complex)or(type(x0) is complex)or(abs(y0) > 10) or (abs(x0) > 10):
                         break
                 yarr.append(y0)
