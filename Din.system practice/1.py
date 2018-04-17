@@ -1,7 +1,8 @@
 import matplotlib.pyplot as pp
+import numpy as np
 
 def f(x, y, lambd):
-        return (lambd - x**x)*y - x
+        return (lambd - x*x)*y - x
 
 def g(x, y, lambd):
         return y
@@ -14,8 +15,10 @@ def calc_phase_point(x0,y0,lambd,h,N):
         xarr = [x0]
         yarr = [y0]
         for i in range(N):
-                y0 = method_euler(x0, y0, f, h, lambd)
-                x0 = x0 + h * g(x0, y0, lambd)
+                y1 = method_euler(x0, y0, f, h, lambd)
+                x1 = x0 + h * g(x0, y0, lambd)#/////
+                x0 = x1
+                y0 = y1
                 #print(x0, y0)
                 if (type(y0) is complex)or(type(x0) is complex)or(abs(y0) > 10) or (abs(x0) > 10):
                         break
@@ -30,8 +33,8 @@ if __name__ == '__main__':
         lambd = 1
         h = 0.01        #length of 1 step
         N = 1000        #numberof steps
-        for x0 in range(-5,6):
-                for y0 in range(-5,6):
+        for x0 in np.arange(-5, 6, 1):
+                for y0 in np.arange(-5,6,1):
                         calc_phase_point(x0, y0, lambd, h, N)
         pp.show()
         #myfile = open('D:/text.txt', 'w')
