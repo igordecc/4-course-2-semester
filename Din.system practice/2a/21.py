@@ -36,8 +36,6 @@ def plotlogmap(x0, lambd, idepth):
     plt.legend()
     plt.show()
 
-#TODO read numpy guide
-
 if __name__=="__main__":
     lambd = 1.3     #float(input("lambd: "))
     idepth = 100    #int(input("depth: "))

@@ -15,6 +15,10 @@ def final_point(x0, N, lambd, betta, additional_points):
 
     return x0_add
 
+#TODO read numpy guide, please
+#TODO learn how to do level color 2D maps
+#TODO Learn how to do interactive regime
+
 if __name__=='__main__':
     N = 1000
     x0 = 0
