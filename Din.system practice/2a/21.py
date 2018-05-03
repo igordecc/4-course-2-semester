@@ -28,16 +28,16 @@ def plotlogmap(x0, lambd, idepth):
     ylist = [xlist[0]]+xlist[:-1]
 
     for i in range(len(xlist)-1):
-        line = plt.plot([xlist[i], xlist[i + 1]], [ylist[i], ylist[i + 1]], color="red")
+        line = plt.plot( [ylist[i], ylist[i + 1]], [xlist[i], xlist[i + 1]], color="red")
 
     plt.xlabel('x_n')
     plt.ylabel('x_n+1')
     plt.title("One-Dimensional Mapping. Logistic map")
-    plt.legend()
+    #plt.legend()
     plt.show()
 
 if __name__=="__main__":
-    lambd = 1.3     #float(input("lambd: "))
+    lambd = 1.5     #float(input("lambd: "))
     idepth = 100    #int(input("depth: "))
     x0 = 0
     plotlogmap(x0,lambd, idepth)
