@@ -30,16 +30,27 @@ def interpret_map(abmap):
     #colormap = len()
     return colormap
 
-#TODO read how to make color map, please (matplotlib)
+#TODO 1 read how to make color map, please (matplotlib)
 #TODO СТЯНИ ПЕРЕД РАБОТОЙ
+#TODO 2 find "кубическое уравнение" in a book
+
+#todo 1a make a,b axies
+#todo 1b make collor conture map ///////
+#todo 1bb manage collor conture map ///////
+#todo 1c turn the map to 90 degrees
+
+
 
 if __name__=="__main__":
     x0 = 0
-    a = (-0.6, 0.6, 0.02)
-    b = (0.8, 2.5, 0.02)
-    abmap = make_array(x0, a, b, ap=100)
+    a = (-0.6, 0.6, 0.04)
+    b = (0.8, 2.5, 0.04)
+    abmap = make_array(x0, a, b, ap=20)
     colormap = interpret_map(abmap)
-    plt.contour(colormap)
+    #contour = plt.contour(colormap)
+    plt.get_cmap('inferno')
+    pcm = plt.pcolormesh(colormap, color=(0.1,0.1,0.1))
+    #pcm.set_color(((0.8,0.1,0.1), (0.1,0.1,0.8)))
 
     #im = plt.pcolormesh(np.arange(100).reshape((10, 10)))
     #plt.colorbar(im)
