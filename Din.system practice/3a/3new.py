@@ -48,11 +48,11 @@ if __name__=="__main__":
     abmap = make_array(x0, a, b, ap=20)
     colormap = interpret_map(abmap)
     #contour = plt.contour(colormap)
-    plt.get_cmap('inferno')
-    pcm = plt.pcolormesh(colormap, color=(0.1,0.1,0.1))
+    #plt.get_cmap('inferno')
+    pcm = plt.pcolormesh(colormap)#, color=(0.1,0.1,0.1))
     #pcm.set_color(((0.8,0.1,0.1), (0.1,0.1,0.8)))
 
     #im = plt.pcolormesh(np.arange(100).reshape((10, 10)))
     #plt.colorbar(im)
-
+    ####plt.axes().
     plt.show()
