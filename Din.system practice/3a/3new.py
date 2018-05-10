@@ -1,4 +1,5 @@
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from matplotlib import transforms as trns
 import numpy as np
 
 #карта динамических режимов
@@ -49,10 +50,20 @@ if __name__=="__main__":
     colormap = interpret_map(abmap)
     #contour = plt.contour(colormap)
     #plt.get_cmap('inferno')
+
+    #NUMPY TRANSFORM
+    colormap = np.matrix.transpose(np.array(colormap))
     pcm = plt.pcolormesh(colormap)#, color=(0.1,0.1,0.1))
+    #pcm = plt.pcolormesh(rot+base)
     #pcm.set_color(((0.8,0.1,0.1), (0.1,0.1,0.8)))
+    ###plt.xticks(np.arange(0, 42, 3.5), np.arange(-0.6, 0.6, 0.1))
+    ###plt.yticks(np.arange(0, 35, 2), np.arange(0.8, 2.5, 0.1))
+    plt.autoscale()
+
+    plt.figure().add_axes(np.arange(-0.6, 0.6, 0.3) )
 
     #im = plt.pcolormesh(np.arange(100).reshape((10, 10)))
     #plt.colorbar(im)
     ####plt.axes().
+    #plt.plot(transform=rot)
     plt.show()
