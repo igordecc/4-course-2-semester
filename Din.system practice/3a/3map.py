@@ -4,16 +4,16 @@ import numpy as np
 
 #карта динамических режимов
 
-def logistic_map(x0, a, b):
+def cubic_map(x0, a, b):
     return a - b*x0 + x0**3
 
 def final_point(x0, a, b, additional_points=100, N=1000):
     for i in range(N-additional_points):
-        x0 = logistic_map(x0, a, b)
+        x0 = cubic_map(x0, a, b)
 
     x0_additional_points = []
     for i in range(additional_points):
-        x0 = logistic_map(x0, a, b)
+        x0 = cubic_map(x0, a, b)
         x0_additional_points.append(x0)
 
     return x0_additional_points

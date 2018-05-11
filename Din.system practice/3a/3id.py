@@ -2,13 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def logistic_map(x0, a, b):
+def cubic_map(x0, a, b):
     return a - b*x0 + x0**3
 
 def list_creator(x0, a, b, idepth):
-    xlist = [logistic_map(x0, a, b)]
+    xlist = [cubic_map(x0, a, b)]
     for i in range(idepth):
-        xlist.append(logistic_map(xlist[-1], a, b))
+        xlist.append(cubic_map(xlist[-1], a, b))
         xlist.append(xlist[-1])
     return xlist
 
@@ -18,7 +18,7 @@ def plotlogmap(x0, a, b, idepth):
 
     x = np.linspace(-1.5, 1.5, 100)
     plt.plot(x, x, label="x(n+1) = x(n)")
-    plt.plot(x, logistic_map(x, a, b), label='x(n+1) = a - b*x(n) - x(n)**3')
+    plt.plot(x, cubic_map(x, a, b), label='x(n+1) = a - b*x(n) - x(n)**3')
 
 
     xlist = list_creator( x0, a, b, idepth )
