@@ -19,7 +19,7 @@ def itter_x(x0):
 def plotlogmap(x0, lambd, idepth):
 
 
-    x = np.linspace(-lambd, lambd, 100)
+    x = np.linspace(-1.5, 1.5, 100)         # "1.5" was lambd
     plt.plot(x, x, label="x(n+1) = x(n)")
     plt.plot(x, logistic_map(x, lambd), label='x(n+1) = Lx(n) - x(n)**2')
 
@@ -37,7 +37,7 @@ def plotlogmap(x0, lambd, idepth):
     plt.show()
 
 if __name__=="__main__":
-    lambd = 1.5     #float(input("lambd: "))
+    lambd = .8     #float(input("lambd: "))
     idepth = 100    #int(input("depth: "))
     x0 = 0
     plotlogmap(x0,lambd, idepth)
