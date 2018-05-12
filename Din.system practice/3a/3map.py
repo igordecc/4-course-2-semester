@@ -31,17 +31,6 @@ def interpret_map(abmap):
     #colormap = len()
     return colormap
 
-#TODO 1 read how to make color map, please (matplotlib)
-#TODO СТЯНИ ПЕРЕД РАБОТОЙ
-#TODO 2 find "кубическое уравнение" in a book
-
-#todo 1a make a,b axies
-#todo 1b make collor conture map ///////
-#todo 1bb manage collor conture map ///////
-#todo 1c turn the map to 90 degrees
-
-
-
 if __name__=="__main__":
     x0 = 0
     a = (-0.6, 0.6, 0.04)

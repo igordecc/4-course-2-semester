@@ -4,72 +4,79 @@ import numpy as np
 
 #карта динамических режимов
 
-def VDP_eq(x, y, lambd, a):
-    return (lambd - x**2)*y - a - (x + 1)**2
+def VDP_f(x, y, *lambd):
+    """
+    main Van-der-Pole equation
+    :param x: x
+    :param y: y = x'
+    :param lambd: parameters lambda and  a: lambda - 0; a - 1.
+    :return: y'
+    """
+    return (lambd[0] - x**2)*y - lambd[1] - (x + 1)**2
 
-def VDP_eq_x(x, y, lambd, a):
+def VDP_g(x, y, *lambd):
+    """
+
+    :param x:
+    :param y:
+    :param lambd:
+    :return: x'
+    """
     return y
-
-def euler_method(f, x, y, h):
-    return y + h*(f(x, y))
-
-#TODO there is example in 1.py for solving dual variable equasion
-#TODO 1 connect VDP1 and VDP2 under the general VDP function
-#TODO write euler method for this "vector" function.
-
-def final_point(x0, a, b, additional_points=100, N=1000):
-    for i in range(N-additional_points):
-        x0 = VDP_eq(x0, a, b)
-
-    x0_additional_points = []
-    for i in range(additional_points):
-        x0 = VDP_eq(x0, a, b)
-        x0_additional_points.append(x0)
-
-    return x0_additional_points
+""" DOESNT WORK
+def VDP():
+    return VDP_f, VDP_g
+"""
 
 
-def make_array(x0, a, b, ap):
-    a = np.arange(*a, dtype=np.float64)
-    b = np.arange(*b, dtype=np.float64)
-    abmap = [ [final_point(x0, i, j, ap) for j in b] for i in a]
-    return np.array(abmap) #.shape((a.__len__(), b.__len__(), -1))
+def method_euler(x0, y0, result0, f, h, *lambd):
+    """
+    do calculate for tn moment
+    :param x0: 1st variable
+    :param y0: 2d variable
+    :param result0: previous result, list
+    :param f: vector of functions
+    :param h: if there is t0 and tn, then tn = t0 + n*h
+    :param lambd: parameters, like a,b and others
+    :return: new result1, list
+    """
+    result1 = [result0[i] + h * f[i](x0, y0, *lambd) for i in range(len(f))]
+    return result1
 
-def interpret_map(abmap):
-    colormap = [[len(set(j)) for j in i] for i in abmap]
-    #abmap = [set(j, 4) for j in for i in abmap] # remove duplicates
-    #colormap = len()
-    return colormap
+def getxylist(x0, y0, VDP, h, tn, *lambd, t0=0 ):
+    result0 = [x0, y0]
+    xylist = [result0]
+    for t in np.arange(t0, tn, h):
+        result0 = method_euler(xylist[-1][0],xylist[-1][1], result0, VDP, h, *lambd)
+        print(result0)
+        xylist.append(result0)
+    xylist = np.array(xylist)
+    xlist = xylist[:][0]
+    ylist = xylist[:][1]
+    return xlist, ylist
 
-#TODO 1 read how to make color map, please (matplotlib)
-#TODO СТЯНИ ПЕРЕД РАБОТОЙ
-#TODO 2 find "кубическое уравнение" in a book
+def makesystem(f,g, *lambd):
+    return lambda x,y: ( f(x,y,*lambd), g(x,y,*lambd) )
 
-#todo 1a make a,b axies
-#todo 1b make collor conture map ///////
-#todo 1bb manage collor conture map ///////
-#todo 1c turn the map to 90 degrees
+def euler(x,y, f, h=1e-4):
+    xp, yp = f(x,y)
+    return x + h*xp, y + h*yp
 
-
+#TODO fix (Google) "OverflowError: (34, 'Result too large')"
+#TODO read lambda functions
+#TODO ask for reading (from Kostya) about Functional programming
 
 if __name__=="__main__":
-    x0 = 0
-    a = (-0.6, 0.6, 0.04)
-    b = (0.8, 2.5, 0.04)
-    abmap = make_array(x0, a, b, ap=20)
-    colormap = interpret_map(abmap)
-    #contour = plt.contour(colormap)
-    #plt.get_cmap('inferno')
-
-    #NUMPY TRANSFORM
-    colormap = np.matrix.transpose(np.array(colormap))
-    pcm = plt.pcolormesh(colormap)#, color=(0.1,0.1,0.1))
-    #pcm = plt.pcolormesh(rot+base)
-    #pcm.set_color(((0.8,0.1,0.1), (0.1,0.1,0.8)))
-
-    plt.xticks(np.linspace(0, 30, 9), np.linspace(-0.6, 0.6, 9))
-    plt.yticks(np.linspace(0, 45, 9), np.linspace(0.8, 2.5, 9))
-
+    x0 = 0.1
+    y0 = 0.1
+    lambd = .5#(-0.6, 0.6, 0.04)
+    b = 1 #(0.8, 2.5, 0.04)
+    tn = 100
+    h = .1
+    VDP = VDP_f, VDP_g
+    xlist, ylist = getxylist(x0, y0, VDP, h, tn, lambd, b)
+    plt.plot(xlist, ylist)
+    print(xlist, ylist)
     plt.autoscale()
 
     #im = plt.pcolormesh(np.arange(100).reshape((10, 10)))
