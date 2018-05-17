@@ -23,7 +23,7 @@ def make_array(x0, a, b, ap):
     a = np.arange(*a, dtype=np.float64)
     b = np.arange(*b, dtype=np.float64)
     abmap = [ [final_point(x0, i, j, ap) for j in b] for i in a]
-    return np.array(abmap) #.shape((a.__len__(), b.__len__(), -1))
+    return np.round(np.array(abmap), 1) #.shape((a.__len__(), b.__len__(), -1))
 
 def interpret_map(abmap):
     colormap = [[len(set(j)) for j in i] for i in abmap]
@@ -33,8 +33,8 @@ def interpret_map(abmap):
 
 if __name__=="__main__":
     x0 = 0
-    a = (-0.6, 0.6, 0.04)
-    b = (0.8, 2.5, 0.04)
+    a = (-0.6, 0.6, 0.005)
+    b = (0.8, 2.5, 0.005)
     abmap = make_array(x0, a, b, ap=20)
     colormap = interpret_map(abmap)
     #contour = plt.contour(colormap)

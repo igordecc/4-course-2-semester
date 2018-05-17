@@ -35,7 +35,7 @@ def plotlogmap(x0, a, b, idepth):
 
 if __name__=="__main__":
     a = .5     #float(input("a: "))
-    b = 1
+    b = 1.2
     idepth = 100    #int(input("depth: "))
     x0 = 0
     plotlogmap(x0, a, b, idepth)
