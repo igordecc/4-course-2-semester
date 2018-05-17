@@ -24,7 +24,7 @@ def plotlogmap(x0, a, b, idepth):
     xlist = list_creator( x0, a, b, idepth )
     ylist = [xlist[0]]+xlist[:-1]
 
-    for i in range(len(xlist)-1):
+    for i in range(50,len(xlist)-1):
         line = plt.plot( [ylist[i], ylist[i + 1]], [xlist[i], xlist[i + 1]], color="red")
 
     plt.xlabel('x_n')
@@ -35,7 +35,8 @@ def plotlogmap(x0, a, b, idepth):
 
 if __name__=="__main__":
     a = .5     #float(input("a: "))
-    b = 1.2
+    b = 1.9
+    print(a, b)
     idepth = 100    #int(input("depth: "))
     x0 = 0
     plotlogmap(x0, a, b, idepth)

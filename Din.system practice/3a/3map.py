@@ -46,8 +46,8 @@ if __name__=="__main__":
     #pcm = plt.pcolormesh(rot+base)
     #pcm.set_color(((0.8,0.1,0.1), (0.1,0.1,0.8)))
 
-    plt.xticks(np.linspace(0, 30, 9), np.linspace(-0.6, 0.6, 9))
-    plt.yticks(np.linspace(0, 45, 9), np.linspace(0.8, 2.5, 9))
+    plt.xticks(np.linspace(0, 30*8, 9), np.linspace(-0.6, 0.6, 9))
+    plt.yticks(np.linspace(0, 45*8, 9), np.linspace(0.8, 2.5, 9))
 
     plt.autoscale()
 
