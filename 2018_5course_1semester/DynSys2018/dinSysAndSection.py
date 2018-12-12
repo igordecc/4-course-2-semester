@@ -14,7 +14,11 @@ def ressler(x, y, z, a = .25, b = 0.15, r = 2.5, h = 0.01 ):     #a = 0.2, b = 0
 # slicex = [1,2,3,4,5,6,7,8,9]
 # slicey = [1,2,3,4,5,6,7,8,9]
 # slicez = [1,2,3,4,5,6,7,8,9]
+<<<<<<< HEAD
 def doPortrait(a = .25, b = 0.15, r = 2.5, evaluateNum=10000, ):
+=======
+def doPortret(ressler=ressler, a = .25, b = 0.15, r = 2.5, evaluateNum=100000,):
+>>>>>>> 3b59c22d146f446c5bb759032e7c93b63d9f8bff
     xyz = numpy.empty((evaluateNum, 3))
 
     x0 = .1
@@ -93,6 +97,22 @@ def plotDiagram(a = .25, b = .15):
 
     ax.legend()
     pyplot.show()
+
+#4 exercise
+def partialDerivative(argNum, f, eps):
+    def _f(*args):
+        v = f(*args)
+        args = list(args)
+        args[argNum] += eps
+        return ( f(*args) - v )/eps
+    return _f
+
+
+def doLyapunovIndex(f):
+    numpy.log(f)
+    ...
+
+#TODO make partial derivative matrix (матрица чатсных производных) см. скрины в ./DynSys
 
 if __name__ == '__main__':
     plotPhase()
