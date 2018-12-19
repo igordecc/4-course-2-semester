@@ -116,13 +116,14 @@ def plotDiagram(a=1.4, b=0.3, r=0):
     ax = fig.gca(projection="3d")
 
     #rRange = [r for r in numpy.arange(2, 5, 0.05)]
-    Range = [b for b in numpy.arange(1, 1.5, 0.01)]
+    Range = [b for b in numpy.arange(1, 1.5, 0.005)]
     rDiagramData = []
     for param in Range:
 
-
         x, y, z = doPortret(ressler, param, b,r)
-        slicex, slicey, slicez = slicer(x, y, z)
+        #slicex, slicey, slicez = slicer(x, y, z)
+        yzSpace = 1
+        slicey, slicez = y[::yzSpace], z[::yzSpace]
         for y, z in zip(slicey, slicez):
             rDiagramData.append([param,y,z])
 
@@ -132,7 +133,7 @@ def plotDiagram(a=1.4, b=0.3, r=0):
     r = rDiagramData[0]
     z = rDiagramData[2]
 
-    ax.plot(r, y, z, "g.", ms=5, label="biffurcation diagram")
+    ax.plot(r, y, z, "g.", ms=1, alpha=0.01, label="biffurcation diagram")
 
     ax.legend()
     pyplot.show()
