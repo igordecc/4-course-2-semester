@@ -11,7 +11,7 @@ import numpy as np
 #     return x + h*new_x, y + h*new_y, z + h*new_z
 
 def ressler(x, y, z, a=1.4, b=0.3, r=2.5, h=0.01):
-    new_x = 1 - a*x**2 + b*y
+    new_x = 1 - a*abs(x) + b*y
     new_y = x
     new_z = 0
     return new_x, new_y, new_z
@@ -116,7 +116,7 @@ def plotDiagram(a=1.4, b=0.3, r=0):
     ax = fig.gca(projection="3d")
 
     #rRange = [r for r in numpy.arange(2, 5, 0.05)]
-    Range = [b for b in numpy.arange(1, 1.5, 0.005)]
+    Range = [b for b in numpy.arange(1.2, 1.7, 0.005)]
     rDiagramData = []
     for param in Range:
 
