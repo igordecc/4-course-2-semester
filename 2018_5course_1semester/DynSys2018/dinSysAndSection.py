@@ -20,6 +20,7 @@ def ressler(x, y, z, a=1.4, b=0.3, r=2.5, h=0.01):
 # slicex = [1,2,3,4,5,6,7,8,9]
 # slicey = [1,2,3,4,5,6,7,8,9]
 # slicez = [1,2,3,4,5,6,7,8,9]
+
 def doPortret(ressler=ressler, a=1.4, b=0.3, r=2.5, evaluateNum=10000,):
     xyz = numpy.empty((evaluateNum, 3))
 
@@ -115,19 +116,20 @@ def plotDiagram(a=1.4, b=0.3, r=0):
     ax = fig.gca(projection="3d")
 
     #rRange = [r for r in numpy.arange(2, 5, 0.05)]
-    Range = [b for b in numpy.arange(1, 1.5, 0.001)]
+    Range = [b for b in numpy.arange(1, 1.5, 0.01)]
     rDiagramData = []
     for param in Range:
 
-        x, y, z = doPortret(ressler, param, b,r, evaluateNum=10000)
+
+        x, y, z = doPortret(ressler, param, b,r)
         slicex, slicey, slicez = slicer(x, y, z)
         for y, z in zip(slicey, slicez):
             rDiagramData.append([param,y,z])
 
 
     rDiagramData = numpy.transpose(rDiagramData)
-    r = rDiagramData[0]
     y = rDiagramData[1]
+    r = rDiagramData[0]
     z = rDiagramData[2]
 
     ax.plot(r, y, z, "g.", ms=5, label="biffurcation diagram")
@@ -152,6 +154,6 @@ def doLyapunovIndex(f):
 #TODO make partial derivative matrix (матрица чатсных производных) см. скрины в ./DynSys
 
 if __name__ == '__main__':
-    plotPhase()
+    #plotPhase()
     #plotSlice()
-    #plotDiagram()
+    plotDiagram()
