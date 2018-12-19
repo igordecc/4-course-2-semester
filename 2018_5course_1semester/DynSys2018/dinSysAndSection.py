@@ -154,6 +154,7 @@ def doLyapunovIndex(f):
 
 #TODO make partial derivative matrix (матрица чатсных производных) см. скрины в ./DynSys
 
+
 if __name__ == '__main__':
     #plotPhase()
     #plotSlice()
