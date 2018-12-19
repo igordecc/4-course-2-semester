@@ -14,11 +14,9 @@ def ressler(x, y, z, a = .25, b = 0.15, r = 2.5, h = 0.01 ):     #a = 0.2, b = 0
 # slicex = [1,2,3,4,5,6,7,8,9]
 # slicey = [1,2,3,4,5,6,7,8,9]
 # slicez = [1,2,3,4,5,6,7,8,9]
-<<<<<<< HEAD
-def doPortrait(a = .25, b = 0.15, r = 2.5, evaluateNum=10000, ):
-=======
-def doPortret(ressler=ressler, a = .25, b = 0.15, r = 2.5, evaluateNum=100000,):
->>>>>>> 3b59c22d146f446c5bb759032e7c93b63d9f8bff
+
+def doPortrait(ressler=ressler, a = .25, b = 0.15, r = 2.5, evaluateNum=100000,):
+
     xyz = numpy.empty((evaluateNum, 3))
 
     x0 = .1
@@ -28,7 +26,7 @@ def doPortret(ressler=ressler, a = .25, b = 0.15, r = 2.5, evaluateNum=100000,):
     for i in range(1, evaluateNum):
         xyz[i] = ressler(*xyz[i - 1], a, b, r)
 
-    xyz = xyz[(evaluateNum // 4):]  # 0. избавиться - переходный процесс
+    xyz = xyz[evaluateNum-(evaluateNum // 4):]  # 0. избавиться - переходный процесс
     xyz = numpy.transpose(xyz)
     x = xyz[0]
     y = xyz[1]
@@ -83,7 +81,7 @@ def plotDiagram(a = .25, b = .15):
     rDiagramData = []
     for r in rRange:
 
-        x, y, z = doPortrait(a, b, r, evaluateNum=10000)
+        x, y, z = doPortrait(ressler, a, b, r, evaluateNum=10000)
         slicex, slicey, slicez = slicer(x, y, z)
         for y, z in zip(slicey, slicez):
             rDiagramData.append([r,y,z])
@@ -115,6 +113,6 @@ def doLyapunovIndex(f):
 #TODO make partial derivative matrix (матрица чатсных производных) см. скрины в ./DynSys
 
 if __name__ == '__main__':
-    plotPhase()
+    #plotPhase()
     #plotSlice()
-    #plotDiagram()
+    plotDiagram()
