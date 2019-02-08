@@ -19,18 +19,18 @@ def logistic_map(x, _lambda):
 # - repeat for all others _lambdas in interval [0;5]
 
 
-def iterate(lmap, times, delta, x0, _lambda):
+def iterate(lmapfn, times, delta, x0, _lambda):
 
     x = x0
     for i in range(times-delta):    #sjould be: delta < times
-        x = lmap(x, _lambda)
+        x = lmapfn(x, _lambda)
     # we are looking for Certain stable x values here
     # it's good to remember ALL x value to find certain ones later on.
     x_array = numpy.zeros(delta)
     #delta is the number of x, wich we want to remember
-    x_array[0] = lmap(x, _lambda)
-    for i in range(1, delta):
-        x_array[i+1] = lmap(x_array[i], _lambda)
+    x_array[0] = lmapfn(x, _lambda)
+    for i in range(0, delta-1):
+        x_array[i+1] = lmapfn(x_array[i], _lambda)
 
     return x_array
     # again, we can define several cut all random point and live only stable one
@@ -38,6 +38,8 @@ def iterate(lmap, times, delta, x0, _lambda):
     # and add features SECOND
 
 
-
-
 # lets test it!
+# TODO test! - OK!
+# unit tests - tests of each single element of our program - CHECK
+# integration tests - global test of 1 feature from _todo - will be at the end
+
