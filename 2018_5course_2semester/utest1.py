@@ -6,7 +6,7 @@ def test_iterate():
     delta = 20
     x0 = 0.1
     _lambda = 2
-    array = task1.iterate(lmapfn, times, delta, x0, _lambda)
+    array = task1.iterate(_lambda, lmapfn, times, delta, x0)
     assert len(array) == delta
 
 if __name__ == '__main__':

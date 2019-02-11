@@ -2,7 +2,7 @@ import numpy
 
 
 def logistic_map(x, _lambda):
-    x_new = x - _lambda * x ** 2
+    x_new = 1 - _lambda * x ** 2
     return x_new
 
 # TODO
@@ -12,14 +12,14 @@ def logistic_map(x, _lambda):
 # NOTE l_critical can be the point of the first bifurcation
 
 #plot bifurcation tree:
-# - iterate for sertain _lambda
-# - find stationar dots
+# - iterate for certain _lambda
+# - find stationary dots - u don't need that
 # - mark on the plot
 # -  - will use matplotlib library
 # - repeat for all others _lambdas in interval [0;5]
 
 
-def iterate(lmapfn, times, delta, x0, _lambda):
+def iterate(_lambda, lmapfn, times, delta, x0):
 
     x = x0
     for i in range(times-delta):    #sjould be: delta < times
@@ -43,3 +43,29 @@ def iterate(lmapfn, times, delta, x0, _lambda):
 # unit tests - tests of each single element of our program - CHECK
 # integration tests - global test of 1 feature from _todo - will be at the end
 
+def allLambda(lmin, lmax, ld, *args):
+    diagramList = []
+    _lambdaRow = numpy.arange(lmin, lmax, ld)
+    for _lambda in _lambdaRow:
+        diagramList.append(iterate(_lambda, *args))
+    return _lambdaRow, diagramList
+
+if __name__ == '__main__':
+    times = 1000
+    delta = 200
+    x0 = 0.1
+    _lambda = 1.4
+    x_array = iterate(_lambda, logistic_map, times, delta, x0)
+    import matplotlib.pyplot
+    #matplotlib.pyplot.plot(x_array, '.')
+    #matplotlib.pyplot.grid()
+    #matplotlib.pyplot.show()
+
+    matplotlib.pyplot.clf()
+    lmin, lmax, ld = 0.5, 1.7, 0.01
+    x,y = allLambda(lmin, lmax, ld, logistic_map, times, delta, x0)
+    matplotlib.pyplot.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
+    matplotlib.pyplot.grid()
+    matplotlib.pyplot.show()
+
+    #come up with how scalle graphic around Critical point
