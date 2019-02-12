@@ -26,7 +26,6 @@ def iterate(_lambda,
             delta,
             x0
             ):
-
     x = x0
     for i in range(times-delta):    #sjould be: delta < times
         x = lmapfn(x, _lambda)
