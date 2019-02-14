@@ -87,7 +87,7 @@ def plot_iterdiag():
     _lambda = 0.75
     # f_array =[[x, logistic_map(x, _lambda)] for x in numpy.arange(-1, 1, 0.1)]
     # f_array =[(x, logistic_map(x, _lambda)) for x in numpy.arange(-1, 1, 0.1)]
-    na = numpy.arange(-1, 1.001, 0.02)
+    na = numpy.arange(-1, 1.00, 0.02)
     f_array =[logistic_map(x, _lambda) for x in na]
     x = [x for x in na]
     zero_array = [0 for x in na]
