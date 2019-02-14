@@ -59,63 +59,48 @@ def allLambda(lmin,
         diagramList.append(iterate(_lambda, *args))
     return _lambdaRow, diagramList
 
-def scale(x_scale_point,
-          y_scale_point,
-          x_scale_coefficient,
-          y_scale_coefficient,
-          xmin,
-          xmax,
-          ymin,
-          ymax
-          ):
 
-    # nxmin, nxmax = xmin * x_scale_coefficient, xmax * x_scale_coefficient
-    # nymin, nymax = ymin * y_scale_coefficient, ymax * y_scale_coefficient
-
-    x_proportions = x_scale_point -  xmin, xmax - x_scale_point
-    n_x_proportions = [ i * x_scale_coefficient for i in x_proportions ]
-    n_xmin, n_xmax = x_scale_point - n_x_proportions[0], x_scale_point + n_x_proportions[1]
-
-    y_proportions = y_scale_point - ymin, ymax - y_scale_point
-    n_y_proportions = [i * y_scale_coefficient for i in y_proportions]
-    n_ymin, n_ymax = y_scale_point - n_y_proportions[0], y_scale_point + n_y_proportions[1]
-
-    return matplotlib.pyplot.axis(n_xmin, n_xmax, n_ymin, n_ymax)
-
-if __name__ == '__main__':
+def plot_xarray():
     times = 1000
     delta = 200
     x0 = 0.1
     _lambda = 1.4
     x_array = iterate(_lambda, logistic_map, times, delta, x0)
 
-    #matplotlib.pyplot.plot(x_array, '.')
-    #matplotlib.pyplot.grid()
-    #matplotlib.pyplot.show()
-
+    matplotlib.pyplot.plot(x_array, '.')
+    matplotlib.pyplot.grid()
+    matplotlib.pyplot.show()
     matplotlib.pyplot.clf()
+
+def plot_bifdiag():
+    times = 1000
+    delta = 200
+    x0 = 0.1
     lmin, lmax, ld = 0.5, 1.7, 0.01
     x,y = allLambda(lmin, lmax, ld, logistic_map, times, delta, x0)
     matplotlib.pyplot.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
     matplotlib.pyplot.grid()
     matplotlib.pyplot.show()
+    matplotlib.pyplot.clf()
+
+def plot_iterdiag():
+    _lambda = 0.75
+    # f_array =[[x, logistic_map(x, _lambda)] for x in numpy.arange(-1, 1, 0.1)]
+    # f_array =[(x, logistic_map(x, _lambda)) for x in numpy.arange(-1, 1, 0.1)]
+    na = numpy.arange(-1, 1.001, 0.02)
+    f_array =[logistic_map(x, _lambda) for x in na]
+    x = [x for x in na]
+    zero_array = [0 for x in na]
+    matplotlib.pyplot.plot(x,f_array)
+    matplotlib.pyplot.plot(x,x)
+    matplotlib.pyplot.plot(x, zero_array)
+    matplotlib.pyplot.plot(zero_array, x)
+    matplotlib.pyplot.grid()
+    matplotlib.pyplot.show()
+    matplotlib.pyplot.clf()
+    ...
 
 
-    # TODO come up with how scalle graphic around Critical point
-    # TODO you have done universal scale, but it will better to make scale function wich is including allLambda() function custom scale
-    xmin = .5
-    xmax = 1.8
-    ymin = -1
-    ymax = 1
-    x_scale_point = 1.4
-    y_scale_point = 0
-    x_scale_coefficient = 1
-    y_scale_coefficient = 0.5
-    # scaling point
-    # x_scale_point = 1.1
-    # y_scale_point = DON'T SCALE
-
-    #
-
-
-
+if __name__ == '__main__':
+    #plot_bifdiag()
+    plot_iterdiag()
