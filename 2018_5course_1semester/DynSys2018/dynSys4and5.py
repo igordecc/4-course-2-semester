@@ -96,7 +96,7 @@ def Lorenz(t, X, sig=10, bet=8/3, r=28):
 #     return (
 #         - a*2*x*x_ - b*y_,
 #         x_,
-#         0
+#         0*
 #     )
 #
 # def Enno(t, X, a=1, b=.15, r=2.5):

@@ -128,6 +128,36 @@ def plot_iterdiag():
     ...
 
 
+def diff(fn, x, params, dx):
+    return ( fn(x + dx, params) - fn(x, params) ) / dx
+
+# def lyapunov_index(fn, x0, params, nsum):
+#     # for one-dimension map
+#     x = list(x0)
+#     dx = list(1)  # x0 for variation equations
+#     for i in range(nsum):
+#         x.append(fn(x))
+#         dx.append(diff(fn,x,dx[i]) * dx[i])
+
+def lyapunov_index(fn, x0, params, nsum):
+    x = [x0]
+    dx = 0.01
+    lyap_sum = 0
+    for i in range(nsum):
+        dfdx = diff(fn, x[i], params, dx)
+        lyap_sum += numpy.log(abs(dfdx))
+        x.append(fn(x[i], params))
+    lyap_sum /= nsum
+    return lyap_sum
+
+def dolyapunov():
+    x0=0.1
+    _lambda = 1.25
+    nsum = 100
+    lindex = lyapunov_index(logistic_map, x0, _lambda, nsum)
+    print(lindex)
+
 if __name__ == '__main__':
     #plot_bifdiag()
-    plot_iterdiag()
+    # plot_iterdiag()
+    dolyapunov()

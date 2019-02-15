@@ -9,6 +9,7 @@ def test_iterate():
     array = task1.iterate(_lambda, lmapfn, times, delta, x0)
     assert len(array) == delta
 
+
 if __name__ == '__main__':
     test_iterate()
     print("All is good!")
