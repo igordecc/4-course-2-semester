@@ -72,6 +72,33 @@ def allLambda(lmin,
         diagramList.append(iterate(_lambda, *args))
     return _lambdaRow, diagramList
 
+def diff(fn,
+         x,
+         params,
+         dx):
+    return ( fn(x + dx, params) - fn(x, params) ) / dx
+
+# def lyapunov_index(fn, x0, params, nsum):
+#     # for one-dimension map
+#     x = list(x0)
+#     dx = list(1)  # x0 for variation equations
+#     for i in range(nsum):
+#         x.append(fn(x))
+#         dx.append(diff(fn,x,dx[i]) * dx[i])
+
+def lyapunov_index(fn,
+                   x0,
+                   params,
+                   nsum):
+    x = [x0]
+    dx = 0.01
+    lyap_sum = 0
+    for i in range(nsum):
+        dfdx = diff(fn, x[i], params, dx)
+        lyap_sum += numpy.log(abs(dfdx))
+        x.append(fn(x[i], params))
+    lyap_sum /= nsum
+    return lyap_sum
 
 def plot_xarray():
     times = 1000
@@ -79,7 +106,6 @@ def plot_xarray():
     x0 = 0.1
     _lambda = 1.4
     x_array = iterate(_lambda, logistic_map, times, delta, x0)
-
     matplotlib.pyplot.plot(x_array, '.')
     matplotlib.pyplot.grid()
     matplotlib.pyplot.show()
@@ -126,29 +152,6 @@ def plot_iterdiag():
     matplotlib.pyplot.show()
     matplotlib.pyplot.clf()
     ...
-
-
-def diff(fn, x, params, dx):
-    return ( fn(x + dx, params) - fn(x, params) ) / dx
-
-# def lyapunov_index(fn, x0, params, nsum):
-#     # for one-dimension map
-#     x = list(x0)
-#     dx = list(1)  # x0 for variation equations
-#     for i in range(nsum):
-#         x.append(fn(x))
-#         dx.append(diff(fn,x,dx[i]) * dx[i])
-
-def lyapunov_index(fn, x0, params, nsum):
-    x = [x0]
-    dx = 0.01
-    lyap_sum = 0
-    for i in range(nsum):
-        dfdx = diff(fn, x[i], params, dx)
-        lyap_sum += numpy.log(abs(dfdx))
-        x.append(fn(x[i], params))
-    lyap_sum /= nsum
-    return lyap_sum
 
 def dolyapunov():
     x0=0.1
