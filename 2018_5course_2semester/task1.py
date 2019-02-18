@@ -100,6 +100,29 @@ def lyapunov_index(fn,
     lyap_sum /= nsum
     return lyap_sum
 
+def findFeigdelta(_lambda0,
+              _lambda1,
+              _lambda2,
+              ):
+    delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
+    return delta
+
+def findFeig_lambda0(delta,
+              _lambda1,
+              _lambda2,
+              ):
+    # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
+    _lambda0 = _lambda1 - delta * (_lambda2 - _lambda1)
+    return _lambda0
+
+def findFeig_lambda2(delta,
+              _lambda0,
+              _lambda1,
+              ):
+    # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
+    _lambda2 = (_lambda1 - _lambda0)/delta +_lambda1
+    return _lambda2
+
 def plot_xarray():
     times = 1000
     delta = 200
@@ -160,7 +183,33 @@ def dolyapunov():
     lindex = lyapunov_index(logistic_map, x0, _lambda, nsum)
     print(lindex)
 
+def doFeig():
+    delta = 4.669
+    _lambda1 = 1.40115329085
+    _lambda2 = 1.40115518909
+    _lambda0 = findFeig_lambda0(delta, _lambda1, _lambda2)
+    print("_lambda0", _lambda0)
+
+    _lambda0 = 0.75
+    _lambda1 = 1.25
+    _lambda2 = 1.36809893939
+    _iteri = 50
+    for i in range(_iteri):
+        try:
+            delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
+        except:
+            print("exception i =", i)
+            break
+        print("delta", delta)
+        _lambda0 = _lambda1
+        _lambda1 = _lambda2
+        _lambda2 = findFeig_lambda2(delta, _lambda0, _lambda1)
+        print(_lambda1, _lambda2)
+    print("final delta", delta)
+
+    
 if __name__ == '__main__':
     #plot_bifdiag()
     # plot_iterdiag()
-    dolyapunov()
+    #dolyapunov()
+    doFeig()
