@@ -50,6 +50,7 @@ def do_count_laminar():
 
     dx = round(0.1**dimension, dimension)
     print(dx)
+    # SALVATION *10**3, take int() from them, save in the list
     xline = [round(i, dimension) for i in  numpy.arange(xmin, xmax, dx)]
     print(xline)
     # count_array = numpy.zeros((xline.len(), k))
@@ -58,6 +59,7 @@ def do_count_laminar():
     x_dict = dict()
     # x_dict = x_dict.fromkeys(xline) DOESNOT WORK - thank u, floats
     #TODO how to make dict from list of float numbers?
+
     for i in xline:
         x_dict[i] = None
     print(x_dict)
