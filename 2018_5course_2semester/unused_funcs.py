@@ -1,4 +1,6 @@
 import matplotlib.pyplot
+import numpy
+from task1 import logistic_map
 
 def scale(x_scale_point,
           y_scale_point,
@@ -36,3 +38,46 @@ def scale(x_scale_point,
 
     return matplotlib.pyplot.axis(n_xmin, n_xmax, n_ymin, n_ymax)
 
+def iterate(_lambda,
+            lfn,
+            k,
+            delta,
+            x0
+            ):
+    x = x0
+    for i in range(k - delta):    #sjould be: delta < times
+        x = lfn(x, _lambda)
+    # we are looking for Certain stable x values here
+    # it's good to remember ALL x value to find certain ones later on.
+    x_array = numpy.zeros(delta)
+    #delta is the number of x, wich we want to remember
+    x_array[0] = lfn(x, _lambda)
+    for i in range(0, delta-1):
+        x_array[i+1] = lfn(x_array[i], _lambda)
+
+    return x_array
+    # again, we can define several cut all random point and live only stable one
+    # but we will try solve our problem FIRST
+    # and add features SECOND
+
+def allLambda(lmin,
+              lmax,
+              ld,
+              *args
+              ):
+    diagramList = []
+    _lambdaRow = numpy.arange(lmin, lmax, ld)
+    for _lambda in _lambdaRow:
+        diagramList.append(iterate(_lambda, *args))
+    return _lambdaRow, diagramList
+
+def plot_xarray():
+    times = 1000
+    delta = 200
+    x0 = 0.1
+    _lambda = 1.4
+    x_array = iterate(_lambda, logistic_map, times, delta, x0)
+    matplotlib.pyplot.plot(x_array, '.')
+    matplotlib.pyplot.grid()
+    matplotlib.pyplot.show()
+    matplotlib.pyplot.clf()

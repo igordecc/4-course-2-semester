@@ -19,7 +19,6 @@ def logistic_map(x, _lambda):
 # -  - will use matplotlib library
 # - repeat for all others _lambdas in interval [0;5]
 
-
 def iterate(_lambda,
             lfn,
             k,
@@ -41,6 +40,7 @@ def iterate(_lambda,
     # again, we can define several cut all random point and live only stable one
     # but we will try solve our problem FIRST
     # and add features SECOND
+
 
 def iterate_v2(_lambda,
              fn,
@@ -123,16 +123,6 @@ def findFeig_lambda2(delta,
     _lambda2 = (_lambda1 - _lambda0)/delta +_lambda1
     return _lambda2
 
-def plot_xarray():
-    times = 1000
-    delta = 200
-    x0 = 0.1
-    _lambda = 1.4
-    x_array = iterate(_lambda, logistic_map, times, delta, x0)
-    matplotlib.pyplot.plot(x_array, '.')
-    matplotlib.pyplot.grid()
-    matplotlib.pyplot.show()
-    matplotlib.pyplot.clf()
 
 def plot_bifdiag():
     times = 1000
