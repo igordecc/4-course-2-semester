@@ -1,3 +1,6 @@
+# redo from f(iter) to f(Q) - does not work
+# TODO first - build f(Q) for not discrete Qs, after - build the map, like logistic map.
+
 import numpy
 import matplotlib.pyplot
 import matplotlib.widgets
@@ -22,7 +25,6 @@ def do_map():
     fig, ax = matplotlib.pyplot.subplots()
 
     x_array = iter_map(x, Omega, K, iter_number)
-    # redo from f(iter) to f(Q) - does not work
 
     #my_plot, = matplotlib.pyplot.plot(x_array[:-1],x_array[1:])
     my_plot, = matplotlib.pyplot.plot(x_array)
