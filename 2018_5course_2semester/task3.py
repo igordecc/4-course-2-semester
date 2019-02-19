@@ -8,7 +8,7 @@ def circular_map(x, Omega, K):
 
 def do_map():
     #Omega = 0.60666666
-    Omega = 0.2
+    Omega = 0.6
     K = 1
     x = 0
     iter_number = 100
@@ -22,19 +22,26 @@ def do_map():
     fig, ax = matplotlib.pyplot.subplots()
 
     x_array = iter_map(x, Omega, K, iter_number)
+    # redo from f(iter) to f(Q) - does not work
+
+    #my_plot, = matplotlib.pyplot.plot(x_array[:-1],x_array[1:])
     my_plot, = matplotlib.pyplot.plot(x_array)
     slider_ax1 = matplotlib.pyplot.axes([0.25, 0.1, 0.65, 0.03])
     slider_ax2 = matplotlib.pyplot.axes([0.25, 0.15, 0.65, 0.03])
-    slider_Omega = matplotlib.widgets.Slider(slider_ax1, "Omega", 0.1, 5, valinit=0.6066) #, valstep=0.1)
-    slider_K = matplotlib.widgets.Slider(slider_ax2, "K", 0.1, 5, valinit=1) #, valstep=0.1) Does not exist anymore?
+    slider_Omega = matplotlib.widgets.Slider(slider_ax1, "Omega", 0.1, 5, valinit=Omega) #, valstep=0.1)
+    slider_K = matplotlib.widgets.Slider(slider_ax2, "K", 0.1, 5, valinit=K) #, valstep=0.1) Does not exist anymore?
 
 
     def update(val):
-        x = 0
-        iter_number = 100
         Omega = slider_Omega.val
         K = slider_K.val
-        my_plot.set_ydata(iter_map(x, Omega, K, iter_number))
+        x_array = iter_map(x, Omega, K, iter_number)
+        my_plot.set_ydata(x_array)
+        # my_plot.set_xdata(x_array[:-1])
+        # my_plot.set_ydata(x_array[1:])
+
+
+
         fig.canvas.draw_idle()
 
     slider_Omega.on_changed(update)
