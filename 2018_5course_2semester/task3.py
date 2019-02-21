@@ -1,5 +1,5 @@
 # redo from f(iter) to f(Q) - does not work
-# TODO first - build f(Q) for not discrete Qs, after - build the map, like logistic map.
+# TODO f(Q) for not discrete Qs is DONE, now: build the map, like logistic map.
 
 import numpy
 import matplotlib.pyplot
