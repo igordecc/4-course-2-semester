@@ -125,10 +125,12 @@ def findFeig_lambda2(delta,
 
 
 def plot_bifdiag():
+    #TODO scale y by something
+    #TODO scale lambda by 1/2 (because logistic_map
     times = 1000
     delta = 200
     x0 = 0.1
-    lmin, lmax, ld = 0.5, 1.7, 0.01
+    lmin, lmax, ld = 0.5, 1.7, 0.001
     x,y = allLambda(lmin, lmax, ld, logistic_map, times, delta, x0)
     matplotlib.pyplot.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
     matplotlib.pyplot.grid()
@@ -136,9 +138,9 @@ def plot_bifdiag():
     matplotlib.pyplot.clf()
 
 def plot_iterdiag():
-    _lambda = 0.75
-    k = 20
-    x0 = 0.1
+    _lambda = 1.4011
+    k = 200
+    x0 = 0
 
 
     # plot basic figures
@@ -190,6 +192,7 @@ def doFeig():
         except:
             print("exception i =", i)
             break
+        #TODO by nutons method or division/2 find super stable cicle
         print("delta", delta)
         _lambda0 = _lambda1
         _lambda1 = _lambda2
@@ -199,7 +202,7 @@ def doFeig():
 
     
 if __name__ == '__main__':
-    #plot_bifdiag()
-    # plot_iterdiag()
+    plot_bifdiag()
+    #plot_iterdiag()
     #dolyapunov()
     doFeig()

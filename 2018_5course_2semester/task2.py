@@ -28,7 +28,8 @@ def plot_lyapunov():
 def do_lyapunov_map():
     x0 = 0.1
     nsum = 1000
-    lrange = numpy.arange(1.76, 1.745, -0.0001)     # can change _lambda here
+    #TODO change proximity
+    lrange = numpy.arange(1.35, 1.505, 0.0001)     # can change _lambda here
     lindex = [  lyapunov_index(logistic_map, x0, _lambda, nsum) for _lambda in lrange]
     zeros = numpy.zeros(len(lrange))
     matplotlib.pyplot.plot(lrange ,lindex)
@@ -75,5 +76,5 @@ def do_count_laminar():
 if __name__ == '__main__':
     #plot_xarray()
     #plot_lyapunov()
-    #do_lyapunov_map()
-    do_count_laminar()
+    do_lyapunov_map()
+    #do_count_laminar()
