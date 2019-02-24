@@ -167,6 +167,51 @@ def plot_bifdiag():
     matplotlib.pyplot.show()
     matplotlib.pyplot.clf()
 
+def plot_bifdiag2():
+    plt.figure(1, figsize=(6,5))
+    left, bottom = 0.1, 0.1
+    width, height = 0.8, 0.8
+    pl_axes = plt.axes([left, bottom, width, height ])
+
+    def do_plot(lmin = 0.5, lmax=1.7, ymin=-0.75, ymax=1):
+        times = 1000
+        delta = 200
+        x0 = 0.1
+        ld = (lmax-lmin)/1000
+        x,y = allLambda(lmin, lmax, ld, logistic_map, times, delta, x0)
+        pl_axes.clear()
+        plt.ylim((ymin, ymax))
+        pl = pl_axes.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
+
+        print(lmin, lmax, ymin, ymax)
+        return lmin, lmax, ymin, ymax
+
+    def rescale(lmin, lmax, ymin, ymax):
+        alpha = -2.5029
+        m, v = 1 / abs(alpha), 1 / (alpha ** 2)
+        newlmin = lmin + (lmax - lmin) * m
+        newlmax = lmax - (lmax - lmin) * v
+        ymin, ymax = ymin/2, ymax/2
+        return newlmin, newlmax, ymin, ymax
+
+
+    lmin, lmax, ymin, ymax = do_plot()
+
+    plt.grid()
+
+    b_axes = plt.axes([0.8, .025, 0.1, 0.04])
+    scale_button = wgt.Button(b_axes, "Scale")
+    def scale(event):
+
+        nonlocal lmin, lmax, ymin, ymax
+        newlmin, newlmax, ymin, ymax = rescale(lmin, lmax, ymin, ymax)
+        lmin, lmax, ymin, ymax = do_plot(newlmin, newlmax, ymin, ymax)
+
+
+    scale_button.on_clicked(scale)
+
+    plt.show()
+
 def plot_iterdiag():
     _lambda = 1.4011
     k = 200
@@ -233,7 +278,7 @@ def doFeig():
     
 if __name__ == '__main__':
     #matplotlib.pyplot.ion()
-    plot_bifdiag()
+    plot_bifdiag2()
     #plot_iterdiag()
     #dolyapunov()
     #doFeig()
