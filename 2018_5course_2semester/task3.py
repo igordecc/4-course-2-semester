@@ -52,6 +52,18 @@ def do_map():
     matplotlib.pyplot.show()
 
 
+def do_iterlines_array(x0, Omega, K, skip_n_steps=100, present_n_steps=100):
+    x_array = [x0]
+    #-----------step1--transition_process
+    for i in range(skip_n_steps):
+        x_array.append( circular_map(x_array[i], Omega, K) )
+    x_array = [x_array[-1]]
+    #-----------step2--calculating_process
+    for i in range(present_n_steps):
+        x_array.append(circular_map(x_array[i], Omega, K))
+    return x_array
+
+    #
 def do_func():
     Omega = 0.6
     K = 12
@@ -75,14 +87,15 @@ def do_func():
     plot_axes = matplotlib.pyplot.gca()
     plot_axes.set_xlim([0, 2 * numpy.pi])
     plot_axes.set_ylim([0, 2 * numpy.pi])
-    matplotlib.pyplot.axis([0, 2 * numpy.pi, 0, 2 * numpy.pi])
-    # ticks = [i for i in numpy.arange(0, 2 * numpy.pi, 0.5)]
-    # matplotlib.pyplot.xticks(ticks)
-    # matplotlib.pyplot.yticks(ticks)
+    #matplotlib.pyplot.axis([0, 2 * numpy.pi, 0, 2 * numpy.pi])
 
     my_plot, = matplotlib.pyplot.plot(xplotarray, func_array)
     matplotlib.pyplot.grid()
 
+
+    x_n_array = do_iterlines_array(x, Omega, K)
+
+    my_plot2, = matplotlib.pyplot.plot(x_n_array[:-1],x_n_array[1:])
 
     #---------------------
 
@@ -94,8 +107,12 @@ def do_func():
     def update(val):
         Omega = slider_Omega.val
         K = slider_K.val
+        #---func data---------
         func_array = iter_map(x, Omega, K, xplotarray)
         my_plot.set_ydata(func_array)
+        #---iter data-----
+        x_n_array = do_iterlines_array(x, Omega, K)
+        my_plot2.set #TODO PLOT LINES HERE!!!!!!!!!!!!!!!!!!!!!
         fig.canvas.draw_idle()
 
     slider_Omega.on_changed(update)

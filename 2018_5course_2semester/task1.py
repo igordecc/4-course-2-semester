@@ -1,6 +1,7 @@
 import numpy
 import matplotlib.pyplot
-
+import matplotlib.pyplot as plt
+import matplotlib.widgets as wgt
 
 def logistic_map(x, _lambda):
     x_new = 1 - _lambda * x ** 2
@@ -127,13 +128,42 @@ def findFeig_lambda2(delta,
 def plot_bifdiag():
     #TODO scale y by something
     #TODO scale lambda by 1/2 (because logistic_map
-    times = 1000
-    delta = 200
-    x0 = 0.1
-    lmin, lmax, ld = 0.5, 1.7, 0.001
-    x,y = allLambda(lmin, lmax, ld, logistic_map, times, delta, x0)
-    matplotlib.pyplot.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
     matplotlib.pyplot.grid()
+    # ------- rescale -------
+    def rescale(lmin, lmax):
+        alpha = 2
+        m, v = 1 / alpha, 1 / (alpha ** 2)
+        newlmin = lmin + (lmax - lmin) * m
+        newlmax = lmax - (lmax - lmin) * v
+        return newlmin, newlmax
+
+    # ----------------------------
+
+    def do_plot(lmin = 0.5, lmax=1.7):
+        times = 1000
+        delta = 200
+        x0 = 0.1
+        #TODO lmin ~ m = 1/alpha, lmax ~ v = 1/(alpha)**2, alpha =1.2
+        #scale horisontal: newlmin = lmin + (lmax - lmin)*m,  newlmax = lmax - (lmax - lmin)*v
+        #y scale is constant
+        ld = 0.001
+        x,y = allLambda(lmin, lmax, ld, logistic_map, times, delta, x0)
+        matplotlib.pyplot.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
+
+
+    do_plot()
+
+    scalebaxes = plt.axes([0.8, 0.025, 0.1, 0.04])
+    scaleb = wgt.Button(scalebaxes, "Scale", hovercolor="0.875")
+
+
+    def scale(val):
+
+        do_plot()
+
+    scaleb.on_clicked(scale)
+
+
     matplotlib.pyplot.show()
     matplotlib.pyplot.clf()
 
@@ -202,7 +232,8 @@ def doFeig():
 
     
 if __name__ == '__main__':
+    #matplotlib.pyplot.ion()
     plot_bifdiag()
     #plot_iterdiag()
     #dolyapunov()
-    doFeig()
+    #doFeig()
