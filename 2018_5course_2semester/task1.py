@@ -168,11 +168,10 @@ def plot_bifdiag():
     matplotlib.pyplot.clf()
 
 def plot_bifdiag2():
-    plt.figure(1, figsize=(6,5))
+    fig = plt.figure(1, figsize=(6,5))
     left, bottom = 0.1, 0.1
     width, height = 0.8, 0.8
     pl_axes = plt.axes([left, bottom, width, height ])
-
     def do_plot(lmin = 0.5, lmax=1.7, ymin=-0.75, ymax=1):
         times = 1000
         delta = 200
@@ -180,8 +179,8 @@ def plot_bifdiag2():
         ld = (lmax-lmin)/1000
         x,y = allLambda(lmin, lmax, ld, logistic_map, times, delta, x0)
         pl_axes.clear()
-        plt.ylim((ymin, ymax))
-        pl = pl_axes.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
+        pl_axes.set_ylim((ymin, ymax))
+        pl_axes.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
 
         print(lmin, lmax, ymin, ymax)
         return lmin, lmax, ymin, ymax
@@ -206,10 +205,12 @@ def plot_bifdiag2():
         nonlocal lmin, lmax, ymin, ymax
         newlmin, newlmax, ymin, ymax = rescale(lmin, lmax, ymin, ymax)
         lmin, lmax, ymin, ymax = do_plot(newlmin, newlmax, ymin, ymax)
+        plt.draw()
 
 
     scale_button.on_clicked(scale)
-
+    plt.ion()
+    plt._auto_draw_if_interactive(fig, pl_axes)
     plt.show()
 
 def plot_iterdiag():
@@ -282,3 +283,4 @@ if __name__ == '__main__':
     #plot_iterdiag()
     #dolyapunov()
     #doFeig()
+
