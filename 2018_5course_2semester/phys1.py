@@ -51,9 +51,9 @@ if __name__ == '__main__':
     bin_array = map_to_bin(x_array)
 
     bin_str = "".join(str(i) for i in bin_array)
-    print(bin_str)
+    #print(bin_str)
 
-    block_len = 5
+    block_len = 10
     countdict = find_p(bin_str, block_len)
     H = do_H(countdict, len(bin_str), block_len)
 
@@ -69,10 +69,11 @@ if __name__ == '__main__':
             countdict = find_p(bin_str, i)
             H = do_H(countdict, len(bin_str), i)
             plot_array.append(H)
-            print(countdict, "H", H)
+            #print(countdict, "H", H)
 
         matplotlib.pyplot.plot([i for i in range(1, blockrange)], plot_array)
         matplotlib.pyplot.grid()
         matplotlib.pyplot.show()
 
-    plot_H_n(5)
+    plot_H_n(block_len)
+
