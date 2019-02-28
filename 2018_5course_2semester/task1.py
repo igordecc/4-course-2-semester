@@ -104,7 +104,7 @@ def taskA_plot_bifdiag2():
     left, bottom = 0.1, 0.1
     width, height = 0.8, 0.8
     pl_axes = plt.axes([left, bottom, width, height ])
-    def do_plot(lmin = 0.5, lmax=1.7, ymin=-0.75, ymax=1):
+    def do_plot(lmin = 0.60115, lmax=2.20115, ymin=-1, ymax=1):
         times = 1000
         delta = 200
         x0 = 0.1
@@ -117,31 +117,33 @@ def taskA_plot_bifdiag2():
         print(lmin, lmax, ymin, ymax)
         return lmin, lmax, ymin, ymax
 
-    def rescale(lmin, lmax, ymin, ymax):
-        alpha = -2.5029
-        m, v = 1 / abs(alpha), 1 / (alpha ** 2)
-        newlmin = lmin + (lmax - lmin) * m
-        newlmax = lmax - (lmax - lmin) * v
-        ymin, ymax = ymin/2, ymax/2
+    def rescale(lmin, lmax, ymin, ymax, lcr):
+        alpha = 2.5029
+        delta = 4.6692
+        nu = lmax - lcr
+        mu = lcr - lmin
+        nu = nu/delta
+        mu = mu/delta
+        newlmax = lcr + nu
+        newlmin = lcr - mu
+        ymin, ymax = ymax/alpha, ymin/alpha  # mirrored image
         return newlmin, newlmax, ymin, ymax
 
 
     lmin, lmax, ymin, ymax = do_plot()
-
+    lcr = 1.40115
     plt.grid()
 
     b_axes = plt.axes([0.8, .025, 0.1, 0.04])
     scale_button = wgt.Button(b_axes, "Scale")
     def scale(event):
 
-        nonlocal lmin, lmax, ymin, ymax
-        newlmin, newlmax, ymin, ymax = rescale(lmin, lmax, ymin, ymax)
+        nonlocal lmin, lmax, ymin, ymax, lcr
+        newlmin, newlmax, ymin, ymax = rescale(lmin, lmax, ymin, ymax, lcr)
         lmin, lmax, ymin, ymax = do_plot(newlmin, newlmax, ymin, ymax)
         plt.draw()
 
-
     scale_button.on_clicked(scale)
-
     plt._auto_draw_if_interactive(fig, pl_axes)
     plt.show()
 
@@ -276,5 +278,5 @@ if __name__ == '__main__':
     taskA_plot_bifdiag2()
     #taskB_plot_iterdiag()
     #taskC_dolyapunov()
-    taskD_doFeig()
+    #taskD_doFeig()
     ...
