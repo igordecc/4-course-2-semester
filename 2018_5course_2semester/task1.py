@@ -162,7 +162,7 @@ def taskB_plot_iterdiag():
     matplotlib.pyplot.plot(zero_array, x)
 
     x_array = iterate_v2(_lambda, logistic_map, k, 0, x0)
-    print(x_array)
+    #print(x_array)
 
 
     # should be function
@@ -175,35 +175,7 @@ def taskB_plot_iterdiag():
     matplotlib.pyplot.show()
     # matplotlib.pyplot.clf()
 
-    #----------------------------
-    # def rg_transform(fn, arg, _lambda, k):
-    #     #k - depth of recurtion
-    #     def new_fn(arg, _lambda):
-    #         alpha = fn(fn(0, _lambda), _lambda)
-    #         return fn(fn(arg / alpha, _lambda), _lambda) * alpha
-    #
-    #     print(k, new_fn(arg, _lambda))
-    #
-    #     if k>1:
-    #         return rg_transform(new_fn, arg, _lambda, k-1)
-    #     else:
-    #         return new_fn(arg, _lambda)
-    #
-    # fig, axarray = plt.subplots(3,3)
-    #
-    # _lambda = 1.25
-    # k = 1
-    # x_array = numpy.arange(-4, 4, 0.1)
-    # y_array = [rg_transform(logistic_map, x, _lambda, k) for x in x_array]
-    #
-    # print(axarray[0][0], axarray[0,0])
-    # print(y_array)
-    #
-    # axarray[0][0].plot(x_array, y_array)
-    #
-    # plt.show()
-    #---------------------------
-
+    #-----------------------
     def logistic(x, lam):
         return 1.0 - lam * x ** 2
 
@@ -218,16 +190,17 @@ def taskB_plot_iterdiag():
 
     from matplotlib.pyplot import plot, show
 
-    rgs = [RG(lambda x: logistic(x, 1.35), k) for k in range(3)]
+    rgs = [RG(lambda x: logistic(x, 1.401), k) for k in range(3)]
 
     xs = numpy.linspace(-1, 1)
     ys = lambda f: [f(x) for x in xs]
-    plot(
+    plt.plot(
         xs, ys(rgs[0]), "r-",
         xs, ys(rgs[1]), "g-",
         xs, ys(rgs[2]), "b-",
     )
-    show()
+    plt.grid()
+    plt.show()
 
 def taskC_dolyapunov():
     def lyapunov_index(fn,
@@ -300,8 +273,8 @@ def taskD_doFeig():
 
     
 if __name__ == '__main__':
-    #taskA_plot_bifdiag2()
-    taskB_plot_iterdiag()
+    taskA_plot_bifdiag2()
+    #taskB_plot_iterdiag()
     #taskC_dolyapunov()
-    #taskD_doFeig()
-
+    taskD_doFeig()
+    ...

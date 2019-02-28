@@ -81,3 +81,32 @@ def plot_xarray():
     matplotlib.pyplot.grid()
     matplotlib.pyplot.show()
     matplotlib.pyplot.clf()
+
+#----------------------------
+    # def rg_transform(fn, arg, _lambda, k):
+    #     #k - depth of recurtion
+    #     def new_fn(arg, _lambda):
+    #         alpha = fn(fn(0, _lambda), _lambda)
+    #         return fn(fn(arg / alpha, _lambda), _lambda) * alpha
+    #
+    #     print(k, new_fn(arg, _lambda))
+    #
+    #     if k>1:
+    #         return rg_transform(new_fn, arg, _lambda, k-1)
+    #     else:
+    #         return new_fn(arg, _lambda)
+    #
+    # fig, axarray = plt.subplots(3,3)
+    #
+    # _lambda = 1.25
+    # k = 1
+    # x_array = numpy.arange(-4, 4, 0.1)
+    # y_array = [rg_transform(logistic_map, x, _lambda, k) for x in x_array]
+    #
+    # print(axarray[0][0], axarray[0,0])
+    # print(y_array)
+    #
+    # axarray[0][0].plot(x_array, y_array)
+    #
+    # plt.show()
+    #---------------------------
