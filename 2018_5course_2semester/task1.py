@@ -20,29 +20,6 @@ def logistic_map(x, _lambda):
 # -  - will use matplotlib library
 # - repeat for all others _lambdas in interval [0;5]
 
-def iterate(_lambda,
-            lfn,
-            k,
-            delta,
-            x0
-            ):
-    x = x0
-    for i in range(k - delta):    #sjould be: delta < times
-        x = lfn(x, _lambda)
-    # we are looking for Certain stable x values here
-    # it's good to remember ALL x value to find certain ones later on.
-    x_array = numpy.zeros(delta)
-    #delta is the number of x, wich we want to remember
-    x_array[0] = lfn(x, _lambda)
-    for i in range(0, delta-1):
-        x_array[i+1] = lfn(x_array[i], _lambda)
-
-    return x_array
-    # again, we can define several cut all random point and live only stable one
-    # but we will try solve our problem FIRST
-    # and add features SECOND
-
-
 def iterate_v2(_lambda,
              fn,
              k,
@@ -70,7 +47,7 @@ def allLambda(lmin,
     diagramList = []
     _lambdaRow = numpy.arange(lmin, lmax, ld)
     for _lambda in _lambdaRow:
-        diagramList.append(iterate(_lambda, *args))
+        diagramList.append(iterate_v2(_lambda, *args))
     return _lambdaRow, diagramList
 
 def diff(fn,
@@ -78,51 +55,6 @@ def diff(fn,
          params,
          dx):
     return ( fn(x + dx, params) - fn(x, params) ) / dx
-
-# def lyapunov_index(fn, x0, params, nsum):
-#     # for one-dimension map
-#     x = list(x0)
-#     dx = list(1)  # x0 for variation equations
-#     for i in range(nsum):
-#         x.append(fn(x))
-#         dx.append(diff(fn,x,dx[i]) * dx[i])
-
-def lyapunov_index(fn,
-                   x0,
-                   params,
-                   nsum):
-    x = [x0]
-    dx = 0.01
-    lyap_sum = 0
-    for i in range(nsum):
-        dfdx = diff(fn, x[i], params, dx)
-        lyap_sum += numpy.log(abs(dfdx))
-        x.append(fn(x[i], params))
-    lyap_sum /= nsum
-    return lyap_sum
-
-def findFeigdelta(_lambda0,
-              _lambda1,
-              _lambda2,
-              ):
-    delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
-    return delta
-
-def findFeig_lambda0(delta,
-              _lambda1,
-              _lambda2,
-              ):
-    # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
-    _lambda0 = _lambda1 - delta * (_lambda2 - _lambda1)
-    return _lambda0
-
-def findFeig_lambda2(delta,
-              _lambda0,
-              _lambda1,
-              ):
-    # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
-    _lambda2 = (_lambda1 - _lambda0)/delta +_lambda1
-    return _lambda2
 
 
 def plot_bifdiag():
@@ -167,7 +99,7 @@ def plot_bifdiag():
     matplotlib.pyplot.show()
     matplotlib.pyplot.clf()
 
-def plot_bifdiag2():
+def taskA_plot_bifdiag2():
     fig = plt.figure(1, figsize=(6,5))
     left, bottom = 0.1, 0.1
     width, height = 0.8, 0.8
@@ -209,11 +141,11 @@ def plot_bifdiag2():
 
 
     scale_button.on_clicked(scale)
-    plt.ion()
+
     plt._auto_draw_if_interactive(fig, pl_axes)
     plt.show()
 
-def plot_iterdiag():
+def taskB_plot_iterdiag():
     _lambda = 1.4011
     k = 200
     x0 = 0
@@ -241,17 +173,107 @@ def plot_iterdiag():
 
     matplotlib.pyplot.grid()
     matplotlib.pyplot.show()
-    matplotlib.pyplot.clf()
-    ...
+    # matplotlib.pyplot.clf()
 
-def dolyapunov():
+    #----------------------------
+    # def rg_transform(fn, arg, _lambda, k):
+    #     #k - depth of recurtion
+    #     def new_fn(arg, _lambda):
+    #         alpha = fn(fn(0, _lambda), _lambda)
+    #         return fn(fn(arg / alpha, _lambda), _lambda) * alpha
+    #
+    #     print(k, new_fn(arg, _lambda))
+    #
+    #     if k>1:
+    #         return rg_transform(new_fn, arg, _lambda, k-1)
+    #     else:
+    #         return new_fn(arg, _lambda)
+    #
+    # fig, axarray = plt.subplots(3,3)
+    #
+    # _lambda = 1.25
+    # k = 1
+    # x_array = numpy.arange(-4, 4, 0.1)
+    # y_array = [rg_transform(logistic_map, x, _lambda, k) for x in x_array]
+    #
+    # print(axarray[0][0], axarray[0,0])
+    # print(y_array)
+    #
+    # axarray[0][0].plot(x_array, y_array)
+    #
+    # plt.show()
+    #---------------------------
+
+    def logistic(x, lam):
+        return 1.0 - lam * x ** 2
+
+    def RG(fn, k):
+        def make_next(fk):
+            return lambda x: fk(fk(x * fk(fk(0)))) / fk(fk(0))
+
+        for _ in range(k):
+            fn = make_next(fn)
+
+        return fn
+
+    from matplotlib.pyplot import plot, show
+
+    rgs = [RG(lambda x: logistic(x, 1.35), k) for k in range(3)]
+
+    xs = numpy.linspace(-1, 1)
+    ys = lambda f: [f(x) for x in xs]
+    plot(
+        xs, ys(rgs[0]), "r-",
+        xs, ys(rgs[1]), "g-",
+        xs, ys(rgs[2]), "b-",
+    )
+    show()
+
+def taskC_dolyapunov():
+    def lyapunov_index(fn,
+                       x0,
+                       params,
+                       nsum):
+        x = [x0]
+        dx = 0.01
+        lyap_sum = 0
+        for i in range(nsum):
+            dfdx = diff(fn, x[i], params, dx)
+            lyap_sum += numpy.log(abs(dfdx))
+            x.append(fn(x[i], params))
+        lyap_sum /= nsum
+        return lyap_sum
+
     x0=0.1
     _lambda = 1.25
     nsum = 100
     lindex = lyapunov_index(logistic_map, x0, _lambda, nsum)
     print(lindex)
 
-def doFeig():
+def taskD_doFeig():
+    def findFeigdelta(_lambda0,
+                      _lambda1,
+                      _lambda2,
+                      ):
+        delta = (_lambda1 - _lambda0) / (_lambda2 - _lambda1)
+        return delta
+
+    def findFeig_lambda0(delta,
+                         _lambda1,
+                         _lambda2,
+                         ):
+        # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
+        _lambda0 = _lambda1 - delta * (_lambda2 - _lambda1)
+        return _lambda0
+
+    def findFeig_lambda2(delta,
+                         _lambda0,
+                         _lambda1,
+                         ):
+        # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
+        _lambda2 = (_lambda1 - _lambda0) / delta + _lambda1
+        return _lambda2
+
     delta = 4.669
     _lambda1 = 1.40115329085
     _lambda2 = 1.40115518909
@@ -278,9 +300,8 @@ def doFeig():
 
     
 if __name__ == '__main__':
-    #matplotlib.pyplot.ion()
-    plot_bifdiag2()
-    #plot_iterdiag()
-    #dolyapunov()
-    #doFeig()
+    #taskA_plot_bifdiag2()
+    taskB_plot_iterdiag()
+    #taskC_dolyapunov()
+    #taskD_doFeig()
 
