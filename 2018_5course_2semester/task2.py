@@ -1,4 +1,4 @@
-from task1 import logistic_map, iterate_v2, lyapunov_index
+from task1 import logistic_map, iterate_v2
 import matplotlib.pyplot
 import numpy
 
@@ -16,6 +16,28 @@ def plot_xarray():
     matplotlib.pyplot.clf()
 
     return x_array, k
+
+def lyapunov_index(fn,
+                   x0,
+                   params,
+                   nsum ):
+    def diff(fn,
+             x,
+             params,
+             dx):
+        return (fn(x + dx, params) - fn(x, params)) / dx
+
+    x = [x0]
+    dx = 0.0001     # precision need to be high enough
+    lyap_sum = 0
+    delta = nsum // 2
+    for i in range(nsum):
+        if i>delta:
+            dfdx = diff(fn, x[i], params, dx)
+            lyap_sum += numpy.log(abs(dfdx))
+        x.append(fn(x[i], params))
+    lyap_sum /= (nsum-delta)
+    return lyap_sum
 
 def plot_lyapunov():
     # point 2
