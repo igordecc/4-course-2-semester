@@ -3,12 +3,11 @@ import matplotlib.pyplot
 import matplotlib.pyplot as plt
 import matplotlib.widgets as wgt
 
-def logistic_map(x, _lambda):
-    x_new = 1 - _lambda * x ** 2
-    return x_new
+import sup_task_funcs as stf
+
 
 # TODO
-# create logistic_map() function - CHECK
+# create stf.logistic_map() function - CHECK
 # plot bifurcation tree - NOT
 # review point's vicinity (x_0 = 0, _lambda = l_critical) - NOT
 # NOTE l_critical can be the point of the first bifurcation
@@ -20,19 +19,7 @@ def logistic_map(x, _lambda):
 # -  - will use matplotlib library
 # - repeat for all others _lambdas in interval [0;5]
 
-def iterate_v2(_lambda,
-             fn,
-             k,
-             delta,
-             x0):
-    # iterate function for iterating 1 dimension map
-    x_array = [fn(x0, _lambda)]
-    for i in range(k):      #k+1, or not?
-        x_array.append(fn(x_array[i],_lambda))
-    if delta==0:
-        return x_array
-    else:
-        return x_array[-delta:]
+
 
 # lets test it!
 # TODO test! - OK!
@@ -47,7 +34,7 @@ def allLambda(lmin,
     diagramList = []
     _lambdaRow = numpy.arange(lmin, lmax, ld)
     for _lambda in _lambdaRow:
-        diagramList.append(iterate_v2(_lambda, *args))
+        diagramList.append(stf.iterate(_lambda, *args))
     return _lambdaRow, diagramList
 
 def diff(fn,
@@ -59,7 +46,7 @@ def diff(fn,
 
 def plot_bifdiag():
     #TODO scale y by something
-    #TODO scale lambda by 1/2 (because logistic_map
+    #TODO scale lambda by 1/2 (because stf.logistic_map
     matplotlib.pyplot.grid()
     # ------- rescale -------
     def rescale(lmin, lmax):
@@ -79,7 +66,7 @@ def plot_bifdiag():
         #scale horisontal: newlmin = lmin + (lmax - lmin)*m,  newlmax = lmax - (lmax - lmin)*v
         #y scale is constant
         ld = 0.001
-        x,y = allLambda(lmin, lmax, ld, logistic_map, times, delta, x0)
+        x,y = allLambda(lmin, lmax, ld, stf.logistic_map, times, delta, x0)
         matplotlib.pyplot.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
 
 
@@ -109,7 +96,7 @@ def taskA_plot_bifdiag2():
         delta = 200
         x0 = 0.1
         ld = (lmax-lmin)/1000
-        x,y = allLambda(lmin, lmax, ld, logistic_map, times, delta, x0)
+        x,y = allLambda(lmin, lmax, ld, stf.logistic_map, times, delta, x0)
         pl_axes.clear()
         pl_axes.set_ylim((ymin, ymax))
         pl_axes.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
@@ -155,7 +142,7 @@ def taskB_plot_iterdiag():
 
     # plot basic figures
     na = numpy.arange(-1, 1.00, 0.02)
-    f_array =[logistic_map(x, _lambda) for x in na]
+    f_array =[stf.logistic_map(x, _lambda) for x in na]
     x = [x for x in na]
     zero_array = [0 for x in na]
     matplotlib.pyplot.plot(x,f_array)
@@ -163,7 +150,7 @@ def taskB_plot_iterdiag():
     matplotlib.pyplot.plot(x, zero_array)
     matplotlib.pyplot.plot(zero_array, x)
 
-    x_array = iterate_v2(_lambda, logistic_map, k, 0, x0)
+    x_array = stf.iterate(_lambda, stf.logistic_map, k, 0, x0)
     #print(x_array)
 
 
@@ -222,7 +209,7 @@ def taskC_dolyapunov():
     x0=0.1
     _lambda = 1.25
     nsum = 100
-    lindex = lyapunov_index(logistic_map, x0, _lambda, nsum)
+    lindex = lyapunov_index(stf.logistic_map, x0, _lambda, nsum)
     print(lindex)
 
 def taskD_doFeig():
@@ -279,4 +266,6 @@ if __name__ == '__main__':
     #taskB_plot_iterdiag()
     #taskC_dolyapunov()
     #taskD_doFeig()
+
+    # TODO MOVE SOME FUNCTIONS TO EXPLICIT EXTERNAL FILE
     ...

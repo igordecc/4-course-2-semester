@@ -1,4 +1,4 @@
-from task1 import logistic_map, iterate_v2
+import sup_task_funcs as stf
 import matplotlib.pyplot
 import numpy
 
@@ -8,7 +8,7 @@ def plot_xarray():
     _lambda = 1.7499 # от порядка к хаосу через перемежаемость 1.75 -> 1.7499
     k = 1000
     delta = 0
-    x_array = iterate_v2(_lambda, logistic_map, k, delta, x0)
+    x_array = stf.iterate(_lambda, stf.logistic_map, k, delta, x0)
 
     matplotlib.pyplot.plot(x_array, '.')
     matplotlib.pyplot.grid()
@@ -21,19 +21,13 @@ def lyapunov_index(fn,
                    x0,
                    params,
                    nsum ):
-    def diff(fn,
-             x,
-             params,
-             dx):
-        return (fn(x + dx, params) - fn(x, params)) / dx
-
     x = [x0]
     dx = 0.0001     # precision need to be high enough
     lyap_sum = 0
     delta = nsum // 2
     for i in range(nsum):
         if i>delta:
-            dfdx = diff(fn, x[i], params, dx)
+            dfdx = stf.diff(fn, x[i], params, dx)
             lyap_sum += numpy.log(abs(dfdx))
         x.append(fn(x[i], params))
     lyap_sum /= (nsum-delta)
@@ -44,7 +38,7 @@ def plot_lyapunov():
     x0 = 0.1
     _lambda = 1.751
     nsum = 1000
-    lindex = lyapunov_index(logistic_map, x0, _lambda, nsum)
+    lindex = lyapunov_index(stf.logistic_map, x0, _lambda, nsum)
     print(lindex)
 
 def do_lyapunov_map():
@@ -52,7 +46,7 @@ def do_lyapunov_map():
     nsum = 1000
     #TODO change proximity
     lrange = numpy.arange(1.35, 1.505, 0.0001)     # can change _lambda here
-    lindex = [  lyapunov_index(logistic_map, x0, _lambda, nsum) for _lambda in lrange]
+    lindex = [  lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in lrange]
     zeros = numpy.zeros(len(lrange))
     matplotlib.pyplot.plot(lrange ,lindex)
     matplotlib.pyplot.plot(lrange, zeros)
