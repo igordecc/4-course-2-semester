@@ -276,7 +276,7 @@ def taskD_doFeig():
     
 if __name__ == '__main__':
     taskA_plot_bifdiag2()
-    #taskB_plot_iterdiag()
+    taskB_plot_iterdiag()
     #taskC_dolyapunov()
     #taskD_doFeig()
     ...
