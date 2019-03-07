@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 def bec_ressler(state, alienstate, params):
     x, y, z = state
     x2, y2, z2 = alienstate
+    # print('params["E"]', params["E"]) #TESTs
+    # print("x2 ", x2)
+    # print('x ', x)
     dxdt = -params["w"]*y - z + params["E"]*(x2 - x)
     dydt = params["w"]*x + params["a"]*y
     dzdt = params["p"] + z*(x - params["c"])
@@ -26,7 +29,7 @@ def euler_method(state, increment, dt):
 def update_state(state_d, params):
     state_osc1 = state_d["osc1"][-1]
     state_osc2 = state_d["osc2"][-1]
-    # print("state_osc1 ", state_osc1)
+    # print("state_osc1 ", state_osc1)  #TESTs
     # print("state_osc2 ", state_osc2)
     increment_osc1 = bec_ressler(state_osc1, state_osc2, params["osc1"])
     increment_osc2 = bec_ressler(state_osc2, state_osc1, params["osc2"])
@@ -37,11 +40,12 @@ def update_state(state_d, params):
     new_state_osc1 = euler_method(state_osc1, increment_osc1, dt)
     new_state_osc2 = euler_method(state_osc2, increment_osc2, dt)
 
-    if len(state_d["savedtime"])>params["startfrom"]:
-        vector_difference = map(lambda x: x[0] - x[1], zip(increment_osc1, increment_osc2))
+    if (len(state_d["savedtime"])>params["startfrom"]) and abs(increment_osc1[0]) < 2**33:
+        vector_difference = list(map(lambda x: x[0] - x[1], zip(increment_osc1, increment_osc2)))
         e_error_integral = euler_method([state_d["e_error_norm"][-1]], [norm(vector_difference)], dt)[0]
+        e_error_sum = sum([state_d["e_error_norm"][-1], norm(vector_difference)])       # backing variant, in case e_error_integral is not right thing - this thing is not right too.
         state_d["e_error_norm"].append(e_error_integral)
-        # print(state_d["e_error_norm"][-1] - state_d["e_error_norm"][-2])
+        # print(state_d["e_error_norm"][-1] - state_d["e_error_norm"][-2]) #TESTs
 
     state_d["osc1"].append(new_state_osc1)
     state_d["osc2"].append(new_state_osc2)
@@ -60,15 +64,15 @@ if __name__ == '__main__':
             "a": 0.15,
             "p": 0.2,
             "c": 10,
-            "w": 0.8,  # change here [0.89 - 1.01]
-            "E": 0.1,
+            "w": 0.81,  # change here [0.89 - 1.01]
+            "E": 1.1,
         },
         "osc2": {
             "a": 0.15,
             "p": 0.2,
             "c": 10,
             "w": 0.8,  # const
-            "E": 0.1,
+            "E": 1.4,
         },
         "dt": 0.1,
         "startfrom": 500
@@ -86,15 +90,16 @@ if __name__ == '__main__':
 
     make_timestep(state_d, params)
 
-    # map it
-
     x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
     x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
     plt.plot(x_osc1, x_osc2, "r.")
+    plt.xlim(-15,20)
+    plt.ylim(-15,20)
     plt.grid()
     plt.show()
 
     def e_error():
         return state_d["e_error_norm"][-1] / (state_d["savedtime"][-1] - state_d["savedtime"][params["startfrom"]])
 
+    # TODO it's calculating now, but it's not Average. 1. Try make it average, by getting sum instead of integral
     print("e_error: ", e_error())
