@@ -4,7 +4,13 @@
 import numpy
 from functools import reduce
 import matplotlib.pyplot as plt
+from copy import deepcopy
+from functools import reduce
 
+#------methods--------
+# return remake of data
+
+#----------------
 def bec_ressler(state, alienstate, params):
     x, y, z = state
     x2, y2, z2 = alienstate
@@ -27,7 +33,10 @@ def euler_method(state, increment, dt):
     return new_state
 
 def e_error(state_d, params):
-    return sum(state_d["e_error_norm"]) / len(state_d["e_error_norm"])/(state_d["savedtime"][-1] - state_d["savedtime"][params["startfrom"]])
+    e_value = sum(state_d["e_error_norm"]) / len(state_d["e_error_norm"]) / (
+                state_d["savedtime"][-1] - state_d["savedtime"][params["startfrom"]])
+    return e_value
+
 
 def update_state(state_d, params):
     state_osc1 = state_d["osc1"][-1]
@@ -55,6 +64,7 @@ def update_state(state_d, params):
 
     state_d["savedtime"].append(state_d["time"].pop(0))
 
+
 def make_timestep(state_d, params):
     while state_d["time"]:
         update_state(state_d, params)
@@ -68,17 +78,18 @@ if __name__ == '__main__':
             "p": 0.2,
             "c": 10,
             "w": 0.81,  # change here [0.89 - 1.01]
-            "E": 1.0,
+            "E": .1,
         },
         "osc2": {
             "a": 0.15,
             "p": 0.2,
             "c": 10,
             "w": 0.8,  # const
-            "E": 1.0,
+            "E": 0.1,
         },
         "dt": 0.1,
-        "startfrom": 500
+        "startfrom": 500,
+        "e_error": 0,
     }
 
     state_d = {
@@ -88,9 +99,8 @@ if __name__ == '__main__':
         "osc2": [[0.1, 0.1, 0.1], ],
         "e_error_norm": [0, ]
     }
-    state_d_default = state_d.copy()
 
-    def part1_x1fromx2():
+    def part1_x1fromx2(state_d, params):
         make_timestep(state_d, params)
 
         x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
@@ -101,21 +111,57 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-        # TODO it's calculating now, but it's not Average. 1. Try make it average, by getting sum instead of integral
         print("e_error: ", e_error(state_d, params))
+    # part1_x1fromx2(deepcopy(state_d), deepcopy(params))
 
-    part1_x1fromx2()
-    def part2_efromE():
-        E_osc1 = [i for i in numpy.arange(0, 2.5, 0.05)]
-        E_osc2 = [i for i in numpy.arange(0, 2.5, 0.05)]
-        e_list = []
-        for E1, E2 in zip(E_osc1, E_osc2):
-            state_d = state_d_default.copy()
-            params["osc1"]["E"] = E1
-            params["osc2"]["E"] = E2
+    def part2_efromE(state_d, params):
+        def pipeline_each(data, fns):
+            result = reduce(lambda a, x: list(map(x, a)),
+                            fns,
+                            data)
+            return result
 
-            make_timestep(state_d, params)
-            e_list.append(e_error(state_d, params))
-            #TODO USE PIPE LINES
+        def make_elist(state_d, params):
+            E_osc1 = [i for i in numpy.arange(0, 2.5, 0.005)]
+            E_osc2 = [i for i in numpy.arange(0, 2.5, 0.005)]
 
-        map(make_timestep(state_d, params), state_d)
+            def make_timestep_local(data):
+                state_d, params = data
+                make_timestep(state_d, params)
+                return state_d, params
+
+            def e_list_append(data):
+                state_d, params = data
+                params["e_error"] = e_error(state_d, params)
+                return state_d, params
+
+            # TODO remake - data into list of params [params1, params2, params3]
+            # TODO make for each params it's calculus
+
+            paramlist = [deepcopy(params) for i in E_osc1]
+            params_and_E = list(zip(paramlist, E_osc1, E_osc2))
+            def updateEs(p_E_sample):
+                params, E_osc1, E_osc2 = p_E_sample[0], p_E_sample[1], p_E_sample[2]
+                params["osc1"]["E"] = E_osc1
+                params["osc2"]["E"] = E_osc2
+                return params
+            paramlist = list(map(updateEs, params_and_E))
+            state_d_list = [deepcopy(state_d) for i in E_osc1]
+
+            data = list(zip(state_d_list, paramlist))
+            new_data = pipeline_each(data, [make_timestep_local,
+                                 e_list_append
+                                 ])
+            e_list = list(map(lambda x: x[1]["e_error"], new_data))
+            return E_osc1, E_osc2, e_list
+
+
+        E_osc1, E_osc2, e_list = make_elist(state_d, params)
+        plt.plot(E_osc1, e_list, "b-")
+        plt.yscale("log")
+
+        plt.grid()
+        plt.show()
+        # print(e_list)
+
+    part2_efromE(deepcopy(state_d), deepcopy(params))
