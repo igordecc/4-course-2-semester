@@ -77,18 +77,18 @@ if __name__ == '__main__':
             "a": 0.15,
             "p": 0.2,
             "c": 10,
-            "w": 0.81,  # change here [0.89 - 1.01]
-            "E": .1,
+            "w": 0.92,  # change here [0.89 - 1.01]
+            "E": 1.5,
         },
         "osc2": {
             "a": 0.15,
             "p": 0.2,
             "c": 10,
-            "w": 0.8,  # const
-            "E": 0.1,
+            "w": 0.95,  # const
+            "E": 1.5,
         },
-        "dt": 0.1,
-        "startfrom": 500,
+        "dt": 0.01,
+        "startfrom": 1500,
         "e_error": 0,
     }
 
@@ -105,14 +105,15 @@ if __name__ == '__main__':
 
         x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
         x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
+        print("e_error: ", e_error(state_d, params))
         plt.plot(x_osc1, x_osc2, "r.")
         plt.xlim(-15,20)
         plt.ylim(-15,20)
         plt.grid()
         plt.show()
 
-        print("e_error: ", e_error(state_d, params))
-    # part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+
+    #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
 
     def part2_efromE(state_d, params):
         def pipeline_each(data, fns):
@@ -122,8 +123,8 @@ if __name__ == '__main__':
             return result
 
         def make_elist(state_d, params):
-            E_osc1 = [i for i in numpy.arange(0, 2.5, 0.005)]
-            E_osc2 = [i for i in numpy.arange(0, 2.5, 0.005)]
+            E_osc1 = [i for i in numpy.arange(0, 2.5, 0.05)]
+            E_osc2 = [i for i in numpy.arange(0, 2.5, 0.05)]
 
             def make_timestep_local(data):
                 state_d, params = data
