@@ -17,7 +17,8 @@ import sup_task_funcs as stf
 #     slider_position = [0, 0, 1, 1]
 
 _lambda = 1.4011
-k = 200
+iterate = 2000
+delete_steps = 200
 x0 = 0
 
 # plot basic figures
@@ -30,7 +31,7 @@ plt.plot(x, x)  # diagonal
 plt.plot(x, zero_array)  # x axes
 plt.plot(zero_array, x)  # y axes
 
-x_array = stf.iterate(_lambda, stf.logistic_map, k, 0, x0)
+x_array = stf.iterate(_lambda, stf.logistic_map, iterate, delete_steps, x0)
 # print(x_array)
 
 
@@ -55,11 +56,15 @@ def find_D_corr(r=0.5):
     D = sum(count_array)/n**2
     return D
 
-r_array = numpy.arange(0,1.5,0.05)
+r_array = numpy.arange(0,1.5,0.005)
 
-D_array = list(map(find_D_corr, r_array))
+C_array = list(map(find_D_corr, r_array))
 
-plt.plot(r_array, D_array, "r.")
+D = sum(C_array)/sum(r_array)
+print("D: ", D)
+plt.plot(r_array, C_array, "r.")
+plt.yscale("log")
+plt.xscale("log")
 plt.grid()
 plt.show()
 # plt.clf()
