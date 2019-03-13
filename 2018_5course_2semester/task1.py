@@ -142,13 +142,13 @@ def taskB_plot_iterdiag():
 
     # plot basic figures
     na = numpy.arange(-1, 1.00, 0.02)
-    f_array =[stf.logistic_map(x, _lambda) for x in na]
+    f_array =[stf.logistic_map(x, _lambda) for x in na] # parabola
     x = [x for x in na]
     zero_array = [0 for x in na]
-    matplotlib.pyplot.plot(x,f_array)
-    matplotlib.pyplot.plot(x,x)
-    matplotlib.pyplot.plot(x, zero_array)
-    matplotlib.pyplot.plot(zero_array, x)
+    matplotlib.pyplot.plot(x,f_array) # parabola
+    matplotlib.pyplot.plot(x,x) #diagonal
+    matplotlib.pyplot.plot(x, zero_array) # x axes
+    matplotlib.pyplot.plot(zero_array, x) # y axes
 
     x_array = stf.iterate(_lambda, stf.logistic_map, k, 0, x0)
     #print(x_array)
@@ -262,7 +262,7 @@ def taskD_doFeig():
 
     
 if __name__ == '__main__':
-    taskA_plot_bifdiag2()
+    #taskA_plot_bifdiag2()
     taskB_plot_iterdiag()
     #taskC_dolyapunov()
     #taskD_doFeig()

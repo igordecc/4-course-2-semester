@@ -21,3 +21,10 @@ def iterate(_lambda,
         return x_array
     else:
         return x_array[-delta:]
+
+from functools import reduce
+def pipeline_each(data, fns):
+    result = reduce(lambda a, x: list(map(x, a)),
+                    fns,
+                    data)
+    return result
