@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy
 import sup_task_funcs as stf
+from functools import reduce
+
 # import matplotlib.widgets as wdg
 # 
 # def do_slider(pos, name, min, max, valinit, update_fn, fig):
@@ -40,29 +42,34 @@ for n in range(0, len(x_array) - 1):
     plt.vlines(x_array[n], x_array[n], x_array[n + 1], "b")
     plt.hlines(x_array[n + 1], x_array[n], x_array[n + 1], "b")
 
+
 # plt.grid()
 # plt.show()
 
 def do_D2_corr(x_array):
-    #for every dot there wil be a number
+    # for every dot there wil be a number
     r = 0.5
-    n = len(x_array) #количество точек
-    def find_D_corr(r=0.5):
-        from functools import reduce
+    n = len(x_array)  # количество точек
+
+    def find_C_corr(r=0.5):
+
         count_array = [0 for i in x_array]
-        count_array = map(lambda xi: reduce(lambda a, x: a + (1 if abs(xi-x)<=r else 0),
+        count_array = map(lambda xi: reduce(lambda a, x: a + (1 if abs(xi - x) <= r else 0),
                                             x_array, 0),
                           x_array)
         count_array = list(count_array)
-        D = sum(count_array)/n**2
-        return D
+        C = sum(count_array) / n ** 2
+        return C
 
     r_array = numpy.arange(0, 1.5, 0.005)
 
-    C_array = list(map(find_D_corr, r_array))
+    C_array = list(map(find_C_corr, r_array))
 
-    D = sum(C_array)/sum(r_array)
+    D = sum(C_array) / sum(r_array)
+    D1 = (max(C_array)-min(C_array)) / (max(r_array)-min(r_array))
     print("D: ", D)
+    print("D1: ", D1)
+    plt.clf()
     plt.plot(r_array, C_array, "r.")
     plt.yscale("log")
     plt.xscale("log")
@@ -70,30 +77,47 @@ def do_D2_corr(x_array):
     plt.show()
     # plt.clf()
 
-# do_D2_corr(x_array)
 
-xmin = min(x_array)
-xmax = max(x_array)
+do_D2_corr(x_array)
 
-box_number = 100
-xdelta = (xmax - xmin)/box_number
-xminmax_array = numpy.arange(xmin, xmax + xdelta, xdelta)
+# =========================================================
+def hausdorf_D(x_array):
+    xmin = min(x_array)
+    xmax = max(x_array)
 
-# for i,j in :
-#     if :
-#         count += 1
-#         break
-#
-# map(lambda xi: reduce(lambda a,i,j: a+(1 if (xi>=i)and(xi<=j) else 0),
-#                       zip(xminmax_array[:-1], xminmax_array[1:]), 0),
-#     x_array)
+    box_number = 100
+    def do_delta_and_N(box_number):
+        xdelta = (xmax - xmin) / box_number
 
-x_box_array = map(lambda xi: list(filter(lambda x: all([(xi>=x[0]),(x<=x[1])]),     # will filter only 1 box for each xi
-                                         zip(xminmax_array[:-1], xminmax_array[1:]))
-                                  ),
-                            x_array)
+        box_indexes_of_x_array = map(lambda x: (x - xmin) // xdelta, x_array)
+        box_indexes_of_x_array = list(map(int, box_indexes_of_x_array))
+        from collections import Counter
+        the_number_of_not_empty_boxes = stf.pipeline_each([box_indexes_of_x_array], [Counter,
+                                                                      sorted,
+                                                                      len]
+                                                      )[0]
+        return xdelta, the_number_of_not_empty_boxes
 
-x_box_array = list(x_box_array)
-print(x_box_array)
+    box_number = numpy.arange(10, 1000, 10)
 
-box_count_array = numpy.zeros(100)
+    delta_and_n = list(map(do_delta_and_N, box_number))
+    delta = [i[0] for i in delta_and_n]
+    n_number_of_not_empy_boxes = [i[1] for i in delta_and_n]
+
+    D_Hausdorff = -sum(numpy.log(n_number_of_not_empy_boxes))/sum(numpy.log(delta))    # y / x
+    D_Hausdorff1 = (max(numpy.log(n_number_of_not_empy_boxes)) - min(numpy.log(n_number_of_not_empy_boxes))) / (max(numpy.log(delta)) - min(numpy.log(delta)))    # y / x
+    print("D_Hausdorff: ", D_Hausdorff)
+    print("D_Hausdorff1: ", D_Hausdorff1)
+
+    plt.clf()
+    plt.plot(delta, n_number_of_not_empy_boxes, "r.")
+    plt.xscale("log")
+    plt.yscale("log")
+    plt.grid()
+    plt.show()
+
+    # print(delta)
+    # print(n_number_of_not_empy_boxes)
+
+
+hausdorf_D(x_array)
