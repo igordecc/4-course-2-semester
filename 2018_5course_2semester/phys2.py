@@ -34,6 +34,10 @@ plt.plot(x, zero_array)  # x axes
 plt.plot(zero_array, x)  # y axes
 
 x_array = stf.iterate(_lambda, stf.logistic_map, iterate, delete_steps, x0)
+
+import random
+
+
 # print(x_array)
 
 
@@ -42,10 +46,10 @@ for n in range(0, len(x_array) - 1):
     plt.vlines(x_array[n], x_array[n], x_array[n + 1], "b")
     plt.hlines(x_array[n + 1], x_array[n], x_array[n + 1], "b")
 
-
+# x_array = numpy.random.uniform(0,1,100)
 # plt.grid()
 # plt.show()
-
+from scipy.stats import linregress
 def do_D2_corr(x_array):
     # for every dot there wil be a number
     r = 0.5
@@ -67,10 +71,12 @@ def do_D2_corr(x_array):
 
     D = sum(C_array) / sum(r_array)
     D1 = (max(C_array)-min(C_array)) / (max(r_array)-min(r_array))
-    print("D: ", D)
-    print("D1: ", D1)
+    D2 = linregress(r_array, C_array)
+    print("D corelational  avarage: ", D)
+    print("D corelational max avarage: ", D1)
+    print("D corelational lg: ", D2)
     plt.clf()
-    plt.plot(r_array, C_array, "r.")
+    plt.plot(r_array, C_array, "g.")
     plt.yscale("log")
     plt.xscale("log")
     plt.grid()
@@ -106,11 +112,14 @@ def hausdorf_D(x_array):
 
     D_Hausdorff = -sum(numpy.log(n_number_of_not_empy_boxes))/sum(numpy.log(delta))    # y / x
     D_Hausdorff1 = (max(numpy.log(n_number_of_not_empy_boxes)) - min(numpy.log(n_number_of_not_empy_boxes))) / (max(numpy.log(delta)) - min(numpy.log(delta)))    # y / x
-    print("D_Hausdorff: ", D_Hausdorff)
-    print("D_Hausdorff1: ", D_Hausdorff1)
+    D_Hausdorff2 = linregress(numpy.log(delta), numpy.log(n_number_of_not_empy_boxes))
+
+    print("D Hausdorff's a: ", D_Hausdorff)
+    print("D Hausdorff ma: ", D_Hausdorff1)
+    print("D Hausdorff lr: ", D_Hausdorff2)
 
     plt.clf()
-    plt.plot(delta, n_number_of_not_empy_boxes, "r.")
+    plt.plot(delta, n_number_of_not_empy_boxes, "g.")
     plt.xscale("log")
     plt.yscale("log")
     plt.grid()
@@ -121,3 +130,5 @@ def hausdorf_D(x_array):
 
 
 hausdorf_D(x_array)
+
+#огибающая корелляциоонной функции для хаотического сигнала

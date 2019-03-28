@@ -236,36 +236,51 @@ def taskD_doFeig():
         _lambda2 = (_lambda1 - _lambda0) / delta + _lambda1
         return _lambda2
 
-    delta = 4.669
-    _lambda1 = 1.40115329085
-    _lambda2 = 1.40115518909
-    _lambda0 = findFeig_lambda0(delta, _lambda1, _lambda2)
-    print("_lambda0", _lambda0)
+    # delta = 4.669
+    # _lambda1 = 1.40115329085
+    # _lambda2 = 1.40115518909
+    # _lambda0 = findFeig_lambda0(delta, _lambda1, _lambda2)
+    # print("_lambda0", _lambda0)
 
-    _lambda0 = 0.75
-    _lambda1 = 1.25
-    _lambda2 = 1.36809893939
+    _lambda0 = 0
+    _lambda1 = 1
+    _lambda2 = 1.31070264134
     _iteri = 50
+
+    def simple_iterration(x0, fn, params, iter_number):
+        x1 = x0
+
+        for i in range(iter_number):
+            x0 = x1
+            x1 = x0 - fn(x0) / diff(fn, x0, params, dx=0.01)
+        return x1
+
+    delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
+    print("delta", delta)
+
     for i in range(_iteri):
-        try:
-            delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
-        except:
-            print("exception i =", i)
-            break
+        print("lambda 0: ", _lambda0)
+        print("lambda 1: ", _lambda1)
+        print("lambda 2: ", _lambda2)
+        # try:
+        #     delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
+        # except:
+        #     print("exception i =", i)
+        #     break
         #TODO by nutons method or division/2 find super stable cicle
-        print("delta", delta)
+
         _lambda0 = _lambda1
         _lambda1 = _lambda2
         _lambda2 = findFeig_lambda2(delta, _lambda0, _lambda1)
-        print(_lambda1, _lambda2)
+        # _lambda2 = simple_iterration(_lambda2, findFeig_lambda2, (delta, _lambda0, _lambda1), iter_number=100
     print("final delta", delta)
 
     
 if __name__ == '__main__':
     #taskA_plot_bifdiag2()
-    taskB_plot_iterdiag()
+    #taskB_plot_iterdiag()
     #taskC_dolyapunov()
-    #taskD_doFeig()
+    taskD_doFeig()
 
     # TODO MOVE SOME FUNCTIONS TO EXPLICIT EXTERNAL FILE
     ...
