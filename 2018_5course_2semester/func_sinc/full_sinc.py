@@ -69,6 +69,9 @@ def make_timestep(state_d, params):
     while state_d["time"]:
         update_state(state_d, params)
 
+import math
+def phase(x,y):
+    return math.atan2(y,x)
 
 if __name__ == '__main__':
     # art of state evolution
@@ -77,18 +80,18 @@ if __name__ == '__main__':
             "a": 0.15,
             "p": 0.2,
             "c": 10,
-            "w": 0.92,  # change here [0.89 - 1.01]
-            "E": 1.5,
+            "w": 1.0,  # change here [0.89 - 1.01]
+            "E": 0,
         },
         "osc2": {
             "a": 0.15,
             "p": 0.2,
             "c": 10,
             "w": 0.95,  # const
-            "E": 1.5,
+            "E": 0.5,
         },
         "dt": 0.01,
-        "startfrom": 1500,
+        "startfrom": 3000,
         "e_error": 0,
     }
 
@@ -111,7 +114,6 @@ if __name__ == '__main__':
         plt.ylim(-15,20)
         plt.grid()
         plt.show()
-
 
     #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
 
@@ -165,4 +167,35 @@ if __name__ == '__main__':
         plt.show()
         # print(e_list)
 
-    part2_efromE(deepcopy(state_d), deepcopy(params))
+    #part2_efromE(deepcopy(state_d), deepcopy(params))
+
+    import numpy as np
+    def part51_phase(state_d, params):
+        make_timestep(state_d, params)
+        x_osc1 = np.array(list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:])))
+
+        def do_phase(osc="osc1"):
+            x_osc1 = np.array(list(map(lambda x: x[0], state_d[osc][params["startfrom"]:])))
+            y_osc1 = np.array(list(map(lambda x: x[1], state_d[osc][params["startfrom"]:])))
+            phase_osc1 = np.arctan2(y_osc1, x_osc1)
+            return phase_osc1
+        phase_osc1 = do_phase("osc1")
+        phase_osc2 = do_phase("osc2")
+        import scipy.fftpack
+        fourier_spk1 = scipy.fftpack.fft(phase_osc1)
+        fourier_spk2 = scipy.fftpack.fft(phase_osc2)
+
+
+        delta_spk = fourier_spk1-fourier_spk2
+        delta_spk_pre = abs(scipy.fftpack.fft(phase_osc1-phase_osc2))
+
+        # x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
+        # print("e_error: ", e_error(state_d, params))
+        # plt.plot(x_osc1, phase_osc1, "r.")
+        plt.plot(x_osc1, delta_spk, "r")
+        # plt.xlim(-15,20)
+        # plt.ylim(-15,20)
+        plt.grid()
+        plt.show()
+
+    part51_phase(deepcopy(state_d), deepcopy(params))
