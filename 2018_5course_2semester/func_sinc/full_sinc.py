@@ -6,6 +6,8 @@ from functools import reduce
 import matplotlib.pyplot as plt
 from copy import deepcopy
 from functools import reduce
+import numpy as np
+import math
 
 #------methods--------
 # return remake of data
@@ -69,9 +71,7 @@ def make_timestep(state_d, params):
     while state_d["time"]:
         update_state(state_d, params)
 
-import math
-def phase(x,y):
-    return math.atan2(y,x)
+
 
 if __name__ == '__main__':
     # art of state evolution
@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
     #part2_efromE(deepcopy(state_d), deepcopy(params))
 
-    import numpy as np
+
     def part51_phase(state_d, params):
         make_timestep(state_d, params)
         x_osc1 = np.array(list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:])))
@@ -188,14 +188,14 @@ if __name__ == '__main__':
 
         delta_spk = fourier_spk1-fourier_spk2
         delta_spk_pre = abs(scipy.fftpack.fft(phase_osc1-phase_osc2))
-        delta_phase = abs(phase_osc1-phase_osc2)
+        #delta_phase = abs(phase_osc1-phase_osc2)
 
         # x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
         # print("e_error: ", e_error(state_d, params))
         # plt.plot(x_osc1, phase_osc1, "r.")
-        plt.plot(x_osc1, delta_phase, "r")
-        plt.xlim(-15,15)
-        plt.ylim(0,1)
+        plt.plot(x_osc1, delta_spk_pre, "r")
+        #plt.xlim(-15,15)
+        #plt.ylim(0,1)
         plt.grid()
         plt.show()
 
