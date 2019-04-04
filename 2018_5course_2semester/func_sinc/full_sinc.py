@@ -88,7 +88,7 @@ if __name__ == '__main__':
             "p": 0.2,
             "c": 10,
             "w": 0.95,  # const
-            "E": 0.5,
+            "E": 0.2,
         },
         "dt": 0.01,
         "startfrom": 3000,
@@ -188,13 +188,14 @@ if __name__ == '__main__':
 
         delta_spk = fourier_spk1-fourier_spk2
         delta_spk_pre = abs(scipy.fftpack.fft(phase_osc1-phase_osc2))
+        delta_phase = abs(phase_osc1-phase_osc2)
 
         # x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
         # print("e_error: ", e_error(state_d, params))
         # plt.plot(x_osc1, phase_osc1, "r.")
-        plt.plot(x_osc1, delta_spk, "r")
-        # plt.xlim(-15,20)
-        # plt.ylim(-15,20)
+        plt.plot(x_osc1, delta_phase, "r")
+        plt.xlim(-15,15)
+        plt.ylim(0,1)
         plt.grid()
         plt.show()
 
