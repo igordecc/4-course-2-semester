@@ -19,7 +19,7 @@ def bec_ressler(state, alienstate, params):
     # print('params["E"]', params["E"]) #TESTs
     # print("x2 ", x2)
     # print('x ', x)
-    dxdt = -params["w"]*y - z + params["E"]*(x2 - x)
+    dxdt = -params["w"]*y - z + params["E"]*(x2 - x) + params["noise_amp"]*np.random.normal(0,1) #noise
     dydt = params["w"]*x + params["a"]*y
     dzdt = params["p"] + z*(x - params["c"])
     newstate = [dxdt, dydt, dzdt]
@@ -35,6 +35,8 @@ def euler_method(state, increment, dt):
     return new_state
 
 def e_error(state_d, params):
+    # what we do? - calculate error parametr e, from our after-evaluation-data
+    # why? - we need to estimate synchronisation in our system somehow. e_error can tell us about degree of synchronisation in a system if we toss it  system's data.
     e_value = sum(state_d["e_error_norm"]) / len(state_d["e_error_norm"]) / (
                 state_d["savedtime"][-1] - state_d["savedtime"][params["startfrom"]])
     return e_value
@@ -82,13 +84,15 @@ if __name__ == '__main__':
             "c": 10,
             "w": 1.0,  # change here [0.89 - 1.01]
             "E": 0,
+            "noise_amp": 1,
         },
         "osc2": {
             "a": 0.15,
             "p": 0.2,
             "c": 10,
             "w": 0.95,  # const
-            "E": 0.2,
+            "E": 1.2,
+            "noise_amp": 1,
         },
         "dt": 0.01,
         "startfrom": 3000,
@@ -115,9 +119,15 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+    part1_x1fromx2(deepcopy(state_d), deepcopy(params))
 
     def part2_efromE(state_d, params):
+        """
+        state-> make_elist() -> E_osc1 changing [Emin, Emax] and elist, calculated from them.
+        :param state_d: dictionary
+        :param params: dictionary
+        :return: plot
+        """
         def pipeline_each(data, fns):
             result = reduce(lambda a, x: list(map(x, a)),
                             fns,
@@ -125,40 +135,65 @@ if __name__ == '__main__':
             return result
 
         def make_elist(state_d, params):
-            E_osc1 = [i for i in numpy.arange(0, 2.5, 0.05)]
-            E_osc2 = [i for i in numpy.arange(0, 2.5, 0.05)]
+            """
+            what are we doing? - making e from E1(, E2) dependence
+            why - we need to make plot with e and E1
+            E1 - connection parameter of the system, give by default.
+            e - synchronisation error parameter, calculated in make_elist.
+            :param state_d: dict
+            :param params: dict
+            :return: (list, list, list)
+            """
 
             def make_timestep_local(data):
+                # why - we need to compute evaluate system for one set of parameters
+                # data -> state_d, params -> make_timestep() -> state_d, params with results
                 state_d, params = data
                 make_timestep(state_d, params)
                 return state_d, params
 
             def e_list_append(data):
+                # why - we need to find e_error for 1 case of parameters
+                # data -> state_d, params -> e_error() -> state_d, params with results
                 state_d, params = data
                 params["e_error"] = e_error(state_d, params)
                 return state_d, params
 
-            # TODO remake - data into list of params [params1, params2, params3]
-            # TODO make for each params it's calculus
-
-            paramlist = [deepcopy(params) for i in E_osc1]
-            params_and_E = list(zip(paramlist, E_osc1, E_osc2))
             def updateEs(p_E_sample):
+                # what is it - support update-function, being used in prepare stage (stage 1)
+                # why - we need to write to params values of E (bounding coeffitient, wich is one of params)
                 params, E_osc1, E_osc2 = p_E_sample[0], p_E_sample[1], p_E_sample[2]
                 params["osc1"]["E"] = E_osc1
                 params["osc2"]["E"] = E_osc2
                 return params
+
+            # why we do that? - we are coping and preparing our state and params dictionaries for the next stage
+
+            # stage 0 - determine values we will whatch
+            E_osc1 = [i for i in numpy.arange(0, 2.5, 0.05)]
+            E_osc2 = [i for i in numpy.arange(0, 2.5, 0.05)]
+
+            # stage 1 - prepare default values
+            paramlist = [deepcopy(params) for i in E_osc1]      # why - we need paramslist with length of list E_osc1
+            params_and_E = list(zip(paramlist, E_osc1, E_osc2))
             paramlist = list(map(updateEs, params_and_E))
             state_d_list = [deepcopy(state_d) for i in E_osc1]
 
             data = list(zip(state_d_list, paramlist))
+
+            # stage 2 - pipeline our data
+            # what we do - evaluate our system and
             new_data = pipeline_each(data, [make_timestep_local,
                                  e_list_append
                                  ])
+
+            # stage 3 - we collect all calculated e_error data. e - synchronisation error parameter.
+            # why - to build a plot from this data next.
             e_list = list(map(lambda x: x[1]["e_error"], new_data))
             return E_osc1, E_osc2, e_list
 
-
+        # what are we doing? - this is wrapper-function area. We plot all plots here to invoke (or make) them by single function call.
+        # why? - (We do all side-staff here) because it's very convenient! And because we need to plot e from E1 curve.
         E_osc1, E_osc2, e_list = make_elist(state_d, params)
         plt.plot(E_osc1, e_list, "b-")
         plt.yscale("log")
@@ -167,7 +202,7 @@ if __name__ == '__main__':
         plt.show()
         # print(e_list)
 
-    #part2_efromE(deepcopy(state_d), deepcopy(params))
+    part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
 
 
     def part51_phase(state_d, params):
@@ -199,4 +234,18 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    part51_phase(deepcopy(state_d), deepcopy(params))
+    #part51_phase(deepcopy(state_d), deepcopy(params))
+
+    def with_noise(state_d, params):
+        make_timestep(state_d, params)
+
+        x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
+        x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
+        print("e_error: ", e_error(state_d, params))
+        plt.plot(x_osc1, x_osc2, "r.")
+        plt.xlim(-15,20)
+        plt.ylim(-15,20)
+        plt.grid()
+        plt.show()
+
+    #with_noise(deepcopy(state_d), deepcopy(params))
