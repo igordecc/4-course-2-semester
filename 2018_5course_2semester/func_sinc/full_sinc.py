@@ -84,7 +84,7 @@ if __name__ == '__main__':
             "c": 10,
             "w": 1.0,  # change here [0.89 - 1.01]
             "E": 0,
-            "noise_amp": 1,
+            "noise_amp": 0,
         },
         "osc2": {
             "a": 0.15,
@@ -92,7 +92,7 @@ if __name__ == '__main__':
             "c": 10,
             "w": 0.95,  # const
             "E": 1.2,
-            "noise_amp": 1,
+            "noise_amp": 0,
         },
         "dt": 0.01,
         "startfrom": 3000,
@@ -273,6 +273,30 @@ if __name__ == '__main__':
         """
 
         make_timestep(state_d, params)
+
+        def checkout_allT(state_d, params):
+            # what we doing?- finding S2(T) for different Ts.
+            # can return minimum S or all S series from T
+            # why? - we need to calculate S2
+
+            def S2(state_d, T):
+                """
+
+                :param state_d:
+                :param T: int - number timesteps to skip
+                :return: S2_value for certain T
+                """
+                # why make it numpy? - for usefullness later
+                np_osc1 = np.array(state_d["osc1"])
+                np_osc2 = np.array(state_d["osc2"])
+
+                # what we doing? we making time-lag slice
+                # why? - for lag synchronisation check
+                np_osc1 = np_osc1[:T]
+                np_osc2 = np_osc2[T:]
+
+                S2_value = np.sum(np.abs(np_osc2 - np_osc1)**2) / np.sqrt( np.sum(np.abs(np_osc1)**2) * np.sum(np.abs(np_osc2)**2))
+                return S2_value
 
         x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
         x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
