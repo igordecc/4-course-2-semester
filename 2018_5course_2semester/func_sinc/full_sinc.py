@@ -119,7 +119,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+    #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
 
     def part2_efromE(state_d, params):
         """
@@ -204,7 +204,7 @@ if __name__ == '__main__':
         plt.show()
         # print(e_list)
 
-    part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
+    #part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
 
 
     def part51_phase(state_d, params):
@@ -278,33 +278,54 @@ if __name__ == '__main__':
             # what we doing?- finding S2(T) for different Ts.
             # can return minimum S or all S series from T
             # why? - we need to calculate S2
-
-            def S2(state_d, T):
+            def S2(state_d_and_T):
                 """
 
                 :param state_d:
                 :param T: int - number timesteps to skip
-                :return: S2_value for certain T
+                :return: S_value for certain T
                 """
-                # why make it numpy? - for usefullness later
-                np_osc1 = np.array(state_d["osc1"])
-                np_osc2 = np.array(state_d["osc2"])
+                # why? - we need to unpack, bbefor we can use it
+                np_osc1, np_osc2, T = state_d_and_T
+                S2_value = np.sum(np.abs(np_osc2 - np_osc1) ** 2) / np.sqrt(
+                    np.sum(np.abs(np_osc1) ** 2) * np.sum(np.abs(np_osc2) ** 2))
+                return np.sqrt(S2_value), T  # why? - because S2 is S**2 and we what S. Not the big difference.
 
-                # what we doing? we making time-lag slice
-                # why? - for lag synchronisation check
-                np_osc1 = np_osc1[:T]
-                np_osc2 = np_osc2[T:]
+            #why - we want make it map, so we need all T and state_d_list to feed the map() function
+            Tmax = len(state_d["osc1"])//100
+            T_list = np.arange(1, Tmax)
 
-                S2_value = np.sum(np.abs(np_osc2 - np_osc1)**2) / np.sqrt( np.sum(np.abs(np_osc1)**2) * np.sum(np.abs(np_osc2)**2))
-                return S2_value
+            # why make it numpy? - for usefullness later
+            np_osc1 = np.array(state_d["osc1"])
+            np_osc2 = np.array(state_d["osc2"])
 
-        x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
-        x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
-        print("e_error: ", e_error(state_d, params))
-        plt.plot(x_osc1, x_osc2, "r.")
-        plt.xlim(-15,20)
-        plt.ylim(-15,20)
-        plt.grid()
-        plt.show()
+            # what we doing? we making time-lag slice
+            # why? - for lag synchronisation check
+            np_osc1 = [np_osc1[:-T] for T in T_list]
+            np_osc2 = [np_osc2[T:] for T in T_list]
 
-    part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+            state_d_and_T = zip(np_osc1, np_osc2, T_list)
+            list_of_S_values = np.array(list(map(S2, state_d_and_T)))
+
+            return list_of_S_values
+
+        list_of_S_values = checkout_allT(state_d, params)
+        list_of_S_values = list_of_S_values.transpose()
+        # now it's [[Smin walues], [Tvalues]]
+        # now we find index of the minimum parameter
+        Smin_num = np.where(list_of_S_values[0] == list_of_S_values[0].min())[0]
+        print(np.where(list_of_S_values[0] == list_of_S_values[0].min())) # that's what we get
+        # and get minimum S with corresponding T
+        print(list_of_S_values[:,Smin_num])
+
+        # TODO make it plot S from T
+        # x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
+        # x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
+        # print("e_error: ", e_error(state_d, params))
+        # plt.plot(x_osc1, x_osc2, "r.")
+        # plt.xlim(-15,20)
+        # plt.ylim(-15,20)
+        # plt.grid()
+        # plt.show()
+
+    diagnose_lagsync(deepcopy(state_d), deepcopy(params))
