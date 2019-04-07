@@ -124,6 +124,9 @@ if __name__ == '__main__':
     def part2_efromE(state_d, params):
         """
         state-> make_elist() -> E_osc1 changing [Emin, Emax] and elist, calculated from them.
+        what is it? - its wrapper function. we plot e from E1(, E2) inside it.
+        why? - we looking for synchronisation and it's dependence from bound-parameters.
+        Also, This wrapper-function can be used to watch system dependence from any kind of parameters. For this jump "to stage 0" in make_elist, type parameter u want and remake updater (updateEs function) TODO Remake updater
         :param state_d: dictionary
         :param params: dictionary
         :return: plot
@@ -167,13 +170,12 @@ if __name__ == '__main__':
                 params["osc2"]["E"] = E_osc2
                 return params
 
-            # why we do that? - we are coping and preparing our state and params dictionaries for the next stage
-
             # stage 0 - determine values we will whatch
             E_osc1 = [i for i in numpy.arange(0, 2.5, 0.05)]
             E_osc2 = [i for i in numpy.arange(0, 2.5, 0.05)]
 
             # stage 1 - prepare default values
+            # why we do that? - we are coping and preparing our state and params dictionaries for the next stage
             paramlist = [deepcopy(params) for i in E_osc1]      # why - we need paramslist with length of list E_osc1
             params_and_E = list(zip(paramlist, E_osc1, E_osc2))
             paramlist = list(map(updateEs, params_and_E))
@@ -182,7 +184,7 @@ if __name__ == '__main__':
             data = list(zip(state_d_list, paramlist))
 
             # stage 2 - pipeline our data
-            # what we do - evaluate our system and
+            # what we do - evaluate our system and making list of e values we are looking for.
             new_data = pipeline_each(data, [make_timestep_local,
                                  e_list_append
                                  ])
@@ -237,6 +239,15 @@ if __name__ == '__main__':
     #part51_phase(deepcopy(state_d), deepcopy(params))
 
     def with_noise(state_d, params):
+        """
+        not done yet
+        what we need TODO: we need to plot sync parameter from noise dependence
+        why? - it's task 7.3
+        :param state_d:
+        :param params:
+        :return:
+        """
+
         make_timestep(state_d, params)
 
         x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
@@ -249,3 +260,27 @@ if __name__ == '__main__':
         plt.show()
 
     #with_noise(deepcopy(state_d), deepcopy(params))
+
+    def diagnose_lagsync(state_d, params):
+        """
+        for diagnosing lag synchronisation you dont need to change the system
+        what we need TODO - check the synchronisation between oscillators simultaneously dislocating data on T steps. Boom - lag synchronisation.
+        how? - write check-function S2(T)
+        why - we need to diagnose lag synchronisation in task 1 and 7.3
+        :param state_d: dict copy
+        :param params: dict copy
+        :return: plots S from T. On minimums will be it (lag. sync.)
+        """
+
+        make_timestep(state_d, params)
+
+        x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
+        x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
+        print("e_error: ", e_error(state_d, params))
+        plt.plot(x_osc1, x_osc2, "r.")
+        plt.xlim(-15,20)
+        plt.ylim(-15,20)
+        plt.grid()
+        plt.show()
+
+    part1_x1fromx2(deepcopy(state_d), deepcopy(params))
