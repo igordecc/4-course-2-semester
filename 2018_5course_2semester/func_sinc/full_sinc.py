@@ -238,29 +238,6 @@ if __name__ == '__main__':
 
     #part51_phase(deepcopy(state_d), deepcopy(params))
 
-    def with_noise(state_d, params):
-        """
-        not done yet
-        what we need TODO: we need to plot sync parameter from noise dependence
-        why? - it's task 7.3
-        :param state_d:
-        :param params:
-        :return:
-        """
-
-        make_timestep(state_d, params)
-
-        x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
-        x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
-        print("e_error: ", e_error(state_d, params))
-        plt.plot(x_osc1, x_osc2, "r.")
-        plt.xlim(-15,20)
-        plt.ylim(-15,20)
-        plt.grid()
-        plt.show()
-
-    #with_noise(deepcopy(state_d), deepcopy(params))
-
     def diagnose_lagsync(state_d, params):
         """
         for diagnosing lag synchronisation you dont need to change the system
@@ -337,11 +314,11 @@ if __name__ == '__main__':
 
         # stage 0 - determine values we will whatch
         Emin = 0
-        Emax = 0.4
+        Emax = 1.2
         dE = 0.01
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
-        E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
+        E_osc2 = [0 for i in numpy.arange(Emin, Emax, dE)]
 
         # stage 1 - prepare default values
         paramlist = [deepcopy(params) for i in E_osc1]  # why - we need paramslist with length of list E_osc1
@@ -369,32 +346,15 @@ if __name__ == '__main__':
         plt.show()
 
 
+    #diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
-        # ####print(np.where(list_of_S_and_T[0] == list_of_S_and_T[0].min())) # Smin's index
-        # ###print(min_S_and_T)
-        #
-        # # TODO make it plot S from T
-        # # x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
-        # # x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
-        # # print("e_error: ", e_error(state_d, params))
-        # plt.plot(list_of_S_and_T[1], list_of_S_and_T[0], "r.")
-        # plt.grid()
-        # plt.show()
-        #
-        # map(checkout_allT(state_d))
-        #
-        # return list_of_S_and_T
+    def add_noise_and_plot_all(state_d, params):
+        noise_amp = 0.2
+        params["osc1"]["noise_amp"] = noise_amp
+        params["osc2"]["noise_amp"] = noise_amp
 
+        part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+        part2_efromE(deepcopy(state_d), deepcopy(params))
+        diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
-    diagnose_lagsync(state_d, params)
-
-
-
-    # np_minS_and_minT = np.empty(0)
-    # for E in [i for i in numpy.arange(0, 2.5, 0.05)]:
-    #     params_copy = deepcopy(params)
-    #     params_copy["osc2"]["E"] = E
-    #     np.append(np_minS_and_minT, diagnose_lagsync(deepcopy(state_d), params_copy))
-    #
-    # np_minS_and_minT = np_minS_and_minT.transpose()
-    # plt.plot(np_minS_and_minT[1], np_minS_and_minT[0])
+    add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
