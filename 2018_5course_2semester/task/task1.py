@@ -1,5 +1,4 @@
 import numpy
-import matplotlib.pyplot
 import matplotlib.pyplot as plt
 import matplotlib.widgets as wgt
 
@@ -103,10 +102,10 @@ def taskB_plot_iterdiag():
     f_array =[stf.logistic_map(x, _lambda) for x in na] # parabola
     x = [x for x in na]
     zero_array = [0 for x in na]
-    matplotlib.pyplot.plot(x,f_array) # parabola
-    matplotlib.pyplot.plot(x,x) #diagonal
-    matplotlib.pyplot.plot(x, zero_array) # x axes
-    matplotlib.pyplot.plot(zero_array, x) # y axes
+    plt.plot(x,f_array) # parabola
+    plt.plot(x,x) #diagonal
+    plt.plot(x, zero_array) # x axes
+    plt.plot(zero_array, x) # y axes
 
     x_array = stf.iterate(_lambda, stf.logistic_map, k, 0, x0)
     #print(x_array)
@@ -114,13 +113,13 @@ def taskB_plot_iterdiag():
 
     # should be function
     for n in range(0, len(x_array)-1):
-        matplotlib.pyplot.vlines(x_array[n], x_array[n], x_array[n+1], "b")
-        matplotlib.pyplot.hlines(x_array[n+1], x_array[n], x_array[n+1], "b")
+        plt.vlines(x_array[n], x_array[n], x_array[n+1], "b")
+        plt.hlines(x_array[n+1], x_array[n], x_array[n+1], "b")
 
 
-    matplotlib.pyplot.grid()
-    matplotlib.pyplot.show()
-    # matplotlib.pyplot.clf()
+    plt.grid()
+    plt.show()
+    # plt.clf()
 
     #-----------------------
     def logistic(x, lam):
@@ -135,7 +134,6 @@ def taskB_plot_iterdiag():
 
         return fn
 
-    from matplotlib.pyplot import plot, show
 
     rgs = [RG(lambda x: logistic(x, 1.401), k) for k in range(3)]
 
@@ -172,11 +170,11 @@ def taskC_dolyapunov():
     lrange = numpy.arange(1.35, 1.505, 0.0001)     # can change _lambda here
     lindex = [lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in lrange]
     zeros = numpy.zeros(len(lrange))
-    matplotlib.pyplot.plot(lrange, lindex)
-    matplotlib.pyplot.plot(lrange, zeros)   # horizontal line
-    matplotlib.pyplot.grid()
-    matplotlib.pyplot.show()
-    matplotlib.pyplot.clf()
+    plt.plot(lrange, lindex)
+    plt.plot(lrange, zeros)   # horizontal line
+    plt.grid()
+    plt.show()
+    plt.clf()
 
 def taskD_doFeig():
     def findFeigdelta(_lambda0,
@@ -241,12 +239,71 @@ def taskD_doFeig():
         # _lambda2 = simple_iterration(_lambda2, findFeig_lambda2, (delta, _lambda0, _lambda1), iter_number=100
     print("final delta", delta)
 
-    
+
+class taskC_dolyapunov_obj:
+    def __init__(self, lmin=1.35, lmax=1.505, dl = 0.0001):
+        #TODO do things bellow
+        # https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html
+        #TODO 1 create 6 subplots figure
+        #TODO 2 add new subplot each call
+        # ... why? - because we need scaling sequence of plots
+        self.fig_num = 0
+        self.fig = plt.figure()
+        def lyapunov_index(fn,
+                           x0,
+                           params,
+                           nsum):
+            x = [x0]
+            dx = 0.0001  # precision need to be high enough
+            lyap_sum = 0
+            delta = nsum // 2
+            for i in range(nsum):
+                if i > delta:
+                    dfdx = stf.diff(fn, x[i], params, dx)
+                    lyap_sum += numpy.log(abs(dfdx))
+                x.append(fn(x[i], params))
+            lyap_sum /= (nsum - delta)
+            return lyap_sum
+
+        x0 = 0.1
+        nsum = 1000
+        # TODO change proximity
+        self.lmin, self.lmax, self.dl = lmin, lmax, dl
+        self.ldelta = (self.lmax - self.lmin) / 2
+        self.lcenter = self.lmin + self.ldelta
+        self.lrange = numpy.arange(self.lmin, self.lmax, self.dl)  # can change _lambda here
+        self.lindex = [lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in self.lrange]
+        self.zeros = numpy.zeros(len(self.lrange))
+
+    def __call__(self, *args, **kwargs):
+        self.fig.add_subplot()
+        plt.plot(self.lrange, self.lindex)
+        plt.plot(self.lrange, self.zeros)  # horizontal line
+        plt.grid()
+
+        self.fig_num += 1
+
+    def scale(self, scaling=0.5, num=1):
+        self.ldelta = self.ldelta * scaling
+        self.lmin = self.lcenter - self.ldelta
+        self.lmax = self.lcenter + self.ldelta
+        self.dl = self.dl*scaling
+        self.__init__(self.lmin, self.lmax, self.dl)
+        self.__call__()
+        ...
+
+
 if __name__ == '__main__':
     #taskA_plot_bifdiag2()
     #taskB_plot_iterdiag()
-    taskC_dolyapunov()
+    #taskC_dolyapunov()
     #taskD_doFeig()
 
-    # TODO MOVE SOME FUNCTIONS TO EXPLICIT EXTERNAL FILE
+    blabla = taskC_dolyapunov_obj()
+    blabla()
+    blabla.scale()
+
+
+
+        # TODO MOVE SOME FUNCTIONS TO EXPLICIT EXTERNAL FILE
     ...
