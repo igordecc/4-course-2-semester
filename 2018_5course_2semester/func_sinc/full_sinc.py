@@ -73,7 +73,18 @@ def make_timestep(state_d, params):
     while state_d["time"]:
         update_state(state_d, params)
 
+def make_timestep_local(data):
+    # why - we need to compute evaluate system for one set of parameters
+    # data -> state_d, params -> make_timestep() -> state_d, params with results
+    state_d, params = data
+    make_timestep(state_d, params)
+    return state_d, params
 
+def pipeline_each(data, fns):
+    result = reduce(lambda a, x: list(map(x, a)),
+                    fns,
+                    data)
+    return result
 
 if __name__ == '__main__':
     # art of state evolution
@@ -131,11 +142,7 @@ if __name__ == '__main__':
         :param params: dictionary
         :return: plot
         """
-        def pipeline_each(data, fns):
-            result = reduce(lambda a, x: list(map(x, a)),
-                            fns,
-                            data)
-            return result
+
 
         def make_elist(state_d, params):
             """
@@ -147,13 +154,6 @@ if __name__ == '__main__':
             :param params: dict
             :return: (list, list, list)
             """
-
-            def make_timestep_local(data):
-                # why - we need to compute evaluate system for one set of parameters
-                # data -> state_d, params -> make_timestep() -> state_d, params with results
-                state_d, params = data
-                make_timestep(state_d, params)
-                return state_d, params
 
             def e_list_append(data):
                 # why - we need to find e_error for 1 case of parameters
@@ -272,12 +272,14 @@ if __name__ == '__main__':
         :return: plots S from T. On minimums will be it (lag. sync.)
         """
 
-        make_timestep(state_d, params)
+
 
         def checkout_allT(state_d, params):
             # what we doing?- finding S2(T) for different Ts.
             # can return minimum S or all S series from T
             # why? - we need to calculate S2
+            make_timestep(state_d, params)
+
             def S2(state_d_and_T):
                 """
 
@@ -305,32 +307,89 @@ if __name__ == '__main__':
             np_osc2 = [np_osc2[T:] for T in T_list]
 
             state_d_and_T = zip(np_osc1, np_osc2, T_list)
-            list_of_S_values = np.array(list(map(S2, state_d_and_T)))
+            list_of_S_and_T = np.array(list(map(S2, state_d_and_T)))
 
-            return list_of_S_values
+            list_of_S_and_T = list_of_S_and_T.transpose() # now it's [[Smin walues], [Tvalues]]
+            return list_of_S_and_T
 
-        list_of_S_values = checkout_allT(state_d, params)
-        list_of_S_values = list_of_S_values.transpose()
-        # now it's [[Smin walues], [Tvalues]]
-        # now we find index of the minimum parameter
-        Smin_num = np.where(list_of_S_values[0] == list_of_S_values[0].min())[0]
-        print(np.where(list_of_S_values[0] == list_of_S_values[0].min())) # that's what we get
-        # and get minimum S with corresponding T
-        min_S_and_T = list_of_S_values[:, Smin_num]
-        print(min_S_and_T)
+        def update_param(p_sample):
+            # what is it - support update-function, being used in prepare stage (stage 1)
+            # why - we need to write to params values of E (bounding coeffitient, wich is one of params)
+            params, p_osc1, p_osc2, param_name = p_sample
+            params["osc1"][param_name] = p_osc1
+            params["osc2"][param_name] = p_osc2
+            return params
 
-        # TODO make it plot S from T
-        # x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
-        # x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
-        # print("e_error: ", e_error(state_d, params))
-        plt.plot(list_of_S_values[1], list_of_S_values[0], "r.")
+        def Smin_and_T_list_append(data):
+            # why - we need to find Smin and corresponding T for 1 case of parameters
+            # data -> state_d, params -> e_error() -> state_d, params with results
+            state_d, params = data
+            numpySandT = checkout_allT(state_d, params)
+
+            # why? we want find the minimum parameter and it's index
+            Smin_num = np.where(numpySandT[0] == numpySandT[0].min())[0]
+            min_S_and_T = numpySandT[:, Smin_num]
+
+            params["s_min"] = min_S_and_T[0]
+            params["t_for_s"] = min_S_and_T[1]
+
+            return state_d, params
+
+        # stage 0 - determine values we will whatch
+        Emin = 0
+        Emax = 0.4
+        dE = 0.01
+
+        E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
+        E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
+
+        # stage 1 - prepare default values
+        paramlist = [deepcopy(params) for i in E_osc1]  # why - we need paramslist with length of list E_osc1
+        param_name_list = ["E" for i in E_osc2]
+        data_to_update = list(zip(paramlist, E_osc1, E_osc2, param_name_list))
+        paramlist = list(map(update_param, data_to_update))
+        state_d_list = [deepcopy(state_d) for i in E_osc1]
+
+        data = list(zip(state_d_list, paramlist))
+
+        # stage 2 - pipeline our data
+        # what we do - evaluate our system and making list of e values we are looking for.
+        new_data = pipeline_each(data, [make_timestep_local,
+                                        Smin_and_T_list_append
+                                        ])
+
+        # stage 3 - we collect all calculated e_error data. e - synchronisation error parameter.
+        # why - to build a plot from this data next.
+        s_min_list = list(map(lambda x: x[1]["s_min"], new_data))
+        t_for_s_list = list(map(lambda x: x[1]["t_for_s"], new_data))
+
+        plt.plot(E_osc1, s_min_list, "b.")
+        #plt.plot(E_osc1, t_for_s_list, "r.")
         plt.grid()
         plt.show()
 
-        return  min_S_and_T
 
 
-    diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+        # ####print(np.where(list_of_S_and_T[0] == list_of_S_and_T[0].min())) # Smin's index
+        # ###print(min_S_and_T)
+        #
+        # # TODO make it plot S from T
+        # # x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
+        # # x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
+        # # print("e_error: ", e_error(state_d, params))
+        # plt.plot(list_of_S_and_T[1], list_of_S_and_T[0], "r.")
+        # plt.grid()
+        # plt.show()
+        #
+        # map(checkout_allT(state_d))
+        #
+        # return list_of_S_and_T
+
+
+    diagnose_lagsync(state_d, params)
+
+
+
     # np_minS_and_minT = np.empty(0)
     # for E in [i for i in numpy.arange(0, 2.5, 0.05)]:
     #     params_copy = deepcopy(params)
