@@ -83,7 +83,7 @@ if __name__ == '__main__':
             "p": 0.2,
             "c": 10,
             "w": 1.0,  # change here [0.89 - 1.01]
-            "E": 0,
+            "E": .4,
             "noise_amp": 0,
         },
         "osc2": {
@@ -91,7 +91,7 @@ if __name__ == '__main__':
             "p": 0.2,
             "c": 10,
             "w": 0.95,  # const
-            "E": 1.2,
+            "E": .4,
             "noise_amp": 0,
         },
         "dt": 0.01,
@@ -316,16 +316,26 @@ if __name__ == '__main__':
         Smin_num = np.where(list_of_S_values[0] == list_of_S_values[0].min())[0]
         print(np.where(list_of_S_values[0] == list_of_S_values[0].min())) # that's what we get
         # and get minimum S with corresponding T
-        print(list_of_S_values[:,Smin_num])
+        min_S_and_T = list_of_S_values[:, Smin_num]
+        print(min_S_and_T)
 
         # TODO make it plot S from T
         # x_osc1 = list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:]))
         # x_osc2 = list(map(lambda x: x[0], state_d["osc2"][params["startfrom"]:]))
         # print("e_error: ", e_error(state_d, params))
-        # plt.plot(x_osc1, x_osc2, "r.")
-        # plt.xlim(-15,20)
-        # plt.ylim(-15,20)
-        # plt.grid()
-        # plt.show()
+        plt.plot(list_of_S_values[1], list_of_S_values[0], "r.")
+        plt.grid()
+        plt.show()
+
+        return  min_S_and_T
+
 
     diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+    # np_minS_and_minT = np.empty(0)
+    # for E in [i for i in numpy.arange(0, 2.5, 0.05)]:
+    #     params_copy = deepcopy(params)
+    #     params_copy["osc2"]["E"] = E
+    #     np.append(np_minS_and_minT, diagnose_lagsync(deepcopy(state_d), params_copy))
+    #
+    # np_minS_and_minT = np_minS_and_minT.transpose()
+    # plt.plot(np_minS_and_minT[1], np_minS_and_minT[0])
