@@ -46,10 +46,10 @@ def do_lyapunov_map():
     nsum = 1000
     #TODO change proximity
     lrange = numpy.arange(1.35, 1.505, 0.0001)     # can change _lambda here
-    lindex = [  lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in lrange]
+    lindex = [lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in lrange]
     zeros = numpy.zeros(len(lrange))
-    matplotlib.pyplot.plot(lrange ,lindex)
-    matplotlib.pyplot.plot(lrange, zeros)
+    matplotlib.pyplot.plot(lrange, lindex)
+    matplotlib.pyplot.plot(lrange, zeros)   # horizontal line
     matplotlib.pyplot.grid()
     matplotlib.pyplot.show()
     matplotlib.pyplot.clf()

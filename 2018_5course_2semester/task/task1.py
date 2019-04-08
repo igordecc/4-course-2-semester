@@ -44,48 +44,6 @@ def diff(fn,
     return ( fn(x + dx, params) - fn(x, params) ) / dx
 
 
-def plot_bifdiag():
-    #TODO scale y by something
-    #TODO scale lambda by 1/2 (because stf.logistic_map
-    matplotlib.pyplot.grid()
-    # ------- rescale -------
-    def rescale(lmin, lmax):
-        alpha = 2
-        m, v = 1 / alpha, 1 / (alpha ** 2)
-        newlmin = lmin + (lmax - lmin) * m
-        newlmax = lmax - (lmax - lmin) * v
-        return newlmin, newlmax
-
-    # ----------------------------
-
-    def do_plot(lmin = 0.5, lmax=1.7):
-        times = 1000
-        delta = 200
-        x0 = 0.1
-        #TODO lmin ~ m = 1/alpha, lmax ~ v = 1/(alpha)**2, alpha =1.2
-        #scale horisontal: newlmin = lmin + (lmax - lmin)*m,  newlmax = lmax - (lmax - lmin)*v
-        #y scale is constant
-        ld = 0.001
-        x,y = allLambda(lmin, lmax, ld, stf.logistic_map, times, delta, x0)
-        matplotlib.pyplot.plot(x, y , 'g.', alpha=0.1, markersize = 2 )
-
-
-    do_plot()
-
-    scalebaxes = plt.axes([0.8, 0.025, 0.1, 0.04])
-    scaleb = wgt.Button(scalebaxes, "Scale", hovercolor="0.875")
-
-
-    def scale(val):
-
-        do_plot()
-
-    scaleb.on_clicked(scale)
-
-
-    matplotlib.pyplot.show()
-    matplotlib.pyplot.clf()
-
 def taskA_plot_bifdiag2():
     fig = plt.figure(1, figsize=(6,5))
     left, bottom = 0.1, 0.1
@@ -197,20 +155,28 @@ def taskC_dolyapunov():
                        params,
                        nsum):
         x = [x0]
-        dx = 0.01
+        dx = 0.0001  # precision need to be high enough
         lyap_sum = 0
+        delta = nsum // 2
         for i in range(nsum):
-            dfdx = diff(fn, x[i], params, dx)
-            lyap_sum += numpy.log(abs(dfdx))
+            if i > delta:
+                dfdx = stf.diff(fn, x[i], params, dx)
+                lyap_sum += numpy.log(abs(dfdx))
             x.append(fn(x[i], params))
-        lyap_sum /= nsum
+        lyap_sum /= (nsum - delta)
         return lyap_sum
 
-    x0=0.1
-    _lambda = 1.25
-    nsum = 100
-    lindex = lyapunov_index(stf.logistic_map, x0, _lambda, nsum)
-    print(lindex)
+    x0 = 0.1
+    nsum = 1000
+    #TODO change proximity
+    lrange = numpy.arange(1.35, 1.505, 0.0001)     # can change _lambda here
+    lindex = [lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in lrange]
+    zeros = numpy.zeros(len(lrange))
+    matplotlib.pyplot.plot(lrange, lindex)
+    matplotlib.pyplot.plot(lrange, zeros)   # horizontal line
+    matplotlib.pyplot.grid()
+    matplotlib.pyplot.show()
+    matplotlib.pyplot.clf()
 
 def taskD_doFeig():
     def findFeigdelta(_lambda0,
@@ -279,8 +245,8 @@ def taskD_doFeig():
 if __name__ == '__main__':
     #taskA_plot_bifdiag2()
     #taskB_plot_iterdiag()
-    #taskC_dolyapunov()
-    taskD_doFeig()
+    taskC_dolyapunov()
+    #taskD_doFeig()
 
     # TODO MOVE SOME FUNCTIONS TO EXPLICIT EXTERNAL FILE
     ...
