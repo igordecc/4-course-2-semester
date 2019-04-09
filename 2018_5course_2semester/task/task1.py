@@ -218,6 +218,11 @@ class taskC_dolyapunov_obj:
         ...
 
 def taskC_dolyapunov():
+    """
+    wrapper function upper to taskC class
+    why? - need for maintaining local program pattern
+    :return:
+    """
     sample = taskC_dolyapunov_obj() # initialising plot-object
     sample() # default plot call
     sample.scale() # calls for scale
@@ -227,6 +232,13 @@ def taskC_dolyapunov():
     plt.show()
 
 def taskD_doFeig():
+    """
+    read page 220 in Kuznecov for details
+
+    what TODO you need to find stable super-stable points by map equation
+    Feigenbaum's equations needed only for the check, not for calculations.
+    :return:
+    """
     def findFeigdelta(_lambda0,
                       _lambda1,
                       _lambda2,
@@ -292,8 +304,8 @@ def taskD_doFeig():
 if __name__ == '__main__':
     #taskA_plot_bifdiag2()
     #taskB_plot_iterdiag()
-    taskC_dolyapunov()
-    #taskD_doFeig()
+    #taskC_dolyapunov()
+    taskD_doFeig()
 
 
 
