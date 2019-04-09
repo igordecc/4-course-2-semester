@@ -247,8 +247,7 @@ class taskC_dolyapunov_obj:
         #TODO 1 create 6 subplots figure
         #TODO 2 add new subplot each call
         # ... why? - because we need scaling sequence of plots
-        self.fig_num = 0
-        self.fig = plt.figure()
+
         def lyapunov_index(fn,
                            x0,
                            params,
@@ -275,13 +274,23 @@ class taskC_dolyapunov_obj:
         self.lindex = [lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in self.lrange]
         self.zeros = numpy.zeros(len(self.lrange))
 
-    def __call__(self, *args, **kwargs):
-        self.fig.add_subplot()
-        plt.plot(self.lrange, self.lindex)
-        plt.plot(self.lrange, self.zeros)  # horizontal line
-        plt.grid()
+        # creating subplots
+        # we will have 6 subplots at most. They will show scaling.
+        self.fig = plt.figure()
 
-        self.fig_num += 1
+        self.gs = self.fig.add_gridspec(1,1)
+        #self.ax1 = self.fig.add_subplot(self.gs[0,0])
+
+
+
+
+    def __call__(self, *args, **kwargs):
+        self.ax1 = self.fig.add_subplot(self.gs[0,0])
+        self.ax1.plot(self.lrange, self.lindex)
+        self.ax1.plot(self.lrange, self.zeros)  # horizontal line
+        self.ax1.grid()
+
+
 
     def scale(self, scaling=0.5, num=1):
         self.ldelta = self.ldelta * scaling
@@ -302,6 +311,7 @@ if __name__ == '__main__':
     blabla = taskC_dolyapunov_obj()
     blabla()
     blabla.scale()
+    plt.show()
 
 
 
