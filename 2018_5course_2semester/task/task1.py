@@ -147,71 +147,6 @@ def taskB_plot_iterdiag():
     plt.grid()
     plt.show()
 
-
-def taskD_doFeig():
-    def findFeigdelta(_lambda0,
-                      _lambda1,
-                      _lambda2,
-                      ):
-        delta = (_lambda1 - _lambda0) / (_lambda2 - _lambda1)
-        return delta
-
-    def findFeig_lambda0(delta,
-                         _lambda1,
-                         _lambda2,
-                         ):
-        # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
-        _lambda0 = _lambda1 - delta * (_lambda2 - _lambda1)
-        return _lambda0
-
-    def findFeig_lambda2(delta,
-                         _lambda0,
-                         _lambda1,
-                         ):
-        # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
-        _lambda2 = (_lambda1 - _lambda0) / delta + _lambda1
-        return _lambda2
-
-    # delta = 4.669
-    # _lambda1 = 1.40115329085
-    # _lambda2 = 1.40115518909
-    # _lambda0 = findFeig_lambda0(delta, _lambda1, _lambda2)
-    # print("_lambda0", _lambda0)
-
-    _lambda0 = 0
-    _lambda1 = 1
-    _lambda2 = 1.31070264134
-    _iteri = 50
-
-    def simple_iterration(x0, fn, params, iter_number):
-        x1 = x0
-
-        for i in range(iter_number):
-            x0 = x1
-            x1 = x0 - fn(x0) / diff(fn, x0, params, dx=0.01)
-        return x1
-
-    delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
-    print("delta", delta)
-
-    for i in range(_iteri):
-        print("lambda 0: ", _lambda0)
-        print("lambda 1: ", _lambda1)
-        print("lambda 2: ", _lambda2)
-        # try:
-        #     delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
-        # except:
-        #     print("exception i =", i)
-        #     break
-        #TODO by nutons method or division/2 find super stable cicle
-
-        _lambda0 = _lambda1
-        _lambda1 = _lambda2
-        _lambda2 = findFeig_lambda2(delta, _lambda0, _lambda1)
-        # _lambda2 = simple_iterration(_lambda2, findFeig_lambda2, (delta, _lambda0, _lambda1), iter_number=100
-    print("final delta", delta)
-
-
 class taskC_dolyapunov_obj:
     def __init__(self,
                  lcenter = 1.40115,
@@ -290,6 +225,69 @@ def taskC_dolyapunov():
     sample.scale()
     sample.scale()
     plt.show()
+
+def taskD_doFeig():
+    def findFeigdelta(_lambda0,
+                      _lambda1,
+                      _lambda2,
+                      ):
+        delta = (_lambda1 - _lambda0) / (_lambda2 - _lambda1)
+        return delta
+
+    def findFeig_lambda0(delta,
+                         _lambda1,
+                         _lambda2,
+                         ):
+        # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
+        _lambda0 = _lambda1 - delta * (_lambda2 - _lambda1)
+        return _lambda0
+
+    def findFeig_lambda2(delta,
+                         _lambda0,
+                         _lambda1,
+                         ):
+        # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
+        _lambda2 = (_lambda1 - _lambda0) / delta + _lambda1
+        return _lambda2
+
+    # delta = 4.669
+    # _lambda1 = 1.40115329085
+    # _lambda2 = 1.40115518909
+    # _lambda0 = findFeig_lambda0(delta, _lambda1, _lambda2)
+    # print("_lambda0", _lambda0)
+
+    _lambda0 = 0
+    _lambda1 = 1
+    _lambda2 = 1.31070264134
+    _iteri = 50
+
+    def simple_iterration(x0, fn, params, iter_number):
+        x1 = x0
+
+        for i in range(iter_number):
+            x0 = x1
+            x1 = x0 - fn(x0) / diff(fn, x0, params, dx=0.01)
+        return x1
+
+    delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
+    print("delta", delta)
+
+    for i in range(_iteri):
+        print("lambda 0: ", _lambda0)
+        print("lambda 1: ", _lambda1)
+        print("lambda 2: ", _lambda2)
+        # try:
+        #     delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
+        # except:
+        #     print("exception i =", i)
+        #     break
+        #TODO by nutons method or division/2 find super stable cicle
+
+        _lambda0 = _lambda1
+        _lambda1 = _lambda2
+        _lambda2 = findFeig_lambda2(delta, _lambda0, _lambda1)
+        # _lambda2 = simple_iterration(_lambda2, findFeig_lambda2, (delta, _lambda0, _lambda1), iter_number=100
+    print("final delta", delta)
 
 if __name__ == '__main__':
     #taskA_plot_bifdiag2()
