@@ -147,34 +147,6 @@ def taskB_plot_iterdiag():
     plt.grid()
     plt.show()
 
-def taskC_dolyapunov():
-    def lyapunov_index(fn,
-                       x0,
-                       params,
-                       nsum):
-        x = [x0]
-        dx = 0.0001  # precision need to be high enough
-        lyap_sum = 0
-        delta = nsum // 2
-        for i in range(nsum):
-            if i > delta:
-                dfdx = stf.diff(fn, x[i], params, dx)
-                lyap_sum += numpy.log(abs(dfdx))
-            x.append(fn(x[i], params))
-        lyap_sum /= (nsum - delta)
-        return lyap_sum
-
-    x0 = 0.1
-    nsum = 1000
-    #TODO change proximity
-    lrange = numpy.arange(1.35, 1.505, 0.0001)     # can change _lambda here
-    lindex = [lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in lrange]
-    zeros = numpy.zeros(len(lrange))
-    plt.plot(lrange, lindex)
-    plt.plot(lrange, zeros)   # horizontal line
-    plt.grid()
-    plt.show()
-    plt.clf()
 
 def taskD_doFeig():
     def findFeigdelta(_lambda0,
@@ -241,7 +213,11 @@ def taskD_doFeig():
 
 
 class taskC_dolyapunov_obj:
-    def __init__(self, lmin=1.35, lmax=1.505, dl = 0.0001):
+    def __init__(self,
+                 lcenter = 1.40115,
+                 ldelta = 0.1,
+                 dl = 0.0001,
+                 ):
         #TODO do things bellow
         # https://matplotlib.org/api/_as_gen/matplotlib.figure.Figure.html
         #TODO 1 create 6 subplots figure
@@ -267,21 +243,27 @@ class taskC_dolyapunov_obj:
         x0 = 0.1
         nsum = 1000
         # TODO change proximity
-        self.lmin, self.lmax, self.dl = lmin, lmax, dl
-        self.ldelta = (self.lmax - self.lmin) / 2
-        self.lcenter = self.lmin + self.ldelta
+        self.lcenter = 1.40115
+        self.ldelta = 0.1
+        self.dl = 0.0001
+
+        self.lcenter = lcenter
+        self.ldelta = ldelta
+        self.dl = dl
+
+        self.lmin = self.lcenter - self.ldelta
+        self.lmax = self.lcenter + self.ldelta
+        # self.lmin, self.lmax, self.dl = lmin, lmax, dl
+        # self.ldelta = (self.lmax - self.lmin) / 2
+        # self.lcenter = self.lmin + self.ldelta #1.40115
         self.lrange = numpy.arange(self.lmin, self.lmax, self.dl)  # can change _lambda here
         self.lindex = [lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in self.lrange]
         self.zeros = numpy.zeros(len(self.lrange))
 
         # creating subplots
-        # we will have 6 subplots at most. They will show scaling.
+        # we will plot in different windows. They will show scaling.
         self.fig = plt.figure()
-
-        self.gs = self.fig.add_gridspec(1,1)
-        #self.ax1 = self.fig.add_subplot(self.gs[0,0])
-
-
+        self.gs = self.fig.add_gridspec(1,1) # WARNING: don't change plot objects - u can break them. only add new.
 
 
     def __call__(self, *args, **kwargs):
@@ -291,27 +273,33 @@ class taskC_dolyapunov_obj:
         self.ax1.grid()
 
 
-
     def scale(self, scaling=0.5, num=1):
         self.ldelta = self.ldelta * scaling
         self.lmin = self.lcenter - self.ldelta
         self.lmax = self.lcenter + self.ldelta
         self.dl = self.dl*scaling
-        self.__init__(self.lmin, self.lmax, self.dl)
+        self.__init__(self.lcenter, self.ldelta, self.dl)
         self.__call__()
         ...
 
+def taskC_dolyapunov():
+    sample = taskC_dolyapunov_obj() # initialising plot-object
+    sample() # default plot call
+    sample.scale() # calls for scale
+    sample.scale()
+    sample.scale()
+    sample.scale()
+    plt.show()
 
 if __name__ == '__main__':
     #taskA_plot_bifdiag2()
     #taskB_plot_iterdiag()
-    #taskC_dolyapunov()
+    taskC_dolyapunov()
     #taskD_doFeig()
 
-    blabla = taskC_dolyapunov_obj()
-    blabla()
-    blabla.scale()
-    plt.show()
+
+
+
 
 
 
