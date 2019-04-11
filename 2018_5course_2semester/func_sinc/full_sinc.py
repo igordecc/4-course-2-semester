@@ -236,7 +236,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    #part51_phase(deepcopy(state_d), deepcopy(params))
+    part51_phase(deepcopy(state_d), deepcopy(params))
 
     def diagnose_lagsync(state_d, params):
         """
@@ -303,7 +303,7 @@ if __name__ == '__main__':
             state_d, params = data
             numpySandT = checkout_allT(state_d, params)
 
-            # why? we want find the minimum parameter and it's index
+            # why? - we want find the minimum parameter and it's index
             Smin_num = np.where(numpySandT[0] == numpySandT[0].min())[0]
             min_S_and_T = numpySandT[:, Smin_num]
 
@@ -314,11 +314,11 @@ if __name__ == '__main__':
 
         # stage 0 - determine values we will whatch
         Emin = 0
-        Emax = 1.2
-        dE = 0.01
+        Emax = 12
+        dE = 0.4
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
-        E_osc2 = [0 for i in numpy.arange(Emin, Emax, dE)]
+        E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
 
         # stage 1 - prepare default values
         paramlist = [deepcopy(params) for i in E_osc1]  # why - we need paramslist with length of list E_osc1
@@ -353,8 +353,8 @@ if __name__ == '__main__':
         params["osc1"]["noise_amp"] = noise_amp
         params["osc2"]["noise_amp"] = noise_amp
 
-        part1_x1fromx2(deepcopy(state_d), deepcopy(params))
-        part2_efromE(deepcopy(state_d), deepcopy(params))
+        #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+        #part2_efromE(deepcopy(state_d), deepcopy(params))
         diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
-    add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+    #add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
