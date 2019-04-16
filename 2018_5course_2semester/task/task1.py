@@ -198,17 +198,19 @@ class taskC_dolyapunov_obj:
         # creating subplots
         # we will plot in different windows. They will show scaling.
         self.fig = plt.figure()
+        #print(self.fig)
         self.gs = self.fig.add_gridspec(1,1) # WARNING: don't change plot objects - u can break them. only add new.
 
 
     def __call__(self, *args, **kwargs):
+        #print(self.fig)
         self.ax1 = self.fig.add_subplot(self.gs[0,0])
         self.ax1.plot(self.lrange, self.lindex)
         self.ax1.plot(self.lrange, self.zeros)  # horizontal line
         self.ax1.grid()
 
 
-    def scale(self, scaling=0.5, num=1):
+    def scale(self, scaling=0.21417862497322768, num=1):
         self.ldelta = self.ldelta * scaling
         self.lmin = self.lcenter - self.ldelta
         self.lmax = self.lcenter + self.ldelta
@@ -301,10 +303,24 @@ def taskD_doFeig():
         # _lambda2 = simple_iterration(_lambda2, findFeig_lambda2, (delta, _lambda0, _lambda1), iter_number=100
     print("final delta", delta)
 
+def taskD_doFeig2():
+    # step 0 - evaluate system with certain lambda
+    s0 = 0.1
+    tested_lambda_0 = 0
+    fn = stf.logistic_map()
+    def evaluate_system(system):
+
+        return system
+    # step - find 2^n stable points
+    # step - calculate deltas
+    # step - is this a lambda with the minimum delta ?
+    # yes - break
+    # no - decreese/increse lambda and repeat
+
 if __name__ == '__main__':
-    taskA_plot_bifdiag2()
+    #taskA_plot_bifdiag2()
     #taskB_plot_iterdiag()
-    #taskC_dolyapunov()
+    taskC_dolyapunov()
     #taskD_doFeig()
 
 
