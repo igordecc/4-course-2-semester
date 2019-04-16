@@ -9,10 +9,7 @@ from functools import reduce
 import numpy as np
 import math
 
-#------methods--------
-# return remake of data
-
-#----------------
+# TODO change for another system
 def bec_ressler(state, alienstate, params):
     x, y, z = state
     x2, y2, z2 = alienstate
@@ -170,7 +167,7 @@ if __name__ == '__main__':
                 params["osc2"]["E"] = E_osc2
                 return params
 
-            # stage 0 - determine values we will whatch
+            # stage 0 - determine values we will whatch # TODO change for another system
             E_osc1 = [i for i in numpy.arange(0, 2.5, 0.05)]
             E_osc2 = [i for i in numpy.arange(0, 2.5, 0.05)]
 
@@ -236,12 +233,12 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    part51_phase(deepcopy(state_d), deepcopy(params))
+    #part51_phase(deepcopy(state_d), deepcopy(params))
 
     def diagnose_lagsync(state_d, params):
         """
         for diagnosing lag synchronisation you dont need to change the system
-        what we need TODO - check the synchronisation between oscillators simultaneously dislocating data on T steps. Boom - lag synchronisation.
+        what we need - check the synchronisation between oscillators simultaneously dislocating data on T steps. Boom - lag synchronisation.
         how? - write check-function S2(T)
         why - we need to diagnose lag synchronisation in task 1 and 7.3
         :param state_d: dict copy
@@ -312,7 +309,7 @@ if __name__ == '__main__':
 
             return state_d, params
 
-        # stage 0 - determine values we will whatch
+        # stage 0 - determine values we will whatch # TODO change for another system
         Emin = 0
         Emax = 12
         dE = 0.4
@@ -352,9 +349,8 @@ if __name__ == '__main__':
         noise_amp = 0.2
         params["osc1"]["noise_amp"] = noise_amp
         params["osc2"]["noise_amp"] = noise_amp
-
-        #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
-        #part2_efromE(deepcopy(state_d), deepcopy(params))
+        part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+        part2_efromE(deepcopy(state_d), deepcopy(params))
         diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
-    #add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+    add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
