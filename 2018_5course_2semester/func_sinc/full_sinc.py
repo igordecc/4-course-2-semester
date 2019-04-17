@@ -91,7 +91,7 @@ if __name__ == '__main__':
             "p": 0.2,
             "c": 10,
             "w": 1.0,  # change here [0.89 - 1.01]
-            "E": .4,
+            "E": 1.,
             "noise_amp": 0,
         },
         "osc2": {
@@ -99,7 +99,7 @@ if __name__ == '__main__':
             "p": 0.2,
             "c": 10,
             "w": 0.95,  # const
-            "E": .4,
+            "E": 1.,
             "noise_amp": 0,
         },
         "dt": 0.01,
@@ -370,4 +370,40 @@ if __name__ == '__main__':
         plt.show()
 
 
-    do_phase_plot(deepcopy(state_d), deepcopy(params))
+    #do_phase_plot(deepcopy(state_d), deepcopy(params))
+
+    def plot_E_from_D(state_d, params):
+
+        def update_data(zipped):
+            data, update_value, flag, flag1 = zipped
+            if flag1 is not None:
+                data[flag][flag1] = update_value
+            else:
+                data[flag] = update_value
+            return data
+
+        def find_e_from_static_D(zipped):
+            state_d, params = zipped
+            make_timestep(state_d, params)
+            return e_error(state_d, params)
+
+        noise_amp_list = np.linspace(0, 10, 100)
+
+        state_d_list = [deepcopy(state_d) for i in noise_amp_list]
+        params_list = [deepcopy(params) for i in noise_amp_list]
+
+        # why? - we need to update here params for different calulations
+        params_list = list(map(update_data, zip(params_list, noise_amp_list, ["osc1" for i in noise_amp_list], ["noise_amp" for i in noise_amp_list])))
+        params_list = list(map(update_data, zip(params_list, noise_amp_list, ["osc2" for i in noise_amp_list], ["noise_amp" for i in noise_amp_list])))
+
+        # we map find_e to statistic D
+        e_value_list = list(map(find_e_from_static_D, zip(state_d_list, params_list)))
+
+        plt.plot(noise_amp_list, e_value_list)
+        plt.xlabel("noise amp")
+        plt.ylabel("e error")
+        plt.grid()
+        plt.show()
+
+
+    plot_E_from_D(deepcopy(state_d), deepcopy(params))
