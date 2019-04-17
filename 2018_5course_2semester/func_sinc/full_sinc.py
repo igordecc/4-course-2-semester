@@ -353,4 +353,21 @@ if __name__ == '__main__':
         part2_efromE(deepcopy(state_d), deepcopy(params))
         diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
-    add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+    #add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+
+    def do_phase_plot(state_d, params):
+        make_timestep(state_d, params)
+
+        xyz1 = numpy.transpose(state_d["osc1"][params["startfrom"]:])
+        xyz2 = numpy.transpose(state_d["osc2"][params["startfrom"]:])
+
+        from mpl_toolkits.mplot3d import Axes3D
+        fig = plt.figure()
+        ax = fig.gca(projection="3d")
+        ax.plot(xyz1[0],xyz1[1],xyz1[2], "r")
+        ax.plot(xyz2[0],xyz2[1],xyz2[2], "b")
+        plt.grid()
+        plt.show()
+
+
+    do_phase_plot(deepcopy(state_d), deepcopy(params))
