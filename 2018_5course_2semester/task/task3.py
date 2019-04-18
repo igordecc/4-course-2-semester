@@ -2,8 +2,12 @@
 # TODO f(Q) for not discrete Qs is DONE, now: build the map, like logistic map.
 
 import numpy
+import numpy as np
 import matplotlib.pyplot
+import matplotlib.pyplot as plt
 import matplotlib.widgets
+import matplotlib.widgets as wdt
+import sup_task_funcs as stf
 
 def circular_map(x, Omega, K):
     equation = x + Omega +( (K / (2*numpy.pi) * numpy.sin(x%(2*numpy.pi))) ) #RIGHT VERTION
@@ -120,7 +124,14 @@ def do_func():
 
     matplotlib.pyplot.show()
 
+def plot_lyap_map():
+    x0 = 0.1
+    nsum = 1000
+    Omega, K = 0.6066, 1
+    params = (Omega, K)
+    stf.lyapunov_index(stf.logistic_map, x0, params, nsum)
 
 if __name__ == '__main__':
     #do_map()
-    do_func()
+    #do_func()
+    plot_lyap_map()

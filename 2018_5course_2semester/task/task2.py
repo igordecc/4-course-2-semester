@@ -63,18 +63,24 @@ def plot_lyapunov():
     print(lindex)
 
 def do_lyapunov_map():
-    x0 = 0.1
-    nsum = 1000
+    x0 = 0.01
+    nsum = 10000
     #TODO change proximity
-    lrange = np.arange(1.35, 1.505, 0.0001)     # can change _lambda here
-    lindex = [lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in lrange]
+    lambd_crit = 1.75
+    lrange = np.arange(1.7495, lambd_crit, 0.00001)     # can change _lambda here
+    lindex = np.log([lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in lrange])
     zeros = np.zeros(len(lrange))
-    plt.plot(lrange, lindex)
+    lrange = np.log(np.ones(lrange.shape) * lambd_crit - lrange)
+    #polifitting
+    polifited = np.poly1d(np.polyfit(lrange, lindex, 3))
+
+    plt.plot(lrange, lindex, ".")
+    #plt.plot(lrange, polifited(lrange), "--")
     plt.plot(lrange, zeros)   # horizontal line
     plt.grid()
     plt.show()
     plt.clf()
-
+    import scipy
 def do_count_laminar():
 
     # x values
@@ -82,15 +88,20 @@ def do_count_laminar():
     dimension = int(np.log10(k))
     print(dimension)
 
+    # why - somehow k - itteration number meens our round capability?
+    # probaly need to make "dimmention" constant
     xmax = round(max(x_array), dimension)
     xmin = round(min(x_array), dimension)
 
 
     dx = round(0.1**dimension, dimension)
-    print(dx)
+    #print(dx)
     # SALVATION *10**3, take int() from them, save in the list
-    xline = [round(i, dimension) for i in  np.arange(xmin, xmax, dx)]
+    xline = [round(i, dimension) for i in np.arange(xmin, xmax, dx)]
     print(xline)
+    xline = [i for i in np.arange(xmin, xmax, dx)]
+    print(xline)
+    #print(xline)
     # count_array = np.zeros((xline.len(), k))
 
     # turn_x_array_to_countdict()
@@ -100,7 +111,7 @@ def do_count_laminar():
 
     for i in xline:
         x_dict[i] = None
-    print(x_dict)
+    #print(x_dict)
     for i in x_array:
         x_dict[round(i, dimension)] += 1
 
@@ -111,7 +122,7 @@ def do_count_laminar():
 
 
 if __name__ == '__main__':
-    plot_xarray()
+    #plot_xarray()
     #plot_lyapunov()
-    #do_lyapunov_map()
+    do_lyapunov_map()
     #do_count_laminar()

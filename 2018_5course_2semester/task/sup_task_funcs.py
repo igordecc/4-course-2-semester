@@ -1,3 +1,5 @@
+import numpy as np
+
 def diff(fn,
          x,
          params,
@@ -7,6 +9,10 @@ def diff(fn,
 def logistic_map(x, _lambda):
     x_new = 1 - _lambda * x ** 2
     return x_new
+
+def circular_map(x, Omega, K):
+    equation = x + Omega +( (K / (2*numpy.pi) * numpy.sin(x%(2*numpy.pi))) ) #RIGHT VERTION
+    return equation
 
 def iterate(_lambda,
              fn,
@@ -30,3 +36,20 @@ def pipeline_each(data, fns):
                     fns,
                     data)
     return result
+
+
+def lyapunov_index(fn,
+                   x0,
+                   params,
+                   nsum ):
+    x = [x0]
+    dx = 0.0001     # precision need to be high enough
+    lyap_sum = 0
+    delta = nsum // 2
+    for i in range(nsum):
+        if i>delta:
+            dfdx = diff(fn, x[i], params, dx)
+            lyap_sum += np.log(abs(dfdx))
+        x.append(fn(x[i], params))
+    lyap_sum /= (nsum-delta)
+    return lyap_sum
