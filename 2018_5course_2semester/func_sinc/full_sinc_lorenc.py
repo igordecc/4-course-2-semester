@@ -13,12 +13,9 @@ import math
 def bec_ressler(state, alienstate, params):
     x, y, z = state
     x2, y2, z2 = alienstate
-    # print('params["E"]', params["E"]) #TESTs
-    # print("x2 ", x2)
-    # print('x ', x)
-    dxdt = -params["w"]*y - z + params["E"]*(x2 - x) + params["noise_amp"]*np.random.normal(0,1) #noise
-    dydt = params["w"]*x + params["a"]*y
-    dzdt = params["p"] + z*(x - params["c"])
+    dxdt = params["sigma"] *(y - x) + params["E"]*(x2 - x) + params["noise_amp"]*np.random.normal(0,1)
+    dydt = params["r"]*x - y - x*z
+    dzdt = -params["b"]*z + x*y
     newstate = [dxdt, dydt, dzdt]
     return newstate
 
@@ -87,19 +84,17 @@ if __name__ == '__main__':
     # art of state evolution
     params = {
         "osc1": {
-            "a": 0.15,
-            "p": 0.2,
-            "c": 10,
-            "w": 1.0,  # change here [0.89 - 1.01]
-            "E": 1.,
+            "sigma": 10,
+            "b": 8 / 3,
+            "r": 40.0,
+            "E": 0,
             "noise_amp": 0,
         },
         "osc2": {
-            "a": 0.15,
-            "p": 0.2,
-            "c": 10,
-            "w": 0.95,  # const
-            "E": 1.,
+            "sigma": 10,
+            "b": 8 / 3,
+            "r": 35.0,
+            "E": 0.4,
             "noise_amp": 0,
         },
         "dt": 0.01,
@@ -108,12 +103,13 @@ if __name__ == '__main__':
     }
 
     state_d = {
-        "time": [t for t in numpy.arange(0, 100.0001, params["dt"])],
+        "time": [t for t in np.arange(0, 100.0001, params["dt"])],
         "savedtime": [],
         "osc1": [[0.1, 0.1, 0.1], ],
         "osc2": [[0.1, 0.1, 0.1], ],
         "e_error_norm": [0, ]
     }
+
 
     def part1_x1fromx2(state_d, params):
         make_timestep(state_d, params)
@@ -168,8 +164,8 @@ if __name__ == '__main__':
                 return params
 
             # stage 0 - determine values we will whatch # TODO change for another system
-            E_osc1 = [i for i in numpy.arange(0, 2.5, 0.05)]
-            E_osc2 = [i for i in numpy.arange(0, 2.5, 0.05)]
+            E_osc1 = [i for i in numpy.arange(0, 25, 0.5)]
+            E_osc2 = [i for i in numpy.arange(0, 25, 0.5)]
 
             # stage 1 - prepare default values
             # why we do that? - we are coping and preparing our state and params dictionaries for the next stage
@@ -201,7 +197,7 @@ if __name__ == '__main__':
         plt.show()
         # print(e_list)
 
-    part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
+    #part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
 
 
     def part51_phase(state_d, params):
@@ -343,7 +339,7 @@ if __name__ == '__main__':
         plt.show()
 
 
-    #diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+    diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
     def add_noise_and_plot_all(state_d, params):
         noise_amp = 0.2
@@ -406,4 +402,6 @@ if __name__ == '__main__':
         plt.show()
 
 
-    #plot_E_from_D(deepcopy(state_d), deepcopy(params))
+    plot_E_from_D(deepcopy(state_d), deepcopy(params))
+
+#TODO change E bounds
