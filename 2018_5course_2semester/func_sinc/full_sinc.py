@@ -9,7 +9,6 @@ from functools import reduce
 import numpy as np
 import math
 
-# TODO change for another system
 def bec_ressler(state, alienstate, params):
     x, y, z = state
     x2, y2, z2 = alienstate
@@ -261,7 +260,7 @@ if __name__ == '__main__':
                 :param T: int - number timesteps to skip
                 :return: S_value for certain T
                 """
-                # why? - we need to unpack, bbefor we can use it
+                # why? - we need to unpack, before we can use it
                 np_osc1, np_osc2, T = state_d_and_T
                 S2_value = np.sum(np.abs(np_osc2 - np_osc1) ** 2) / np.sqrt(
                     np.sum(np.abs(np_osc1) ** 2) * np.sum(np.abs(np_osc2) ** 2))
@@ -271,7 +270,7 @@ if __name__ == '__main__':
             Tmax = len(state_d["osc1"])//100
             T_list = np.arange(1, Tmax)
 
-            # why make it numpy? - for usefullness later
+            # why make it numpy? - for usefulness later
             np_osc1 = np.array(state_d["osc1"])
             np_osc2 = np.array(state_d["osc2"])
 
@@ -280,11 +279,12 @@ if __name__ == '__main__':
             np_osc1 = [np_osc1[:-T] for T in T_list]
             np_osc2 = [np_osc2[T:] for T in T_list]
 
-            state_d_and_T = zip(np_osc1, np_osc2, T_list)
-            list_of_S_and_T = np.array(list(map(S2, state_d_and_T)))
+            state_d_and_Tau = zip(np_osc1, np_osc2, T_list)
+            #T means Tau, Tau means "number of iterations to shift"
+            list_of_S_and_Tau = np.array(list(map(S2, state_d_and_Tau)))
 
-            list_of_S_and_T = list_of_S_and_T.transpose() # now it's [[Smin walues], [Tvalues]]
-            return list_of_S_and_T
+            list_of_S_and_Tau = list_of_S_and_Tau.transpose() # now it's [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
+            return list_of_S_and_Tau
 
         def update_param(p_sample):
             # what is it - support update-function, being used in prepare stage (stage 1)
@@ -298,24 +298,29 @@ if __name__ == '__main__':
             # why - we need to find Smin and corresponding T for 1 case of parameters
             # data -> state_d, params -> e_error() -> state_d, params with results
             state_d, params = data
-            numpySandT = checkout_allT(state_d, params)
+            list_of_S_and_T = checkout_allT(state_d, params)    # [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
 
             # why? - we want find the minimum parameter and it's index
-            Smin_num = np.where(numpySandT[0] == numpySandT[0].min())[0]
-            min_S_and_T = numpySandT[:, Smin_num]
+            Smin_num = np.where(list_of_S_and_T[0] == list_of_S_and_T[0].min())[0]
+            # what is it?
+            # is it some kind of slice? - yes
+            # is min_S_and_T one dimensional?? - no min_S_and_T is  2 dimensional
+            # how many dimensions have list_of_S_and_T? - 2
+
+            min_S_and_T = list_of_S_and_T[:, Smin_num]
 
             params["s_min"] = min_S_and_T[0]
             params["t_for_s"] = min_S_and_T[1]
-
             return state_d, params
 
-        # stage 0 - determine values we will whatch # TODO change for another system
+        # stage 0 - determine values we will watch # TODO change for another system
         Emin = 0
-        Emax = 12
-        dE = 0.4
+        Emax = 1.2
+        dE = 0.02
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
         E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
+        #E_osc2 = [0 for i in numpy.arange(Emin, Emax, dE)]
 
         # stage 1 - prepare default values
         paramlist = [deepcopy(params) for i in E_osc1]  # why - we need paramslist with length of list E_osc1
@@ -337,13 +342,26 @@ if __name__ == '__main__':
         s_min_list = list(map(lambda x: x[1]["s_min"], new_data))
         t_for_s_list = list(map(lambda x: x[1]["t_for_s"], new_data))
 
-        plt.plot(E_osc1, s_min_list, "b.")
-        #plt.plot(E_osc1, t_for_s_list, "r.")
+        # plt.plot(E_osc1, s_min_list, "b.")
+        # plt.xlabel("E osc1")
+        # plt.ylabel("S min")
+
+        # print((t_for_s_list))
+        plt.plot(E_osc1, t_for_s_list, "r.")
+        plt.xlabel("E osc1")
+        plt.ylabel("T for s list")
         plt.grid()
         plt.show()
 
+        critical_Tau = 10
+        # why - we need to cut first zero points from data, we dont need them1
+        _skip_first_elements = len(t_for_s_list) // 6
+        # why - we need to collect all critical Tau's from different Noise level systems
+        lag_sync_Tau = np.where(np.less(t_for_s_list[_skip_first_elements:], critical_Tau))[0][0] + _skip_first_elements
+        return lag_sync_Tau
 
-    #diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+
+    diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
     def add_noise_and_plot_all(state_d, params):
         noise_amp = 0.2
@@ -406,4 +424,4 @@ if __name__ == '__main__':
         plt.show()
 
 
-    plot_E_from_D(deepcopy(state_d), deepcopy(params))
+    #plot_E_from_D(deepcopy(state_d), deepcopy(params))

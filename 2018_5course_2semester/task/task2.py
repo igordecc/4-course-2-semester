@@ -81,6 +81,7 @@ def do_lyapunov_map():
     plt.show()
     plt.clf()
     import scipy
+
 def do_count_laminar():
 
     # x values
@@ -124,5 +125,8 @@ def do_count_laminar():
 if __name__ == '__main__':
     #plot_xarray()
     #plot_lyapunov()
-    do_lyapunov_map()
+    #do_lyapunov_map()
     #do_count_laminar()
+    import timeit
+    x = timeit.timeit(plot_lyapunov, number=1)
+    print(x, " ms")
