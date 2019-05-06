@@ -200,7 +200,7 @@ if __name__ == '__main__':
         plt.show()
         # print(e_list)
 
-    part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
+    #part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
 
 
     def part51_phase(state_d, params):
@@ -316,7 +316,7 @@ if __name__ == '__main__':
         # stage 0 - determine values we will watch # TODO change for another system
         Emin = 0
         Emax = 1.2
-        dE = 0.02
+        dE = 0.04
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
         E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
@@ -345,8 +345,13 @@ if __name__ == '__main__':
         # plt.plot(E_osc1, s_min_list, "b.")
         # plt.xlabel("E osc1")
         # plt.ylabel("S min")
+        # plt.grid()
+        # plt.show()
+
+        #TODO: s min from noise
 
         # print((t_for_s_list))
+        """
         plt.plot(E_osc1, t_for_s_list, "r.")
         plt.xlabel("E osc1")
         plt.ylabel("T for s list")
@@ -359,19 +364,46 @@ if __name__ == '__main__':
         # why - we need to collect all critical Tau's from different Noise level systems
         lag_sync_Tau = np.where(np.less(t_for_s_list[_skip_first_elements:], critical_Tau))[0][0] + _skip_first_elements
         return lag_sync_Tau
+"""
+        critical_S = 0.08
+        # why - we need to cut first zero points from data, we dont need them1
+        _skip_first_elements = len(s_min_list) // 6
+        # why - we need to collect all critical Tau's from different Noise level systems
+        try:
+            lag_sync_S_number = np.where(np.less(s_min_list[_skip_first_elements:], critical_S))[0][0] + _skip_first_elements #TODO: FIX THIS, check for size
+            # print("lag_sync_S_number ",lag_sync_S_number)
+            # print(s_min_list[lag_sync_S_number]) #its number
+            E_sync = lag_sync_S_number * dE
+            return E_sync   #is it what i needed? - first element
+        except:
+            print("exception case")
 
 
-    diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+    #diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
     def add_noise_and_plot_all(state_d, params):
-        noise_amp = 0.2
-        params["osc1"]["noise_amp"] = noise_amp
-        params["osc2"]["noise_amp"] = noise_amp
-        part1_x1fromx2(deepcopy(state_d), deepcopy(params))
-        part2_efromE(deepcopy(state_d), deepcopy(params))
-        diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+        noise_list = np.arange(1,4,0.05)
+        def find_sync_boundary(noise_amp = 8):
+            params["osc1"]["noise_amp"] = noise_amp
+            params["osc2"]["noise_amp"] = noise_amp
+            #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+            #part2_efromE(deepcopy(state_d), deepcopy(params))
+            first_sync_position = diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+            return first_sync_position
 
-    #add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+        sync_boundaries_list = list(map(find_sync_boundary, noise_list))
+        print("here")
+        # TODO: s min from noise
+
+        plt.plot(noise_list, sync_boundaries_list)
+        plt.xlabel("noise amplifier")
+        # plt.ylabel("shift with first synchronisation encountered")
+        plt.ylabel("E_sync - first synchronisation encountered")
+        plt.grid()
+        plt.show()
+
+
+    add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
 
     def do_phase_plot(state_d, params):
         make_timestep(state_d, params)
