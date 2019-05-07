@@ -12,12 +12,9 @@ import math
 def bec_ressler(state, alienstate, params):
     x, y, z = state
     x2, y2, z2 = alienstate
-    # print('params["E"]', params["E"]) #TESTs
-    # print("x2 ", x2)
-    # print('x ', x)
-    dxdt = -params["w"]*y - z + params["E"]*(x2 - x) + params["noise_amp"]*np.random.normal(0,1) #noise
-    dydt = params["w"]*x + params["a"]*y
-    dzdt = params["p"] + z*(x - params["c"])
+    dxdt = params["sigma"] *(y - x) + params["E"]*(x2 - x) + params["noise_amp"]*np.random.normal(0,1)
+    dydt = params["r"]*x - y - x*z
+    dzdt = -params["b"]*z + x*y
     newstate = [dxdt, dydt, dzdt]
     return newstate
 
@@ -86,19 +83,17 @@ if __name__ == '__main__':
     # art of state evolution
     params = {
         "osc1": {
-            "a": 0.15,
-            "p": 0.2,
-            "c": 10,
-            "w": 1.0,  # change here [0.89 - 1.01]
-            "E": 1.,
+            "sigma": 10,
+            "b": 8 / 3,
+            "r": 40.0,
+            "E": 0.4,
             "noise_amp": 0,
         },
         "osc2": {
-            "a": 0.15,
-            "p": 0.2,
-            "c": 10,
-            "w": 0.95,  # const
-            "E": 1.,
+            "sigma": 10,
+            "b": 8 / 3,
+            "r": 35.0,
+            "E": 0.4,
             "noise_amp": 0,
         },
         "dt": 0.01,
@@ -107,7 +102,7 @@ if __name__ == '__main__':
     }
 
     state_d = {
-        "time": [t for t in numpy.arange(0, 100.0001, params["dt"])],
+        "time": [t for t in np.arange(0, 100.0001, params["dt"])],
         "savedtime": [],
         "osc1": [[0.1, 0.1, 0.1], ],
         "osc2": [[0.1, 0.1, 0.1], ],
@@ -126,7 +121,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+    # part1_x1fromx2(deepcopy(state_d), deepcopy(params))
 
     def part2_efromE(state_d, params):
         """
@@ -200,7 +195,7 @@ if __name__ == '__main__':
         plt.show()
         # print(e_list)
 
-    #part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
+    # part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
 
 
     def part51_phase(state_d, params):
@@ -232,7 +227,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    #part51_phase(deepcopy(state_d), deepcopy(params))
+    # part51_phase(deepcopy(state_d), deepcopy(params))
 
     def lagsync_1_5(state_d, params):
         """
@@ -297,7 +292,7 @@ if __name__ == '__main__':
             return list_of_S_and_T
 
         # stage 0 - determine values we will watch # TODO change for another system
-        E_const = 0.5
+        E_const = 23.5
 
         #we need determine E_const, which we want to see
         params["osc1"]["E"] = E_const
@@ -318,7 +313,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    #lagsync_1_5(deepcopy(state_d),deepcopy(params))
+    # lagsync_1_5(deepcopy(state_d),deepcopy(params))
 
     def lagsync_1_6(state_d, params):
         """
@@ -398,8 +393,8 @@ if __name__ == '__main__':
 
         # stage 0 - determine values we will watch # TODO change for another system
         Emin = 0
-        Emax = 1.
-        dE = 0.02
+        Emax = 40
+        dE = 0.4
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
         E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
@@ -440,7 +435,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    #lagsync_1_6(deepcopy(state_d), deepcopy(params))
+    # lagsync_1_6(deepcopy(state_d), deepcopy(params))
 
     def lag_sync_for_phase_specter_5_1(state_d, params):
         """
@@ -523,8 +518,8 @@ if __name__ == '__main__':
 
         # stage 0 - determine values we will watch # TODO change for another system
         Emin = 0
-        Emax = .3
-        dE = 0.005
+        Emax = 40
+        dE = 0.4
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
         E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
@@ -565,7 +560,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    #lag_sync_for_phase_specter_5_1(deepcopy(state_d), deepcopy(params))
+    # lag_sync_for_phase_specter_5_1(deepcopy(state_d), deepcopy(params))
 
 
     def diagnose_lagsync(state_d, params):
@@ -722,13 +717,13 @@ if __name__ == '__main__':
         from mpl_toolkits.mplot3d import Axes3D
         fig = plt.figure()
         ax = fig.gca(projection="3d")
-        ax.plot(xyz1[0],xyz1[1],xyz1[2], "r")
-        ax.plot(xyz2[0],xyz2[1],xyz2[2], "b")
+        ax.plot(xyz1[0],xyz1[1],xyz1[2], "c")
+        ax.plot(xyz2[0],xyz2[1],xyz2[2], "m")
         plt.grid()
         plt.show()
 
 
-    #do_phase_plot(deepcopy(state_d), deepcopy(params))
+    # do_phase_plot(deepcopy(state_d), deepcopy(params))
 
 
     def add_noise_and_plot_all(state_d, params):
@@ -742,9 +737,7 @@ if __name__ == '__main__':
             first_sync_position = diagnose_lagsync(deepcopy(state_d), deepcopy(params))
             return first_sync_position
 
-
         sync_boundaries_list = list(map(find_sync_boundary, noise_list))
-
 
         plt.plot(noise_list, sync_boundaries_list)
         plt.xlabel("noise depth D")
@@ -755,5 +748,5 @@ if __name__ == '__main__':
         plt.show()
 
 
-    #add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+    # add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
 
