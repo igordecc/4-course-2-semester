@@ -133,7 +133,7 @@ if __name__ == '__main__':
         state-> make_elist() -> E_osc1 changing [Emin, Emax] and elist, calculated from them.
         what is it? - its wrapper function. we plot e from E1(, E2) inside it.
         why? - we looking for synchronisation and it's dependence from bound-parameters.
-        Also, This wrapper-function can be used to watch system dependence from any kind of parameters. For this jump "to stage 0" in make_elist, type parameter u want and remake updater (updateEs function) TODO Remake updater
+        Also, This wrapper-function can be used to watch system dependence from any kind of parameters. For this jump "to stage 0" in make_elist, type parameter u want and remake updater (updateEs function)
         :param state_d: dictionary
         :param params: dictionary
         :return: plot
@@ -318,8 +318,154 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    lagsync_1_5(deepcopy(state_d),deepcopy(params))
+    #lagsync_1_5(deepcopy(state_d),deepcopy(params))
 
+    def lagsync_1_6(state_d, params):
+        """
+        plot Tau form E
+        Smin = const
+        for lorenc system
+        :param state_d:
+        :param params:
+        :return:
+        """
+
+        def checkout_allT(state_d, params):
+            # what we doing?- finding S2(T) for different Ts.
+            # can return minimum S or all S series from T
+            # why? - we need to calculate S2
+            make_timestep(state_d, params)
+
+            def S2(state_d_and_T):
+                """
+
+                :param state_d:
+                :param T: int - number timesteps to skip
+                :return: S_value for certain T
+                """
+                # why? - we need to unpack, before we can use it
+                np_osc1, np_osc2, T = state_d_and_T
+                S2_value = np.sum(np.abs(np_osc2 - np_osc1) ** 2) / np.sqrt(
+                    np.sum(np.abs(np_osc1) ** 2) * np.sum(np.abs(np_osc2) ** 2))
+                return np.sqrt(S2_value), T  # why? - because S2 is S**2 and we what S. Not the big difference.
+
+            # why - we want make it map, so we need all T and state_d_list to feed the map() function
+            Tmax = len(state_d["osc1"]) // 100
+            T_list = np.arange(1, Tmax)
+
+            # why make it numpy? - for usefulness later
+            np_osc1 = np.array(state_d["osc1"])
+            np_osc2 = np.array(state_d["osc2"])
+
+            # what we doing? we making time-lag slice
+            # why? - for lag synchronisation check
+            np_osc1 = [np_osc1[:-T] for T in T_list]
+            np_osc2 = [np_osc2[T:] for T in T_list]
+
+            state_d_and_Tau = zip(np_osc1, np_osc2, T_list)
+            # T means Tau, Tau means "number of iterations to shift"
+            list_of_S_and_Tau = np.array(list(map(S2, state_d_and_Tau)))
+
+            list_of_S_and_Tau = list_of_S_and_Tau.transpose()  # now it's [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
+            return list_of_S_and_Tau
+
+        def update_param(p_sample):
+            # what is it - support update-function, being used in prepare stage (stage 1)
+            # why - we need to write to params values of E (bounding coeffitient, wich is one of params)
+            params, p_osc1, p_osc2, param_name = p_sample
+            params["osc1"][param_name] = p_osc1
+            params["osc2"][param_name] = p_osc2
+            return params
+
+        def Smin_and_T_list_append(data):
+            # why - we need to find Smin and corresponding T for 1 case of parameters
+            # data -> state_d, params -> e_error() -> state_d, params with results
+            state_d, params = data
+            list_of_S_and_T = checkout_allT(state_d, params)  # [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
+
+            # why? - we want find the minimum parameter and it's index
+            Smin_num = np.where(list_of_S_and_T[0] == list_of_S_and_T[0].min())[0]
+            # what is it?
+            # is it some kind of slice? - yes
+            # is min_S_and_T one dimensional?? - no min_S_and_T is  2 dimensional
+            # how many dimensions have list_of_S_and_T? - 2
+
+            min_S_and_T = list_of_S_and_T[:, Smin_num]
+
+            params["s_min"] = min_S_and_T[0]
+            params["t_for_s"] = min_S_and_T[1]
+            return state_d, params
+
+        # stage 0 - determine values we will watch # TODO change for another system
+        Emin = 0
+        Emax = 1.2
+        dE = 0.02
+
+        E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
+        E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
+        # E_osc2 = [0 for i in numpy.arange(Emin, Emax, dE)]
+
+        # stage 1 - prepare default values
+        paramlist = [deepcopy(params) for i in E_osc1]  # why - we need paramslist with length of list E_osc1
+        param_name_list = ["E" for i in E_osc2]
+        data_to_update = list(zip(paramlist, E_osc1, E_osc2, param_name_list))
+        paramlist = list(map(update_param, data_to_update))
+        state_d_list = [deepcopy(state_d) for i in E_osc1]
+
+        data = list(zip(state_d_list, paramlist))
+
+        # stage 2 - pipeline our data
+        # what we do - evaluate our system and making list of e values we are looking for.
+        new_data = pipeline_each(data, [make_timestep_local,
+                                        Smin_and_T_list_append
+                                        ])
+
+        # stage 3 - we collect all calculated e_error data. e - synchronisation error parameter.
+        # why - to build a plot from this data next.
+        s_min_list = list(map(lambda x: x[1]["s_min"], new_data))
+        t_for_s_list = list(map(lambda x: x[1]["t_for_s"], new_data))
+
+        # plt.plot(E_osc1, s_min_list, "b.")
+        # plt.xlabel("E osc1")
+        # plt.ylabel("S min")
+        # plt.grid()
+        # plt.show()
+
+        # print((t_for_s_list))
+
+        plt.plot(E_osc1, t_for_s_list, "b.")
+        plt.xlabel("E")
+        plt.ylabel("Tau")
+        plt.title("Tau(E)" + ", S = S_min")
+        plt.grid()
+        plt.show()
+
+    lagsync_1_6(deepcopy(state_d), deepcopy(params))
+
+
+    def add_noise_and_plot_all(state_d, params):
+        noise_list = np.arange(1, 4, 0.05)
+
+        def find_sync_boundary(noise_amp=8):
+            params["osc1"]["noise_amp"] = noise_amp
+            params["osc2"]["noise_amp"] = noise_amp
+            # part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+            # part2_efromE(deepcopy(state_d), deepcopy(params))
+            first_sync_position = diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+            return first_sync_position
+
+        sync_boundaries_list = list(map(find_sync_boundary, noise_list))
+        print("here")
+
+        plt.plot(noise_list, sync_boundaries_list)
+        plt.xlabel("noise amplifier")
+        # plt.ylabel("shift with first synchronisation encountered")
+        plt.ylabel("E_sync - first synchronisation encountered")
+        plt.grid()
+        plt.show()
+
+    lagsync_1_6(deepcopy(state_d), deepcopy(params))
+    
 
     def diagnose_lagsync(state_d, params):
         """
@@ -433,7 +579,7 @@ if __name__ == '__main__':
         # plt.grid()
         # plt.show()
 
-        # TODO: s min from noise
+
 
         # print((t_for_s_list))
         """
@@ -478,7 +624,7 @@ if __name__ == '__main__':
 
         sync_boundaries_list = list(map(find_sync_boundary, noise_list))
         print("here")
-        # TODO: s min from noise
+
 
         plt.plot(noise_list, sync_boundaries_list)
         plt.xlabel("noise amplifier")
