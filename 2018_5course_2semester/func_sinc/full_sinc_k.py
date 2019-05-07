@@ -234,18 +234,13 @@ if __name__ == '__main__':
 
     #part51_phase(deepcopy(state_d), deepcopy(params))
 
-    def diagnose_lagsync(state_d, params):
+    def lagsync_1_5(state_d, params):
         """
-        for diagnosing lag synchronisation you dont need to change the system
-        what we need - check the synchronisation between oscillators simultaneously dislocating data on T steps. Boom - lag synchronisation.
-        how? - write check-function S2(T)
-        why - we need to diagnose lag synchronisation in task 1 and 7.3
-        :param state_d: dict copy
-        :param params: dict copy
-        :return: plots S from T. On minimums will be it (lag. sync.)
+        plot S from Tau - it's determine where synchronisation Smin at.
+        E == const
+        for lorenc system
+        :return:
         """
-
-
 
         def checkout_allT(state_d, params):
             # what we doing?- finding S2(T) for different Ts.
@@ -266,8 +261,8 @@ if __name__ == '__main__':
                     np.sum(np.abs(np_osc1) ** 2) * np.sum(np.abs(np_osc2) ** 2))
                 return np.sqrt(S2_value), T  # why? - because S2 is S**2 and we what S. Not the big difference.
 
-            #why - we want make it map, so we need all T and state_d_list to feed the map() function
-            Tmax = len(state_d["osc1"])//100
+            # why - we want make it map, so we need all T and state_d_list to feed the map() function
+            Tmax = len(state_d["osc1"]) // 100
             T_list = np.arange(1, Tmax)
 
             # why make it numpy? - for usefulness later
@@ -280,10 +275,100 @@ if __name__ == '__main__':
             np_osc2 = [np_osc2[T:] for T in T_list]
 
             state_d_and_Tau = zip(np_osc1, np_osc2, T_list)
-            #T means Tau, Tau means "number of iterations to shift"
+            # T means Tau, Tau means "number of iterations to shift"
             list_of_S_and_Tau = np.array(list(map(S2, state_d_and_Tau)))
 
-            list_of_S_and_Tau = list_of_S_and_Tau.transpose() # now it's [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
+            list_of_S_and_Tau = list_of_S_and_Tau.transpose()  # now it's [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
+            return list_of_S_and_Tau
+
+        def update_param(p_sample):
+            # what is it - support update-function, being used in prepare stage (stage 1)
+            # why - we need to write to params values of E (bounding coeffitient, wich is one of params)
+            params, p_osc1, p_osc2, param_name = p_sample
+            params["osc1"][param_name] = p_osc1
+            params["osc2"][param_name] = p_osc2
+            return params
+
+        def call_Smin_and_T_list(data):
+            # why - we need to find Smin and corresponding T for 1 case of parameters
+            # data -> state_d, params -> e_error() -> state_d, params with results
+            state_d, params = data
+            list_of_S_and_T = checkout_allT(state_d, params)  # [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
+            return list_of_S_and_T
+
+        # stage 0 - determine values we will watch # TODO change for another system
+        E_const = 0.5
+
+        #we need determine E_const, which we want to see
+        params["osc1"]["E"] = E_const
+        params["osc2"]["E"] = E_const # change for zero - one couple case, change for E_const - double coupled case
+
+        data = (state_d, params)
+
+        # stage 2 - receive data for calculation
+        # why - we try to get lists for plots next
+        list_of_S_and_T = call_Smin_and_T_list(data)
+
+        S_list, Tau_list = list_of_S_and_T
+
+        plt.plot(Tau_list, S_list, "g.")
+        plt.xlabel("Tau")
+        plt.ylabel("S")
+        plt.title("S(Tau)" + ", E = " + str(E_const) + " ") # not S^2 from Tau!
+        plt.grid()
+        plt.show()
+
+    lagsync_1_5(deepcopy(state_d),deepcopy(params))
+
+
+    def diagnose_lagsync(state_d, params):
+        """
+        for diagnosing lag synchronisation you dont need to change the system
+        what we need - check the synchronisation between oscillators simultaneously dislocating data on T steps. Boom - lag synchronisation.
+        how? - write check-function S2(T)
+        why - we need to diagnose lag synchronisation in task 1 and 7.3
+        :param state_d: dict copy
+        :param params: dict copy
+        :return: plots S from T. On minimums will be it (lag. sync.)
+        """
+
+        def checkout_allT(state_d, params):
+            # what we doing?- finding S2(T) for different Ts.
+            # can return minimum S or all S series from T
+            # why? - we need to calculate S2
+            make_timestep(state_d, params)
+
+            def S2(state_d_and_T):
+                """
+
+                :param state_d:
+                :param T: int - number timesteps to skip
+                :return: S_value for certain T
+                """
+                # why? - we need to unpack, before we can use it
+                np_osc1, np_osc2, T = state_d_and_T
+                S2_value = np.sum(np.abs(np_osc2 - np_osc1) ** 2) / np.sqrt(
+                    np.sum(np.abs(np_osc1) ** 2) * np.sum(np.abs(np_osc2) ** 2))
+                return np.sqrt(S2_value), T  # why? - because S2 is S**2 and we what S. Not the big difference.
+
+            # why - we want make it map, so we need all T and state_d_list to feed the map() function
+            Tmax = len(state_d["osc1"]) // 100
+            T_list = np.arange(1, Tmax)
+
+            # why make it numpy? - for usefulness later
+            np_osc1 = np.array(state_d["osc1"])
+            np_osc2 = np.array(state_d["osc2"])
+
+            # what we doing? we making time-lag slice
+            # why? - for lag synchronisation check
+            np_osc1 = [np_osc1[:-T] for T in T_list]
+            np_osc2 = [np_osc2[T:] for T in T_list]
+
+            state_d_and_Tau = zip(np_osc1, np_osc2, T_list)
+            # T means Tau, Tau means "number of iterations to shift"
+            list_of_S_and_Tau = np.array(list(map(S2, state_d_and_Tau)))
+
+            list_of_S_and_Tau = list_of_S_and_Tau.transpose()  # now it's [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
             return list_of_S_and_Tau
 
         def update_param(p_sample):
@@ -298,7 +383,7 @@ if __name__ == '__main__':
             # why - we need to find Smin and corresponding T for 1 case of parameters
             # data -> state_d, params -> e_error() -> state_d, params with results
             state_d, params = data
-            list_of_S_and_T = checkout_allT(state_d, params)    # [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
+            list_of_S_and_T = checkout_allT(state_d, params)  # [[ [Smin walues], [Tvalues] ], [ [Smin walues], [Tvalues] ], ...]
 
             # why? - we want find the minimum parameter and it's index
             Smin_num = np.where(list_of_S_and_T[0] == list_of_S_and_T[0].min())[0]
@@ -320,7 +405,7 @@ if __name__ == '__main__':
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
         E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
-        #E_osc2 = [0 for i in numpy.arange(Emin, Emax, dE)]
+        # E_osc2 = [0 for i in numpy.arange(Emin, Emax, dE)]
 
         # stage 1 - prepare default values
         paramlist = [deepcopy(params) for i in E_osc1]  # why - we need paramslist with length of list E_osc1
@@ -348,7 +433,7 @@ if __name__ == '__main__':
         # plt.grid()
         # plt.show()
 
-        #TODO: s min from noise
+        # TODO: s min from noise
 
         # print((t_for_s_list))
         """
@@ -370,16 +455,16 @@ if __name__ == '__main__':
         _skip_first_elements = len(s_min_list) // 6
         # why - we need to collect all critical Tau's from different Noise level systems
         try:
-            lag_sync_S_number = np.where(np.less(s_min_list[_skip_first_elements:], critical_S))[0][0] + _skip_first_elements #TODO: FIX THIS, check for size
+            lag_sync_S_number = np.where(np.less(s_min_list[_skip_first_elements:], critical_S))[0][0] + _skip_first_elements  # TODO: FIX THIS, check for size
             # print("lag_sync_S_number ",lag_sync_S_number)
             # print(s_min_list[lag_sync_S_number]) #its number
             E_sync = lag_sync_S_number * dE
-            return E_sync   #is it what i needed? - first element
+            return E_sync  # is it what i needed? - first element
         except:
             print("exception case")
 
 
-    #diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+    # diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
     def add_noise_and_plot_all(state_d, params):
         noise_list = np.arange(1,4,0.05)
