@@ -26,7 +26,7 @@ x0 = 0
 # plot basic figures
 na = numpy.arange(-1, 1.00, 0.02)
 f_array = [stf.logistic_map(x, _lambda) for x in na]  # parabola
-x = [x for x in na]
+x = na
 zero_array = [0 for x in na]
 plt.plot(x, f_array)  # parabola
 plt.plot(x, x)  # diagonal
@@ -129,6 +129,6 @@ def hausdorf_D(x_array):
     # print(n_number_of_not_empy_boxes)
 
 
-hausdorf_D(x_array)
+# hausdorf_D(x_array)
 
 #огибающая корелляциоонной функции для хаотического сигнала

@@ -642,8 +642,8 @@ if __name__ == '__main__':
 
         # stage 0 - determine values we will watch # TODO change for another system
         Emin = 0
-        Emax = 1.
-        dE = 0.04
+        Emax = 40.
+        dE = 0.4
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
         E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
@@ -692,7 +692,7 @@ if __name__ == '__main__':
         lag_sync_Tau = np.where(np.less(t_for_s_list[_skip_first_elements:], critical_Tau))[0][0] + _skip_first_elements
         return lag_sync_Tau
         """
-        critical_S = 0.08
+        critical_S = 0.2
         # why - we need to cut first zero points from data, we dont need them1
         _skip_first_elements = len(s_min_list) // 6
         # why - we need to collect all critical Tau's from different Noise level systems
@@ -748,5 +748,5 @@ if __name__ == '__main__':
         plt.show()
 
 
-    # add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+    add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
 
