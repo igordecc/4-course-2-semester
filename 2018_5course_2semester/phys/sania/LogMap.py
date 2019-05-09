@@ -8,7 +8,7 @@ def log_map(x, r):
 def do_map(
         itter_n=ITER,
         x_array=[0.1],
-        r=4):
+        r=3.5):
     for i in range(itter_n):
         x_array.append(log_map(x_array[i], r))
     return x_array

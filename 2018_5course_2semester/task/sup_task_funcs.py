@@ -4,7 +4,7 @@ def diff(fn,
          x,
          params,
          dx):
-    return (fn(x + dx, params) - fn(x, params)) / dx
+    return (fn(x + dx, *params) - fn(x, *params)) / dx
 
 def logistic_map(x, _lambda):
     x_new = 1 - _lambda * x ** 2
@@ -50,6 +50,6 @@ def lyapunov_index(fn,
         if i>delta:
             dfdx = diff(fn, x[i], params, dx)
             lyap_sum += np.log(abs(dfdx))
-        x.append(fn(x[i], params))
+        x.append(fn(x[i], *params))
     lyap_sum /= (nsum-delta)
     return lyap_sum

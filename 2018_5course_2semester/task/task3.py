@@ -68,6 +68,7 @@ def do_iterlines_array(x0, Omega, K, skip_n_steps=100, present_n_steps=100):
     return x_array
 
     #
+
 def do_func():
     Omega = 0.6
     K = 12
@@ -129,9 +130,10 @@ def plot_lyap_map():
     nsum = 1000
     Omega, K = 0.6066, 1
     params = (Omega, K)
-    stf.lyapunov_index(stf.logistic_map, x0, params, nsum)
+    # stf.lyapunov_index(stf.logistic_map, x0, params, nsum)
+    stf.lyapunov_index(circular_map, x0, params, nsum)
 
 if __name__ == '__main__':
-    #do_map()
+    # do_map()
     #do_func()
     plot_lyap_map()
