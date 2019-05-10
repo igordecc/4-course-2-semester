@@ -8,11 +8,60 @@ import matplotlib.pyplot as plt
 import matplotlib.widgets
 import matplotlib.widgets as wdt
 import sup_task_funcs as stf
+import timeit
 
-def circular_map(x, Omega, K):
+def circular_map_args(x, Omega, K):
     equation = x + Omega +( (K / (2*numpy.pi) * numpy.sin(x%(2*numpy.pi))) ) #RIGHT VERTION
     return equation
 
+def circular_map_kwargs(x, Omega=0.6066, K=1):
+    result_x = x + Omega +( (K / (2*numpy.pi) * numpy.sin(x%(2*numpy.pi))) ) #RIGHT VERTION
+    return result_x
+
+params = {
+    "args" : [],
+    "kwargs": {
+        "Omega": 0.6066,
+        "K": 1,
+    },
+    "iter_number": 100,
+    "dt": 0.01,
+    "time_limits": [0, 100, 0.01],
+}
+state_d = {
+    "x_array": numpy.array( [0.01, ] ),
+}
+
+def evaluate(system, state_d, params):
+    kwargs = params["kwargs"] # must be list
+    buff_array = state_d["x_array"]
+
+    for i in np.arange( *params["time_limits"] ):
+        x = circular_map_kwargs(buff_array[-1], **kwargs)
+        buff_array = numpy.append(buff_array, x)
+    state_d["x_array"] = buff_array
+    return state_d, params # state_dictionary must be with computed results
+
+def evaluate_list(system, state_d, params):
+    kwargs = params["kwargs"] # must be list
+    buff_array = [state_d["x_array"][0], ]
+
+    for i in np.arange( *params["time_limits"] ):
+        x = circular_map_kwargs(buff_array[-1], **kwargs)
+        buff_array.append(x)
+    state_d["x_array"] = numpy.array(buff_array)
+    return state_d, params # state_dictionary must be with computed results
+
+# ================time test!====
+from copy import deepcopy
+def test_numpy_append():
+    evaluate(circular_map_kwargs, deepcopy(state_d), deepcopy(params))
+
+def test_list_append():
+    evaluate_list(circular_map_kwargs, deepcopy(state_d), deepcopy(params))
+
+def find_regimes(state_d, params):
+    ...
 def do_map():
     #Omega = 0.60666666
     Omega = 0.6
@@ -136,4 +185,7 @@ def plot_lyap_map():
 if __name__ == '__main__':
     # do_map()
     #do_func()
-    plot_lyap_map()
+    # plot_lyap_map()
+
+    print(timeit.timeit(test_numpy_append, number=1), " ms - numpy append")
+    print(timeit.timeit(test_list_append, number=1), " ms - list append")
