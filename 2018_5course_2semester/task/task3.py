@@ -32,33 +32,39 @@ state_d = {
     "x_array": numpy.array( [0.01, ] ),
 }
 
-def evaluate(system, state_d, params):
-    kwargs = params["kwargs"] # must be list
-    buff_array = state_d["x_array"]
+our_array = numpy.random.random(100000)
+our_list = list(our_array)
+def evaluate():#(system, state_d, params):
+    global our_array
+    our_array += 1
+    # kwargs = params["kwargs"] # must be list
+    # buff_array = state_d["x_array"]
+    #
+    # for i in np.arange( *params["time_limits"] ):
+    #     x = circular_map_kwargs(buff_array[-1], **kwargs)
+    #     buff_array = numpy.append(buff_array, x)
+    # state_d["x_array"] = buff_array
+    # return state_d, params # state_dictionary must be with computed results
 
-    for i in np.arange( *params["time_limits"] ):
-        x = circular_map_kwargs(buff_array[-1], **kwargs)
-        buff_array = numpy.append(buff_array, x)
-    state_d["x_array"] = buff_array
-    return state_d, params # state_dictionary must be with computed results
-
-def evaluate_list(system, state_d, params):
-    kwargs = params["kwargs"] # must be list
-    buff_array = [state_d["x_array"][0], ]
-
-    for i in np.arange( *params["time_limits"] ):
-        x = circular_map_kwargs(buff_array[-1], **kwargs)
-        buff_array.append(x)
-    state_d["x_array"] = numpy.array(buff_array)
-    return state_d, params # state_dictionary must be with computed results
+def evaluate_list():#(system, state_d, params):
+    for i in our_list:
+        i += 1
+    # kwargs = params["kwargs"] # must be list
+    # buff_array = [state_d["x_array"][0], ]
+    #
+    # for i in np.arange( *params["time_limits"] ):
+    #     x = circular_map_kwargs(buff_array[-1], **kwargs)
+    #     buff_array.append(x)
+    # state_d["x_array"] = numpy.array(buff_array)
+    # return state_d, params # state_dictionary must be with computed results
 
 # ================time test!====
 from copy import deepcopy
 def test_numpy_append():
-    evaluate(circular_map_kwargs, deepcopy(state_d), deepcopy(params))
+    evaluate()#(circular_map_kwargs, deepcopy(state_d), deepcopy(params))
 
 def test_list_append():
-    evaluate_list(circular_map_kwargs, deepcopy(state_d), deepcopy(params))
+    evaluate_list()#(circular_map_kwargs, deepcopy(state_d), deepcopy(params))
 
 def find_regimes(state_d, params):
     ...
@@ -187,5 +193,5 @@ if __name__ == '__main__':
     #do_func()
     # plot_lyap_map()
 
-    print(timeit.timeit(test_numpy_append, number=1), " ms - numpy append")
-    print(timeit.timeit(test_list_append, number=1), " ms - list append")
+    print(timeit.timeit(test_numpy_append, number=100)/100, " - numpy append")
+    print(timeit.timeit(test_list_append, number=100)/100, " - list append")
