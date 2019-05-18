@@ -11,7 +11,7 @@ params = {
     },
     "iter_number": 100,
     "dt": 0.01,
-    "time_limits": [0, 20, 0.01],
+    "time_limits": [0, 10.65, 0.01],
     "skip": 1000,
 }
 

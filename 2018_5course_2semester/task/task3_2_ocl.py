@@ -3,14 +3,10 @@
 
 import numpy
 import numpy as np
-import matplotlib.pyplot
 import matplotlib.pyplot as plt
-import matplotlib.widgets
-import matplotlib.widgets as wdt
-import sup_task_funcs as stf
 import timeit
 from copy import deepcopy
-import matplotlib.axis as axis
+import pyopencl as cl
 
 def circular_map_kwargs(x, Omega=0.6066, K=1):
     result_x = (x + Omega + (K / (2*numpy.pi) * numpy.sin(x*2*numpy.pi)) )%1 #RIGHT VERTION
@@ -22,9 +18,7 @@ params = {
         "Omega": 0.06066,
         "K": 1,
     },
-    # "iter_number": 100,
-    "dt": 0.01,
-    "time_limits": [0, 10.65, 0.01],
+    "time_limits": [0, 20, 0.01],
     "skip": 1000,
 }
 
@@ -45,6 +39,44 @@ def evaluate(state_d, params):#(system, state_d, params):
     state_d["x_array"] = numpy.array( buff_array[ params["skip"]: ] )
     return state_d, params # state_dictionary must be with computed results
 
+
+def _opencl_it():
+    a_np = np.random.rand(50000).astype(np.float32)
+    b_np = np.random.rand(50000).astype(np.float32)
+
+    ctx = cl.create_some_context()
+    queue = cl.CommandQueue(ctx)
+
+    mf = cl.mem_flags
+    a_g = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=a_np)
+    b_g = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=b_np)
+
+    prg = cl.Program(ctx, """
+    __kernel void sum(
+        __global const float *a_g, 
+        __global const float *b_g, 
+        __global float *res_g)
+    {
+      int gid = get_global_id(0);
+      res_g[gid] = a_g[gid] + b_g[gid];
+    }
+    __kernel void evaluate(
+        __global const float *Omega,
+        __global const float *K,
+        __global vector x_array,
+        timelimits,
+        skip)
+    {
+        for
+        x_array ???+= (x + Omega + (K / (2*pi) * sin(x*2*pi))
+    }
+    """).build()
+
+    res_g = cl.Buffer(ctx, mf.WRITE_ONLY, a_np.nbytes)
+    prg.sum(queue, a_np.shape, None, a_g, b_g, res_g)
+
+    res_np = np.empty_like(a_np)
+    cl.enqueue_copy(queue, res_np, res_g)
 
 
 def detect_periods(state_d, params, precision = 10**-5):
@@ -91,18 +123,14 @@ def compute_parameter_map(state_d, params):
     # periods_array = np.array(list( map(make_in_parallel, state_d_list, params_list) )).reshape(len(K_array), len(omega_array))
     periods_array = np.array(list( map(make_in_parallel, state_d_list, params_list) )).reshape(len(omega_array), len(K_array))
     periods_array = np.transpose(periods_array)
-    periods_array[periods_array>8] = 10
     print("done mapping!")
 
     # plt plotting============ change to something more sensible or comfy
-
-    plt.matshow(periods_array,cmap=plt.get_cmap("terrain"))
-    plt.xticks([0,100],[0,1])
-    plt.yticks([0,60,80], [4,1,0])
-    # plt.xaxis.set_ticks_position(position="bottom")
-    plt.xlabel("Omega")
-    plt.ylabel("K")
+    plt.matshow(periods_array)
     plt.show()
+
+
+
 
 if __name__ == '__main__':
     """
