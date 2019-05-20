@@ -1,5 +1,6 @@
 # from task3_2 import * #UNCOMENT THIS to change running file
-from task3_lyap import *
+# from task3_lyap import *
+from task3_3 import *
 import timeit
 from copy import deepcopy
 import numpy as np
@@ -12,12 +13,13 @@ params = {
     },
     "iter_number": 100,
     "dt": 0.01,
-    "time_limits": [0, 10.65, 0.01],
+    "time_limits": [0, 20., 0.01],
     "skip": 1000,
 }
 
 state_d = {
     "x_array": np.array( [0.01, ] ),
+    "w": [0,],
 }
 
 def test_all_units():
