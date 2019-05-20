@@ -1,3 +1,5 @@
+# IT's copy of task3_2
+# TODO rebuild program for lyapunov exponent calculations
 
 import numpy
 import numpy as np
@@ -41,6 +43,7 @@ def evaluate(state_d, params):#(system, state_d, params):
         result = circular_map_kwargs(buff_array[-1], **kwargs)
         buff_array.append(result)
     state_d["x_array"] = numpy.array( buff_array[ params["skip"]: ] )
+
     return state_d, params # state_dictionary must be with computed results
 
 
@@ -82,25 +85,52 @@ def compute_parameter_map(state_d, params):
             state_d_list.append(deepcopy(state_d))
 
     def make_in_parallel(state_d, params):
-        state_d, params = evaluate(state_d, params)
-        period_number = detect_periods(state_d, params)
-        return period_number
+        def diff(fn,
+                 x,
+                 kwargs,
+                 dx):
+            return (fn(x + dx, **kwargs) - fn(x, **kwargs)) / dx
+
+        def lyapunov_index(fn,
+                           x0,
+                           kwargs,
+                           nsum):   # number of iterrations that will be summed
+            x = [x0]
+            dx = 0.0001  # precision need to be high enough
+            lyap_sum = 0
+            delta = nsum // 2
+            for i in range(nsum):
+                if i > delta:
+                    dfdx = diff(fn, x[i], kwargs, dx)
+                    lyap_sum += numpy.log(abs(dfdx))
+                x.append(fn(x[i], **kwargs))
+            lyap_sum /= (nsum - delta)
+            return lyap_sum
+
+        lyapunov_index_value = lyapunov_index(circular_map_kwargs, state_d["x_array"][0], params["kwargs"],nsum=1000)
+        return lyapunov_index_value
 
     # periods_array = np.array(list( map(make_in_parallel, state_d_list, params_list) )).reshape(len(K_array), len(omega_array))
     periods_array = np.array(list( map(make_in_parallel, state_d_list, params_list) )).reshape(len(omega_array), len(K_array))
     periods_array = np.transpose(periods_array)
-    periods_array[periods_array>8] = 10
+    periods_array[periods_array>0] *= 40
+    periods_array[periods_array<0] *= 20
+    periods_array[periods_array>40] = 40
+    periods_array[periods_array<-20] = -20
+    # periods_array[periods_array<-4] = periods_array/4
     print("done mapping!")
 
     # plt plotting============ change to something more sensible or comfy
 
-    plt.matshow(periods_array,cmap=plt.get_cmap("terrain"))
+    plt.matshow(periods_array, cmap=plt.get_cmap("coolwarm"))
     plt.xticks([0,100],[0,1])
     plt.yticks([0,60,80], [4,1,0])
     # plt.xaxis.set_ticks_position(position="bottom")
     plt.xlabel("Omega")
     plt.ylabel("K")
     plt.show()
+
+
 
 if __name__ == '__main__':
     """

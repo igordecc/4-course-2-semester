@@ -1,4 +1,5 @@
-from task3_2 import *
+# from task3_2 import * #UNCOMENT THIS to change running file
+from task3_lyap import *
 import timeit
 from copy import deepcopy
 import numpy as np
