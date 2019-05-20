@@ -303,11 +303,58 @@ def taskD_doFeig():
         # _lambda2 = simple_iterration(_lambda2, findFeig_lambda2, (delta, _lambda0, _lambda1), iter_number=100
     print("final delta", delta)
 
+
+import scipy
+from scipy import optimize
+
 def taskD_doFeig2():
+    #scipy.optimize.minimize_scalar(fun, bounds="None", args=(), method='bounded')
+    _lambda0 = 1.31070264134
+    _lambda1 = 1.38154748443
+    _lambda2 = 1.39694535970
+
+    def findFeigdelta(_lambda0,
+                      _lambda1,
+                      _lambda2,
+                      ):
+        delta = (_lambda1 - _lambda0) / (_lambda2 - _lambda1)
+        return delta
+
+    def findFeig_lambda2(delta,
+                         _lambda0,
+                         _lambda1,
+                         ):
+        # @delta = (_lambda1 - _lambda0)/(_lambda2 - _lambda1)
+        _lambda2 = (_lambda1 - _lambda0) / delta + _lambda1
+        return _lambda2
+
+    # step 0 - find delta
+    delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
+
+    # find lambda -> approximate -> find delta || all overr again
+    for k in numpy.arange(6, 11, 1):
+        _lambda0 = _lambda1
+        _lambda1 = _lambda2
+        _lambda2_approximate = findFeig_lambda2(delta, _lambda0, _lambda1)
+
+        def search_minimum_x(_lambda2_approximate): # for 2**k iteration number, k - period number
+            x_array = stf.iterate(_lambda2_approximate, stf.logistic_map, 2**k, 0, 0.1)
+            return x_array[-1]
+
+
+        # lets try find real lyambda
+        result = optimize.minimize_scalar(search_minimum_x, args=(), bounds=( _lambda2_approximate - 0.00001, _lambda2_approximate + 0.00000005 ), method='bounded')
+        print("k: ", k," lambda: ", result["x"])
+
+        _lambda2 = result["x"]
+        delta = findFeigdelta(_lambda0, _lambda1, _lambda2)
+
+
+
     # step 0 - evaluate system with certain lambda
     s0 = 0.1
     tested_lambda_0 = 0
-    fn = stf.logistic_map()
+
     def evaluate_system(system):
 
         return system
@@ -320,8 +367,8 @@ def taskD_doFeig2():
 if __name__ == '__main__':
     #taskA_plot_bifdiag2()
     #taskB_plot_iterdiag()
-    taskC_dolyapunov()
-    #taskD_doFeig()
+    # taskC_dolyapunov()
+    taskD_doFeig2()
 
 
 
