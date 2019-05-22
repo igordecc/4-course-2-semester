@@ -82,7 +82,7 @@ def do_lyapunov_map():
     plt.clf()
     import scipy
 
-def do_count_laminar():
+def do_draw_laminar():
 
     # x values
     x_array, k = plot_xarray()
@@ -121,12 +121,154 @@ def do_count_laminar():
     plt.show()
     plt.clf()
 
+def do_count_unique():
+
+    def unique_for_lambda(_lambda):
+        # point 1
+        x0 = 0.1
+         # от порядка к хаосу через перемежаемость 1.75 -> 1.7499
+        k = 1000
+        delta = 0
+        x_array = stf.iterate(_lambda, stf.logistic_map, k, delta, x0)
+
+        # # x values
+        # x_array, k = plot_xarray()
+
+        precision = 10**-4
+        multiplier = np.int(1/precision)
+        x_array_rounded = (np.array(x_array)*multiplier).astype(np.int)
+        unique_array = np.unique( x_array_rounded )
+
+        return len(unique_array)
+
+    lambda_list = np.arange(1.748, 1.75, 0.000001)   #1.748 - 1.75
+    unique_values_list = list(map(unique_for_lambda, lambda_list))
+
+    plt.plot(lambda_list, unique_values_list)
+    plt.show()
+
+def do_count_laminar():
+
+    def unique_for_lambda(_lambda):
+        # point 1
+        x0 = 0.1
+         # от порядка к хаосу через перемежаемость 1.75 -> 1.7499
+        k = 1000
+        delta = 0
+        x_array = stf.iterate(_lambda, stf.logistic_map, k, delta, x0)
+
+        # # x values
+        # x_array, k = plot_xarray()
+
+        precision = 10**-2
+        multiplier = np.int(1/precision)
+        x_array_rounded = (np.array(x_array)*multiplier).astype(np.int)
+        x_array_rounded = x_array_rounded[1:]   # make array from 1001 to 1000
+
+        # we descretizes array to groups with group_size. laminar or toorbulent each group will be?
+        # then we will understand where toorbulent and where laminar states is on whole array
+        group_size = 20 # star from 20, 40, 100
+        grouped_array = x_array_rounded.reshape(len(x_array_rounded) // group_size, group_size)
+        len_array = [len(np.unique(group)) for group in grouped_array]
+        # from marked array we can find all laminar states apearing
+
+        #  if _len<(group_size//4)  (if _len mini-unique_array is small) then state is laminar, otherwise it's chaotic, means turbulent
+        mark_array = [1 if _len<(group_size//4) else 0 for _len in len_array]
+
+        # print("lambda: ", _lambda," sum mark array: ", sum(mark_array))
+
+        unique_array = np.unique( x_array_rounded )
+
+        return len(unique_array)
+
+    lambda_list = np.arange(1.749, 1.75, 0.000001)   #1.748 - 1.75
+    unique_values_list = list(map(unique_for_lambda, lambda_list))
+
+    # plt.plot(lambda_list, unique_values_list) # ORIGINAL PLOT
+    # plt.show()
+
+    plt.plot(np.abs(lambda_list-lambda_list[-1]), unique_values_list)
+    plt.xscale("log")
+    plt.yscale("log")
+
+    plt.show()
+
+def do_count_laminar2():
+
+    def unique_for_lambda(_lambda):
+        # point 1
+        x0 = 0.1
+         # от порядка к хаосу через перемежаемость 1.75 -> 1.7499
+        k = 1000
+        delta = 0
+        x_array = stf.iterate(_lambda, stf.logistic_map, k, delta, x0)
+
+        # # x values
+        # x_array, k = plot_xarray()
+
+        precision = 10**-2
+        multiplier = np.int(1/precision)
+        x_array_rounded = (np.array(x_array)*multiplier).astype(np.int)
+        x_array_rounded = x_array_rounded[1:]   # make array from 1001 to 1000
+
+        # we descretizes array to groups with group_size. laminar or toorbulent each group will be?
+        # then we will understand where toorbulent and where laminar states is on whole array
+        group_size = 20 # star from 20, 40, 100
+        grouped_array = x_array_rounded.reshape(len(x_array_rounded) // group_size, group_size)
+        len_array = [len(np.unique(group)) for group in grouped_array]
+        # from marked array we can find all laminar states apearing
+
+        #  if _len<(group_size//4)  (if _len mini-unique_array is small) then state is laminar, otherwise it's chaotic, means turbulent
+        mark_array = [1 if _len<(group_size//4) else 0 for _len in len_array]
+
+        # print("lambda: ", _lambda," sum mark array: ", sum(mark_array))
+
+        # unique_array = np.unique( x_array_rounded )
+
+        return sum(mark_array)
+
+    lambda_list = np.arange(1.749, 1.75, 0.000001)   #1.748 - 1.75
+    unique_values_list = list(map(unique_for_lambda, lambda_list))
+
+    # plt.plot(lambda_list, unique_values_list) # ORIGINAL PLOT
+    # plt.show()
+    from scipy import polyval, polyfit, stats
+
+    lambda_list = np.log(lambda_list)
+    unique_values_list = np.log(unique_values_list)
+
+    slope, intercept, r_value, p_value, std_err = stats.linregress(lambda_list, unique_values_list)
+    print(slope, intercept, r_value, p_value, std_err)
+
+    plt.plot(lambda_list, unique_values_list, ".")
+    # we need to calculate tilt coefficient
+    a,b = polyfit(lambda_list, unique_values_list, 1)
+
+    y_predicted = polyval([a,b], lambda_list)
+
+    plt.plot(lambda_list, y_predicted, "r")
+
+    # plt.xscale("log")
+    # plt.yscale("log")
+
+    plt.show() # k =~ 8750
+
+
+
+# TODO
+    # plot len laminar phase from distanse to lambda crit
+    # log x log y
+    # aproximate to line
+
 
 if __name__ == '__main__':
     #plot_xarray()
     #plot_lyapunov()
     #do_lyapunov_map()
-    #do_count_laminar()
-    import timeit
-    x = timeit.timeit(plot_lyapunov, number=1)
-    print(x, " ms")
+    # do_draw_laminar() # page 253 in Kuznecov
+    # do_count_unique()
+
+    do_count_laminar2()
+    # import timeit
+    # x = timeit.timeit(plot_lyapunov, number=1)
+    # print(x, " ms")

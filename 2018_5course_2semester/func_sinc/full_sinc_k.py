@@ -642,8 +642,8 @@ if __name__ == '__main__':
 
         # stage 0 - determine values we will watch # TODO change for another system
         Emin = 0
-        Emax = 40.
-        dE = 0.4
+        Emax = 30.
+        dE = 1
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
         E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
@@ -701,6 +701,7 @@ if __name__ == '__main__':
             # print("lag_sync_S_number ",lag_sync_S_number)
             # print(s_min_list[lag_sync_S_number]) #its number
             E_sync = lag_sync_S_number * dE
+            print(E_sync)
             return E_sync  # is it what i needed? - first element
         except:
             print("exception")
@@ -727,7 +728,7 @@ if __name__ == '__main__':
 
 
     def add_noise_and_plot_all(state_d, params):
-        noise_list = np.arange(1,3.5,0.1)
+        noise_list = np.arange(0,201,20)
         def find_sync_boundary(noise_amp = 8):
             params["osc1"]["noise_amp"] = noise_amp
             params["osc2"]["noise_amp"] = noise_amp
@@ -748,5 +749,5 @@ if __name__ == '__main__':
         plt.show()
 
 
-    add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+    # add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
 
