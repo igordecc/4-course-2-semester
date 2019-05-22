@@ -12,7 +12,7 @@ def log_map(x, r):
 def do_map(
         itter_n=1000,
         x_array=[0.1],
-        r=3.5):
+        r=3.8):
     for i in range(itter_n):
         x_array.append(log_map(x_array[i], r))
     return x_array
@@ -22,9 +22,9 @@ def autocorr1(x, lags_list):
     mean = np.mean(x)
     var = np.var(x)
     xp = x - mean
-    print("xp: ", xp)
-    print("var: ", var)     # omega^2
-    print("mean: ", mean)
+    # print("xp: ", xp)
+    # print("var: ", var)     # omega^2
+    # print("mean: ", mean)
     corr = [1. if lag == 0 else np.sum(xp[:-lag]*xp[lag:])/len(x)/var for lag in lags_list]
     return np.array(corr)
 
@@ -44,6 +44,7 @@ if __name__ == '__main__':
     lag_values = [i for i in range(max_lag)]
     corr_data1 = autocorr1(x_array, lag_values)
     corr_data2 = autocorr2(x_array, lag_values)
-    # plt.plot(lag_values, corr_data1, "c")
+    plt.plot(lag_values, corr_data1, "c")
     plt.plot(lag_values, corr_data2, "r")
+    # plt.plot(x_array, '.')
     plt.show()
