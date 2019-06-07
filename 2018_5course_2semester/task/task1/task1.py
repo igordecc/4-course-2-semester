@@ -1,29 +1,16 @@
+"""
+task 1 from 2018 2-d semester dynamic system task
+
+go to main and uncomment task, which you want to run
+"""
+
 import numpy
 import matplotlib.pyplot as plt
 import matplotlib.widgets as wgt
 
 import sup_task_funcs as stf
+import old_sup_task_funcs as ostf
 
-
-# TODO
-# create stf.logistic_map() function - CHECK
-# plot bifurcation tree - NOT
-# review point's vicinity (x_0 = 0, _lambda = l_critical) - NOT
-# NOTE l_critical can be the point of the first bifurcation
-
-#plot bifurcation tree:
-# - iterate for certain _lambda
-# - find stationary dots - u don't need that
-# - mark on the plot
-# -  - will use matplotlib library
-# - repeat for all others _lambdas in interval [0;5]
-
-
-
-# lets test it!
-# TODO test! - OK!
-# unit tests - tests of each single element of our program - CHECK
-# integration tests - global test of 1 feature from _todo - will be at the end
 
 def allLambda(lmin,
               lmax,
@@ -169,7 +156,7 @@ class taskC_dolyapunov_obj:
             delta = nsum // 2
             for i in range(nsum):
                 if i > delta:
-                    dfdx = stf.diff(fn, x[i], params, dx)
+                    dfdx = ostf.diff(fn, x[i], params, dx)
                     lyap_sum += numpy.log(abs(dfdx))
                 x.append(fn(x[i], params))
             lyap_sum /= (nsum - delta)
@@ -192,7 +179,7 @@ class taskC_dolyapunov_obj:
         # self.ldelta = (self.lmax - self.lmin) / 2
         # self.lcenter = self.lmin + self.ldelta #1.40115
         self.lrange = numpy.arange(self.lmin, self.lmax, self.dl)  # can change _lambda here
-        self.lindex = [lyapunov_index(stf.logistic_map, x0, _lambda, nsum) for _lambda in self.lrange]
+        self.lindex = [lyapunov_index(ostf.logistic_map, x0, _lambda, nsum) for _lambda in self.lrange]
         self.zeros = numpy.zeros(len(self.lrange))
 
         # creating subplots
@@ -365,9 +352,9 @@ def taskD_doFeig2():
     # no - decreese/increse lambda and repeat
 
 if __name__ == '__main__':
-    #taskA_plot_bifdiag2()
-    #taskB_plot_iterdiag()
-    # taskC_dolyapunov()
+    # taskA_plot_bifdiag2()
+    # taskB_plot_iterdiag()
+    # taskC_dolyapunov() # TODO fix stf
     taskD_doFeig2()
 
 

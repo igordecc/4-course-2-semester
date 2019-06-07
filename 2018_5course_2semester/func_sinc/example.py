@@ -86,18 +86,20 @@ if __name__ == '__main__':
             "sigma": 10,
             "b": 8 / 3,
             "r": 40.0,
-            "E": 0.4,
+            "E": 5,
+            #"E": 0.4,
             "noise_amp": 0,
         },
         "osc2": {
             "sigma": 10,
             "b": 8 / 3,
             "r": 35.0,
-            "E": 0.4,
+            "E": 5,
+            #"E": 0.4,
             "noise_amp": 0,
         },
+        "startfrom":2000,
         "dt": 0.01,
-        "startfrom": 3000,
         "e_error": 0,
     }
 
@@ -121,7 +123,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    # part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+    #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
 
     def part2_efromE(state_d, params):
         """
@@ -198,9 +200,11 @@ if __name__ == '__main__':
     # part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
 
 
+#ГРАФИК СПЕКТРАЛЬНЫХ КОМПОНЕНТ
+
     def part51_phase(state_d, params):
         make_timestep(state_d, params)
-        x_osc1 = np.array(list(map(lambda x: x[0], state_d["osc1"][params["startfrom"]:])))
+        x_osc1 = np.array(list(map(lambda x: x[2], state_d["osc1"][params["startfrom"]:])))
 
         def do_phase(osc="osc1"):
             x_osc1 = np.array(list(map(lambda x: x[0], state_d[osc][params["startfrom"]:])))
@@ -227,7 +231,9 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    # part51_phase(deepcopy(state_d), deepcopy(params))
+    part51_phase(deepcopy(state_d), deepcopy(params))
+
+#ГРАФИК ЗАВИСИМОСТИ ФУНКЦИИ ПОДОБИЯ ОТ ВРЕМЕНИ TAU
 
     def lagsync_1_5(state_d, params):
         """
@@ -245,7 +251,6 @@ if __name__ == '__main__':
 
             def S2(state_d_and_T):
                 """
-
                 :param state_d:
                 :param T: int - number timesteps to skip
                 :return: S_value for certain T
@@ -292,7 +297,8 @@ if __name__ == '__main__':
             return list_of_S_and_T
 
         # stage 0 - determine values we will watch # TODO change for another system
-        E_const = 23.5
+        E_const = 1.35
+        #E_const = 5
 
         #we need determine E_const, which we want to see
         params["osc1"]["E"] = E_const
@@ -306,7 +312,7 @@ if __name__ == '__main__':
 
         S_list, Tau_list = list_of_S_and_T
 
-        plt.plot(Tau_list, S_list, "g.")
+        plt.plot(Tau_list, S_list, ".", color="black")
         plt.xlabel("Tau")
         plt.ylabel("S")
         plt.title("S(Tau)" + ", E = " + str(E_const) + " ") # not S^2 from Tau!
@@ -314,6 +320,9 @@ if __name__ == '__main__':
         plt.show()
 
     # lagsync_1_5(deepcopy(state_d),deepcopy(params))
+
+#ГРАФИК ЗАВИСИМОСТИ ВРЕМЕННОГО СДВИГА МЕЖДУ СОСТОЯНИЯМИ ВЗАИМОДЕЙСТВУЮЩИХ СИСТЕМ
+#ОТ ПАРАМЕТРА СВЯЗИ
 
     def lagsync_1_6(state_d, params):
         """
@@ -333,7 +342,6 @@ if __name__ == '__main__':
 
             def S2(state_d_and_T):
                 """
-
                 :param state_d:
                 :param T: int - number timesteps to skip
                 :return: S_value for certain T
@@ -428,7 +436,7 @@ if __name__ == '__main__':
 
         # print((t_for_s_list))
 
-        plt.plot(E_osc1, t_for_s_list, "b.")
+        plt.plot(E_osc1, t_for_s_list, ".", color="black")
         plt.xlabel("E")
         plt.ylabel("Tau")
         plt.title("Tau(E)" + ", S = S_min")
@@ -436,6 +444,9 @@ if __name__ == '__main__':
         plt.show()
 
     # lagsync_1_6(deepcopy(state_d), deepcopy(params))
+
+
+#ПОРОГ УСТАНОВЛЕНИЯ РЕЖИМА СИНХРОНИЗАЦИИ С ЗАПАЗДЫВАНИЕМ
 
     def lag_sync_for_phase_specter_5_1(state_d, params):
         """
@@ -458,7 +469,6 @@ if __name__ == '__main__':
 
             def S2(state_d_and_T):
                 """
-
                 :param state_d:
                 :param T: int - number timesteps to skip
                 :return: S_value for certain T
@@ -553,7 +563,7 @@ if __name__ == '__main__':
 
         # print((t_for_s_list))
 
-        plt.plot(E_osc1, s_min_list, "c.")
+        plt.plot(E_osc1, s_min_list, ".", color="black")
         plt.xlabel("E")
         plt.ylabel("S_min")
         plt.title("S_min(E)")
@@ -582,7 +592,6 @@ if __name__ == '__main__':
 
             def S2(state_d_and_T):
                 """
-
                 :param state_d:
                 :param T: int - number timesteps to skip
                 :return: S_value for certain T
@@ -641,9 +650,9 @@ if __name__ == '__main__':
             return state_d, params
 
         # stage 0 - determine values we will watch # TODO change for another system
-        Emin = 0
-        Emax = 30.
-        dE = 1
+        Emin = 5
+        Emax = 20
+        dE = 0.5
 
         E_osc1 = [i for i in numpy.arange(Emin, Emax, dE)]
         E_osc2 = [i for i in numpy.arange(Emin, Emax, dE)]
@@ -669,7 +678,7 @@ if __name__ == '__main__':
         s_min_list = list(map(lambda x: x[1]["s_min"], new_data))
         t_for_s_list = list(map(lambda x: x[1]["t_for_s"], new_data))
 
-        # plt.plot(E_osc1, s_min_list, "b.")
+        plt.plot(E_osc1, s_min_list, "b.")
         # plt.xlabel("E osc1")
         # plt.ylabel("S min")
         # plt.grid()
@@ -684,7 +693,6 @@ if __name__ == '__main__':
         plt.ylabel("T for s list")
         plt.grid()
         plt.show()
-
         critical_Tau = 10
         # why - we need to cut first zero points from data, we dont need them1
         _skip_first_elements = len(t_for_s_list) // 6
@@ -701,13 +709,15 @@ if __name__ == '__main__':
             # print("lag_sync_S_number ",lag_sync_S_number)
             # print(s_min_list[lag_sync_S_number]) #its number
             E_sync = lag_sync_S_number * dE
-            print(E_sync)
             return E_sync  # is it what i needed? - first element
         except:
             print("exception")
 
 
-    # diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+    #diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+
+
+#ФАЗОВЫЙ ПОРТРЕТ СИСТЕМЫ
 
     def do_phase_plot(state_d, params):
         make_timestep(state_d, params)
@@ -724,11 +734,11 @@ if __name__ == '__main__':
         plt.show()
 
 
-    # do_phase_plot(deepcopy(state_d), deepcopy(params))
+    #do_phase_plot(deepcopy(state_d), deepcopy(params))
 
 
     def add_noise_and_plot_all(state_d, params):
-        noise_list = np.arange(0,201,20)
+        noise_list = np.arange(1,3.5,0.1)
         def find_sync_boundary(noise_amp = 8):
             params["osc1"]["noise_amp"] = noise_amp
             params["osc2"]["noise_amp"] = noise_amp
@@ -750,4 +760,3 @@ if __name__ == '__main__':
 
 
     add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
-
