@@ -718,13 +718,13 @@ if __name__ == '__main__':
         from mpl_toolkits.mplot3d import Axes3D
         fig = plt.figure()
         ax = fig.gca(projection="3d")
-        ax.plot(xyz1[0],xyz1[1],xyz1[2], "c")
-        ax.plot(xyz2[0],xyz2[1],xyz2[2], "m")
+        ax.plot(xyz1[0],xyz1[1],xyz1[2], "r")
+        ax.plot(xyz2[0],xyz2[1],xyz2[2], "b")
         plt.grid()
         plt.show()
 
 
-    # do_phase_plot(deepcopy(state_d), deepcopy(params))
+    do_phase_plot(deepcopy(state_d), deepcopy(params))
 
 
     def add_noise_and_plot_all(state_d, params):
@@ -749,5 +749,5 @@ if __name__ == '__main__':
         plt.show()
 
 
-    add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+    # add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
 

@@ -18,4 +18,5 @@ xf = np.linspace(0.0, 1.0/(2.0*T), N)
 # plots
 fig, ax = plt.subplots()
 ax.plot(xf, 2.0/N * np.abs(yf))
+plt.grid()
 plt.show()

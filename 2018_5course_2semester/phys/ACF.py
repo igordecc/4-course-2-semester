@@ -15,7 +15,7 @@ def do_map(
         r=3.8):
     for i in range(itter_n):
         x_array.append(log_map(x_array[i], r))
-    return x_array
+    return np.array(x_array)
 
 def autocorr1(x, lags_list):
     '''manualy compute, non partial'''

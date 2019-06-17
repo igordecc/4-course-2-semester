@@ -403,7 +403,7 @@ if __name__ == '__main__':
         plt.show()
 
 
-    add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
+    # add_noise_and_plot_all(deepcopy(state_d), deepcopy(params))
 
     def do_phase_plot(state_d, params):
         make_timestep(state_d, params)
@@ -420,7 +420,7 @@ if __name__ == '__main__':
         plt.show()
 
 
-    #do_phase_plot(deepcopy(state_d), deepcopy(params))
+    do_phase_plot(deepcopy(state_d), deepcopy(params))
 
     def plot_E_from_D(state_d, params):
 
