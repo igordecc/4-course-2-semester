@@ -120,7 +120,7 @@ for letter in text:
     if letter in dictionry.keys():
         dictionry[letter] += 1
     else:
-        dictionry[letter] = 0
+        dictionry[letter] = 1
 
 print(dictionry)
 

@@ -1,3 +1,7 @@
+from langdetect import detect
+import operator
+from pprint import pprint
+
 text = """
 Октябрь уж наступил — уж роща отряхает
 Последние листы с нагих своих ветвей;
@@ -114,6 +118,14 @@ XII
 """
 
 
+
+# transmit the text to the lower case one.
+text = text.lower()
+
+# compute letter occurrence chance
+text_length = text.__len__()
+
+
 def count_letter(text):
     dictionry = {}
 
@@ -128,30 +140,40 @@ def count_letter(text):
 
 
 def count_letter_pair(text):
-    dictionry = {}
+    dictionary = {}
 
     # zip to pairs (first, second), (second, third), (third, fourth)
-    paired_list = list(zip(text[:-1], text[1:]))
+    paired_text = list(zip(text[:-1], text[1:]))
 
-    for pair in paired_list:
-        print(pair)
+    global all_paires_counter
+    all_paires_counter = 0
+    for pair in paired_text:
+        if pair in dictionary.keys():
+            dictionary[pair] += 1
+        else:
+            dictionary[pair] = 1
+        all_paires_counter += 1
+    return dictionary
+
+
+# create dictionary of all letter paires in the text
+dictionary = count_letter_pair(text)
+
+for pair in dictionary.keys():
+    dictionary[pair] = dictionary[pair] / all_paires_counter
+
+sorted_dictionary = sorted(dictionary.items(), key=operator.itemgetter(1), reverse=1)
 
 
 
+# create test items
+frequency = [value for key,value in sorted_dictionary]
+text = text
+language = detect(text)
+text_length = text.__len__()
 
-dictionry = count_letter()
 
-print(dictionry)
-
-# compute letter occurrence chance
-text_len = text.__len__()
-
-for letter in dictionry.keys():
-    dictionry[letter] = dictionry[letter]/text_len
-
-print(dictionry)
-
-import operator
-sorted_dictionary = sorted(dictionry.items(), key=operator.itemgetter(1), reverse=1)
-for item in sorted_dictionary:
-    print(item)
+if __name__=='__main__':
+    pprint(frequency)
+    # for item in sorted_dictionary:
+    #     print(item)
