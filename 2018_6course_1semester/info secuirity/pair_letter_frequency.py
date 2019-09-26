@@ -1,6 +1,7 @@
 from langdetect import detect
 import operator
 from pprint import pprint
+import re
 
 text = """
 Октябрь уж наступил — уж роща отряхает
@@ -122,22 +123,16 @@ XII
 # transmit the text to the lower case one.
 text = text.lower()
 
+
+# delete all non aplhabet characters from text
+newtext = ""
+for char in text:
+    if re.search("[а-я]", char):
+        newtext += char
+text = newtext
+
 # compute letter occurrence chance
 text_length = text.__len__()
-
-
-def count_letter(text):
-    dictionry = {}
-
-    text = text.lower()
-    # compute letters count
-    for letter in text:
-        if letter in dictionry.keys():
-            dictionry[letter] += 1
-        else:
-            dictionry[letter] = 0
-    return dictionry
-
 
 def count_letter_pair(text):
     dictionary = {}
@@ -168,12 +163,15 @@ sorted_dictionary = sorted(dictionary.items(), key=operator.itemgetter(1), rever
 
 # create test items
 frequency = [value for key,value in sorted_dictionary]
+key_frequency = [(key,value) for key,value in sorted_dictionary]
 text = text
 language = detect(text)
 text_length = text.__len__()
 
 
 if __name__=='__main__':
-    pprint(frequency)
+    # pprint(frequency)
+    pprint(key_frequency)
+    print(sum(frequency))
     # for item in sorted_dictionary:
     #     print(item)
