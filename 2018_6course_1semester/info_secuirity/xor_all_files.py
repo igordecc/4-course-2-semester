@@ -2,32 +2,34 @@
 task 3 of computer security lessons
 """
 
-import os
-import sys
+def xor_string(string:bytes, key:bytes) -> bytes:
+    i = 0
+    new_string = []
+    for sb in string:
+        kb = key[i]
+        new_string.append(bytes([sb ^ kb]))
+        if i < key.__len__() - 1:
+            i += 1
+        else:
+            i = 0
+    new_string = b"".join(new_string)
+    return new_string
 
-filename = "Ca-VhyIs3uU.jpg"
 
-# with open(filename, "rb") as file:
-#     print(format(file))
+def xor_file2(input_path:str, output_path:str, key:str):
+    with open(input_path, "rb") as file:
+        file_string = file.read()   # in bytes! because "rb"
+        new_file_string = xor_string(file_string, key.encode("utf-8"))
+    with open(output_path, "wb") as file:
+        file.write(new_file_string)
 
-file = open(filename, "rb")
-key = "привет всем"
 
+# TEST xor_string("i love your mom".encode("utf-8"),"key".encode("utf-8"))
+# TEST xor_string # string = xor_string(xor_string("i love your mom".encode("utf-8"),"key".encode("utf-8")), "key".encode("utf-8"))
 
-def xor_file(file, key):
-    newfile = ""
-    listed_key = [char for char in key]     # make list key from string key
-    for string in file:
-        for byte in string:
-            char = listed_key.pop(0)    # use char from key (like from "keykeykeykey.." string)
-            listed_key.append(char)     # but doesnt change the key sequence in general
-            print(bin(byte), "\n")
-            print(byte, "\n")
-            binary_number = bin(int(byte)) # byte to bin
+if __name__ == '__main__':
+    # xor_file2("Ca-VhyIs3uU.jpg", "Ca-VhyIs3uU1.jpg", "give me your image")
+    # xor_file2("Ca-VhyIs3uU1.jpg", "Ca-VhyIs3uU2.jpg", "give me your image")
 
-            # newfile += bin(bit)^bin(char)
-    return newfile
-
-xor_file(file, key)
-
-file.close()
+    xor_file2("1.txt", "1.txtcoded", "дайте картинку")
+    xor_file2("1.txtcoded", "1.txtcodedcoded", "дайте картинку")

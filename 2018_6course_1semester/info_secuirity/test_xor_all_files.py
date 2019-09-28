@@ -8,8 +8,8 @@ class TestXorAllFiles(unittest.TestCase):
 
     def test_reverse_encoding(self):
         file = xor_all_files.file
-        xored = xor_all_files.xor_file(file)
-        decoded_file = xor_all_files.xor_file(file)
+        xored = xor_all_files.xor_file_for_txt(file)
+        decoded_file = xor_all_files.xor_file_for_txt(file)
         self.assertEquals(file, decoded_file)
 
     def test_key(self):
