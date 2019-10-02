@@ -136,45 +136,59 @@ def iterate_bits(data: bytes):
     :param data: string of bytes
     :return: boolean on each iteration
     """
-    for char in data:
-        for bit in "{:08b}".format(char):
+    for byte in data:
+        for bit in "{:08b}".format(byte):
             yield bit == "1"
 
 
-
-
 def encrypt(lines:list, data:bytes):
+    """
+    encrypt lines and return text
+    :param lines: array of strings
+    :param data: bytes
+    :return: string of encrypted text
+    """
+
+    # TODO make ckeck of text length
     lines_index = 0
+    if len(lines) < len(data)*8:    # raise Error, if text are too short
+        raise RuntimeError("Error: Text too short to encrypt message")
+
     for bit in iterate_bits(data):
         if bit:
-            try:
-                lines[lines_index] += (" ")
-            except IndexError:
-                print("Error: Text too short to encrypt message")
-        else:
-            try:
-                lines[lines_index] += ("")
-            except IndexError:
-                print("Error: Text too short to encrypt message")
+            lines[lines_index] += " "
         lines_index += 1
     return "\n".join(lines)
 
 
+def boole_list_to_bytes(bit_message:list):
+    b_number = 0
+    byte_list = []
+    one_cool_byte = 0
+    for item in bit_message:
+        one_cool_byte <<= 1
+        if item:
+            one_cool_byte += 1
+        b_number += 1
+        if b_number == 8:
+            byte_list.append(one_cool_byte)
+            b_number = 0
+            one_cool_byte = 0
+    return bytes(byte_list).rstrip(b"\x00")     # return byte string
+
 def decrypt(lines:list) -> str:
     bit_message = []
     for line in lines:
-        if line[-1] == " ":
+        if line and line[-1] == " ":
             bit_message.append(True)
         else:
             bit_message.append(False)
 
+    byte_string = boole_list_to_bytes(bit_message)
+    ok_string = byte_string.decode("utf-8")
     # TODO - translate bites (or bytes) - to message
-    return message_text
+    return ok_string
 
-
-    # print(lines)
-
-prepare_text(text_carrier)
 
 if __name__ == '__main__':
     text_carrier = """
@@ -292,13 +306,12 @@ if __name__ == '__main__':
     . . . . . . . . . . . . 
     """
 
-    text_carrier = text_carrier*10
-
-    message_text = "today,12am,at12housing"
-    message_text = "влдоарпдлвоарпдлворапл"
+    message_text = "message"
 
     # result = [i for i in iterate_bits(message_text.encode("utf-8"))]
 
     lines = prepare_text(text_carrier)
-    encrypted_text = encrypt(lines, message_text.encode("utf-8"))
-    print(encrypted_text)
+    encrypted_text = encrypt(lines, message_text.encode("utf-8")) # return string
+
+    data = decrypt(encrypted_text.splitlines(keepends=False))
+    print(data)
