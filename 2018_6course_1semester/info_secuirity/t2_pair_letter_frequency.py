@@ -129,22 +129,35 @@ text = text.lower()
 
 
 # delete all non aplhabet characters from text
-newtext = ""
-for char in text:
-    if re.search("[а-я]", char):
-        newtext += char
-text = newtext
+# newtext = ""
+# for char in text:
+#     if re.search("[а-я]", char):
+#         newtext += char
+#
+#
+# text = newtext
 
 # compute letter occurrence chance
-text_length = text.__len__()
 
-def count_letter_pair(text):
+
+def make_pairs(text):
+    pair_list = []
+
+    text_length = len(text)
+    for i in range(text_length-1):
+        char0 = text[i]
+        char1 = text[i+1]
+        if re.search("[а-я]", char0) and re.search("[а-я]", char1):
+            pair_list.append( (char0, char1) )
+    print(pair_list)
+    return pair_list
+
+def count_letter_pair(paired_text):
     dictionary = {}
 
     # zip to pairs (first, second), (second, third), (third, fourth)
-    paired_text = list(zip(text[:-1], text[1:]))
+    # paired_text = list(zip(text[:-1], text[1:]))
 
-    global all_paires_counter
     all_paires_counter = 0
     for pair in paired_text:
         if pair in dictionary.keys():
@@ -152,17 +165,17 @@ def count_letter_pair(text):
         else:
             dictionary[pair] = 1
         all_paires_counter += 1
-    return dictionary
+    return dictionary, all_paires_counter
 
 
 # create dictionary of all letter paires in the text
-dictionary = count_letter_pair(text)
+pair_text = make_pairs(text)
+dictionary, all_paires_counter = count_letter_pair(pair_text)
 
 for pair in dictionary.keys():
     dictionary[pair] = dictionary[pair] / all_paires_counter
 
 sorted_dictionary = sorted(dictionary.items(), key=operator.itemgetter(1), reverse=1)
-
 
 
 # create test items
