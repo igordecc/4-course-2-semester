@@ -122,73 +122,34 @@ XII
 . . . . . . . . . . . . 
 """
 
-
+RU = set("абвгдеёжзиклмнопрстуфхцчшщьыъэюя")
 
 # transmit the text to the lower case one.
 text = text.lower()
 
 
-# delete all non aplhabet characters from text
-# newtext = ""
-# for char in text:
-#     if re.search("[а-я]", char):
-#         newtext += char
-#
-#
-# text = newtext
-
-# compute letter occurrence chance
-
-
 def make_pairs(text):
     pair_list = []
-
     text_length = len(text)
     for i in range(text_length-1):
         char0 = text[i]
         char1 = text[i+1]
-        if re.search("[а-я]", char0) and re.search("[а-я]", char1):
-            pair_list.append( (char0, char1) )
-    print(pair_list)
+        if char0 in RU and char1 in RU:
+            pair_list.append( char0 + char1 )
     return pair_list
 
-def count_letter_pair(paired_text):
-    dictionary = {}
 
-    # zip to pairs (first, second), (second, third), (third, fourth)
-    # paired_text = list(zip(text[:-1], text[1:]))
-
-    all_paires_counter = 0
-    for pair in paired_text:
-        if pair in dictionary.keys():
-            dictionary[pair] += 1
-        else:
-            dictionary[pair] = 1
-        all_paires_counter += 1
-    return dictionary, all_paires_counter
-
-
-# create dictionary of all letter paires in the text
-pair_text = make_pairs(text)
-dictionary, all_paires_counter = count_letter_pair(pair_text)
-
-for pair in dictionary.keys():
-    dictionary[pair] = dictionary[pair] / all_paires_counter
-
-sorted_dictionary = sorted(dictionary.items(), key=operator.itemgetter(1), reverse=1)
-
-
-# create test items
-frequency = [value for key,value in sorted_dictionary]
-key_frequency = [(key,value) for key,value in sorted_dictionary]
-text = text
-language = detect(text)
-text_length = text.__len__()
 
 
 if __name__=='__main__':
-    # pprint(frequency)
-    pprint(key_frequency)
-    print(sum(frequency))
-    # for item in sorted_dictionary:
-    #     print(item)
+    import time
+
+    t = time.perf_counter()
+
+    pair_text = make_pairs(text)
+    from collections import Counter
+    result = Counter(pair_text).most_common()
+    for key, val in result:
+        print(key, ": ", val/len(pair_text))
+
+    print("Done in {:.3f} s".format(time.perf_counter() - t))
