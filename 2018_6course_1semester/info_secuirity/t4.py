@@ -127,16 +127,16 @@ def prepare_text(text_string:str):
     return clean_lines
 
 
-def iterate_bits(data: bytes):
+def iterate_bits(message: bytes):
     """
-    Iterate over bits of a byte string.
+    Transform
 
     ``iterate_bits(message_text.encode("utf-8"))``
 
-    :param data: string of bytes
+    :param message: string of bytes
     :return: boolean on each iteration
     """
-    for byte in data:
+    for byte in message:
         for bit in "{:08b}".format(byte):
             yield bit == "1"
 
@@ -144,8 +144,6 @@ def iterate_bits(data: bytes):
 def encrypt(lines:list, data:bytes):
     """
     encrypt lines and return text
-    :param lines: array of strings
-    :param data: bytes
     :return: string of encrypted text
     """
 
@@ -162,6 +160,10 @@ def encrypt(lines:list, data:bytes):
 
 
 def boole_list_to_bytes(bit_message:list):
+    """
+    message in bits transform to bytes
+    :return: byte string
+    """
     b_number = 0
     byte_list = []
     one_cool_byte = 0
