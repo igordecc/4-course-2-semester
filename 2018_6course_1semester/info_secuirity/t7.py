@@ -37,8 +37,8 @@ def search_bytes_in_files(bytes_to_find:bytes, file_path):
     return file_string.find(bytes_to_find) != -1
 
 if __name__ == '__main__':
-    file_path = "./misc/test_example.py"
-    file_bytes = take_n_bytes(file_path, 64)
+    file_path = "./1.txt"
+    file_bytes = take_n_bytes(file_path, 16)
     print(file_bytes)
     files = find_files(file_bytes, "./")
     print(files)
