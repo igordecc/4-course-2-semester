@@ -16,9 +16,12 @@ task 7 of computer security lessons
 import sys
 import os
 
-def take_n_bytes(file_name:str, n_bytes:int) -> bytes:
+def take_n_bytes(file_name:str, start: int, n_bytes:int) -> bytes:
     with open(file_name, "rb") as file:
-        return file.read()[:n_bytes]
+        file_bytes = file.read()
+        if (start+n_bytes) > len(file_bytes):
+            raise RuntimeError("file is shorter than start")
+        return file_bytes[start:start+n_bytes]
 
 
 def find_files(file_bytes, start_dir):
@@ -37,8 +40,9 @@ def search_bytes_in_files(bytes_to_find:bytes, file_path):
     return file_string.find(bytes_to_find) != -1
 
 if __name__ == '__main__':
-    file_path = "./1.txt"
-    file_bytes = take_n_bytes(file_path, 16)
+    file_path = "./text_carrier.txt"
+
+    file_bytes = take_n_bytes(file_path, 100, 26)
     print(file_bytes)
     files = find_files(file_bytes, "./")
     print(files)
