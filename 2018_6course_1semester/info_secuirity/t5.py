@@ -49,6 +49,32 @@ def iterate_bits(message: bytes):
         for bit in "{:08b}".format(byte):
             yield bit == "1"
 
+def check_text(text, flag):
+    """
+    check text and change all wrong chars to same language
+    :param text:
+    :param flag:
+    :return:
+    """
+    if flag == "ru->en":
+        char_map = dict(SIMILAR_CHARS)
+        new_text_list = [char_map[char] if (char in char_map.keys()) else char for char in text]
+        new_text = "".join(new_text_list)
+
+        return new_text
+
+    elif flag == "en->ru":
+        char_map = [(y,x) for x,y in SIMILAR_CHARS]
+        char_map = dict(char_map)
+        new_text_list = [char_map[char] if (char in char_map.keys()) else char for char in text]
+        new_text = "".join(new_text_list)
+
+        return new_text
+
+    raise RuntimeError("flag error")
+
+
+
 
 def encrypt(text:str, encrypt_type:str, message:bytes):
     """
@@ -123,7 +149,22 @@ def decrypt(text, encrypt_type:str):
 
 
 if __name__ == '__main__':
-    result = encrypt("а" * 40, "ru->en", "hello".encode("utf-8"))
-    print(result)
-    result = decrypt(result, "ru->en")
-    print(result.decode("utf-8"))
+    # encrypt
+    with open("text_carrier.txt", "r") as file:
+
+        file_text = file.read()
+        flag = "ru->en"
+        checked_file_text = check_text(file_text, flag)
+
+        result = encrypt(checked_file_text, flag, "hello".encode("utf-8"))
+
+        with open("encrypted_text.txt", "w") as new_file:
+            new_file.write(result)
+
+    # decrypt
+    with open("encrypted_text.txt", "r") as file:
+        file_text = file.read()
+
+        result = decrypt(file_text, "ru->en")
+        with open("new_text_carrier.txt", "w") as new_file:
+            new_file.write(result.decode("utf-8"))
