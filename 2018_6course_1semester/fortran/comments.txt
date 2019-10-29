@@ -1,1 +1,2 @@
-C:\MinGW\bin\mingw32-gfortran.exe
+TO compile, write in shell:
+C:\MinGW\bin\mingw32-gfortran.exe *filename*
