@@ -25,7 +25,7 @@ program example1
     real_array(1:2, 2) = -1.0
     real_array(3:4, 2) = -2.0
     print *, "2d real array: "
-    print '(f10.5)', real_array
+    print '(4f10.5)', real_array
 
     allocate (complex_array (4))
     do i = 1, size(real_array, 1)
