@@ -29,7 +29,7 @@ program example1
 
     allocate (complex_array (4))
     do i = 1, size(real_array, 1)
-        complex_array(i) = complex (real_array(i,1), real_array(i,2))
+        complex_array(i) = complex(real_array(i,1), real_array(i,2))
     end do
     print *, "complex array: "
     print '(f10.5,f10.5,"i")', complex_array
