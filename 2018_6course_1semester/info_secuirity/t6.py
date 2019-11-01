@@ -17,7 +17,7 @@ def parity_word(text: bytes):
 
 
 
-def parity_word_v2(text: bytes, word_len=5):
+def parity_word_v2(text: bytes, word_len=4):
     chunked_text = [text[i:i+word_len] for i in range(0, len(text), word_len)]
 
     if len(chunked_text[-1]) != word_len:
@@ -34,6 +34,8 @@ def parity_word_v2(text: bytes, word_len=5):
 
 
 if __name__ == '__main__':
-    with open("1.txt", "rb") as file:
-        result = parity_word_v2(file.read(), 5)
-        print(result)
+    with open("text_carrier.txt", "rb") as file:
+        result = parity_word_v2(file.read(), 4)
+        print(int.from_bytes(result, 'big'))
+        2668073485
+
