@@ -43,5 +43,12 @@ print *, "forall(): ", common_array
 
 print *, "--- task 3.3 ---" !3.3
 
+!First, some terminology. Consider the dummy arguments declared as
+
+!real :: a(n)                ! An explicit shape array
+!real, allocatable :: c(:)   ! A deferred shape array - перенимает форму
+!real :: d(*)                ! An assumed size array - перенимает размер
+
 print *, "auto form array ", size(common_array)
 end program example3
+
