@@ -5,7 +5,7 @@ integer(8), allocatable :: integer_array(:)
 
 
 print *, "----- 4,1 -----"  !------ 4,1
-a = (/(mod(i,2),i=1,5, 1)/) 
+a = (/(mod(i,2),i=1,10, 1)/) 
 print *, a
 
 do i=1,10
