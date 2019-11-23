@@ -1,4 +1,25 @@
+module overloadfunc
+    implicit none
+
+    interface check
+    module procedure check_int, check_real
+    end interface
+
+    contains 
+
+    subroutine check_int(cur)
+    integer, intent(in) :: cur
+    print '(i10)', cur
+    end subroutine
+
+    subroutine check_real(cur)
+    real, intent(in) :: cur
+    print '(f10.5)', cur
+    end subroutine
+end module overloadfunc
+
 program example5
+use overloadfunc
 integer(8)::i,j
 real(8)::variable
 integer(8), allocatable :: a(:,:)
@@ -23,5 +44,7 @@ end do
 end do
 print *, "a with impicite cast real to int will be zerro ", a
 print *, "---------5.2--------"
-
+call check_int(10)
+call check_real(10.84564)
+print * 
 end program example5

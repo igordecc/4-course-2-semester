@@ -41,7 +41,7 @@ implicit none
    real :: powered_e, area
    real :: AVRAGE
    integer, allocatable :: inarray(:)
-    
+
    print *, "-------- 7.1 -----------"
    print *, "module with constants: "
    call show_consts() 
@@ -62,11 +62,14 @@ implicit none
    print *, "---------- 7.3 ---------"
    print *,"initial array: ",  (/(i,i=1,10,1)/)
 
-   inarray = (/(i,i=1,10,1)/)
-   call many_functions(inarray)
-   call summ(inarray, 5)
-   call substr(inarray, 5)
-   
+   !included in include_file.f95 
+   !inarray = (/(i,i=1,10,1)/)
+   !call many_functions(inarray)
+   !call summ(inarray, 5)
+   !call substr(inarray, 5)
+   include 'include_file.f95'
+
+
 end program example7
 
 real function AVRAGE(X,Y,Z)
