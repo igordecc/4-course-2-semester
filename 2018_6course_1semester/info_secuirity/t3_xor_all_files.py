@@ -24,8 +24,8 @@ def xor_file2(input_path:str, output_path:str, key:str):
         file.write(new_file_string)
 
 
-# TEST xor_string("i love your mom".encode("utf-8"),"key".encode("utf-8"))
-# TEST xor_string # string = xor_string(xor_string("i love your mom".encode("utf-8"),"key".encode("utf-8")), "key".encode("utf-8"))
+# TEST xor_string("encode string".encode("utf-8"),"key".encode("utf-8"))
+# TEST xor_string # string = xor_string(xor_string("encode string".encode("utf-8"),"key".encode("utf-8")), "key".encode("utf-8"))
 
 if __name__ == '__main__':
     # xor_file2("Ca-VhyIs3uU.jpg", "Ca-VhyIs3uU1.jpg", "give me your image")
