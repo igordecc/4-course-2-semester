@@ -31,5 +31,5 @@ if __name__ == '__main__':
     # xor_file2("Ca-VhyIs3uU.jpg", "Ca-VhyIs3uU1.jpg", "give me your image")
     # xor_file2("Ca-VhyIs3uU1.jpg", "Ca-VhyIs3uU2.jpg", "give me your image")
 
-    xor_file2("1.txt", "1.txtcoded", "равыл")
+    xor_file2("1.txt", "1.txtcoded", "дайте картинку")
     xor_file2("1.txtcoded", "1.txtcodedcoded", "дайте картинку")

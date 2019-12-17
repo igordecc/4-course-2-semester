@@ -2,10 +2,6 @@
 task 2 of computer security lessons
 """
 
-from langdetect import detect
-import operator
-from pprint import pprint
-import re
 
 text = """
 Октябрь уж наступил — уж роща отряхает

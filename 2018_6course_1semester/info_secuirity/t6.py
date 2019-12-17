@@ -2,13 +2,6 @@
 task 6 of computer security lessons
 """
 
-import hashlib
-
-def checksum(file_path):
-    with open(file_path, "rb") as file:
-        return hashlib.md5(file.read()).hexdigest()
-
-
 def parity_word(text: bytes):
     previous_char = text[0]
     for char in text[1:]:

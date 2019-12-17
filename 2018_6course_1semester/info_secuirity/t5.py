@@ -149,6 +149,7 @@ def decrypt(text, encrypt_type:str):
 
 
 if __name__ == '__main__':
+    message = "hello"
     # encrypt
     with open("text_carrier.txt", "r") as file:
 
@@ -156,7 +157,7 @@ if __name__ == '__main__':
         flag = "ru->en"
         checked_file_text = check_text(file_text, flag)
 
-        result = encrypt(checked_file_text, flag, "hello".encode("utf-8"))
+        result = encrypt(checked_file_text, flag, message.encode("utf-8"))
 
         with open("encrypted_text.txt", "w") as new_file:
             new_file.write(result)

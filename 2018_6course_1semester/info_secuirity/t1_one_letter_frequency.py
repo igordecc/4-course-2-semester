@@ -117,21 +117,22 @@ XII
 """
 
 dictionry = {}
+RU = set("абвгдеёжзиклмнопрстуфхцчшщьыъэюя")
 text = text.lower()
 # compute letters count
+len_counter = 0
 for letter in text:
-    if letter in dictionry.keys():
-        dictionry[letter] += 1
-    else:
-        dictionry[letter] = 1
+    if (letter in RU):
+        len_counter += 1
+        if (letter in dictionry.keys() ):
+            dictionry[letter] += 1
+        else:
+            dictionry[letter] = 1
 
 print(dictionry)
 
-# compute letter occurrence chance
-text_len = text.__len__()
-
 for letter in dictionry.keys():
-    dictionry[letter] = dictionry[letter]/text_len
+    dictionry[letter] = dictionry[letter]/len_counter
 
 print(dictionry)
 
