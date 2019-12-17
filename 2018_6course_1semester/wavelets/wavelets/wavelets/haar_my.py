@@ -55,18 +55,21 @@ def haar_1d_inverse(n, y):
     x1 = np.array(x1)
 
     return x1.transpose()
+import random
 
-import haar_lib
-
-n = 16
-#u = np.linspace(1, n, n)
-u = [math.sin(i) for i in range(n)]
+n = 256
+#u = [i*random.randint(0,1)for i in range(n)]
+u = [math.sin(i/10)+random.randint(0,1)/10 for i in range(n)]
 v = haar_1d(n, u)
 
 w = haar_1d_inverse(n, v)
 print(u)
-print(v)
-print(w)
-
+# print(v)
+# print(w)
+import matplotlib.pyplot as plt
+plt.plot(u)
+#plt.plot(v)
+plt.plot(w)
+plt.show()
 
 #haar_lib.haar_1d_test()
