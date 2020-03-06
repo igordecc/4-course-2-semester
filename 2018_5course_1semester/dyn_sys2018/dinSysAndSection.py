@@ -25,7 +25,7 @@ def ressler(x, y, z, param, a = .25, b = 0.15, r = 2.5, h = 0.01 ):     #a = 0.2
 # slicey = [1,2,3,4,5,6,7,8,9]
 # slicez = [1,2,3,4,5,6,7,8,9]
 
-def doPortret(ressler=ressler, param=None, evaluateNum=10000,):
+def doPortret(ressler=ressler, param=None, evaluateNum=20000,):
     xyz = numpy.empty((evaluateNum, 3))
 
     x0 = .1
@@ -50,39 +50,23 @@ def slicer(x,y,z, sectionx=0.0):
     slicex = []
     slicey = []
     slicez = []
-    x,y,z = numpy.array(x), numpy.array(y), numpy.array(z)
+    x,y,z = numpy.array(x, dtype=np.float), numpy.array(y, dtype=np.float), numpy.array(z, dtype=np.float)
     for i in range(len(y)):
 
-        if sectionx == numpy.round(y[i], 2):
+        if ( sectionx == numpy.round(y[i], 1) )and( x[i]< 0):
 
             slicex.append(x[i])
             slicey.append(y[i])
             slicez.append(z[i])
 
-
     return slicex, slicey, slicez
-
-# def slicer(x,y,z, sectionx=0.0):
-#     np.array(x)
-#     np.ndenumerate(x)
-#     listt = [i < sectionx for i in x]
-#     pairedListt = [i for i in zip([0] + listt, listt + [0])][1:-2]
-#     numberList = [i[0] for i in enumerate(pairedListt) if
-#                   (i[1] == (False, True))]  # Puankare sectrion from one side only
-#     print(x)
-#     slicex = []
-#     slicey = []
-#     slicez = []
-#     for i in numberList:
-#         slicex.append(x[i])
-#         slicey.append(y[i])
-#         slicez.append(z[i])
-#     return slicex, slicey, slicez
 
 
 def plotPhase(param=None):
     x, y, z = doPortret(param=param)
     slicex, slicey, slicez = slicer(x,y,z)
+    # print(y)
+    # print(z)
 
     fig = pyplot.figure()
     ax = fig.gca(projection="3d")
@@ -103,25 +87,34 @@ def plotDiagram():
     fig = pyplot.figure()
     ax = fig.gca(projection="3d")
 
-    Range = [r for r in numpy.arange(1, 5, 0.04)]
+    Range = [r for r in numpy.arange(1, 6, 0.1)]
     # Range = [b for b in numpy.arange(0.5, 1.7, 0.005)]
     rDiagramData = []
     for param in Range:
 
-        x, y, z = doPortret(ressler, param)
+        x, y, z = doPortret(param=param)
         slicex, slicey, slicez = slicer(x, y, z) #THERE and 5 rows below IS THE ERROR
         # yzSpace = 1
+        # print(slicey)
+        # print(slicez)
+        # print("-----")
         # slicey, slicez = y[::yzSpace], z[::yzSpace]
-        for y, z in zip(slicey, slicez):
+        # print(slicey)
+        # print(slicez)
+        for y, z in zip(slicex, slicey):
             rDiagramData.append([param,y,z])
 
 
     rDiagramData = numpy.transpose(rDiagramData)
+
     y = rDiagramData[1]
     r = rDiagramData[0]
     z = rDiagramData[2]
+    print(y)
+    print(z)
+    print(r)
 
-    ax.plot(r, y, z, "g.", ms=0.3, alpha=0.01, label="biffurcation diagram")
+    ax.plot(r, y, z, "g.", ms=2, alpha=1, label="biffurcation diagram")
 
     ax.legend()
     pyplot.show()
@@ -144,6 +137,6 @@ def doLyapunovIndex(f):
 
 
 if __name__ == '__main__':
-    # plotPhase(3.51)
-    # plotSlic()
-    plotDiagram()
+    # plotPhase(6)
+    plotSlice()
+    # plotDiagram()
