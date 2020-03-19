@@ -4,13 +4,25 @@ from mpl_toolkits.mplot3d import Axes3D
 import numpy
 import numpy as np
 
+<<<<<<< HEAD
 def ressler(x, y, z, a = .25, b = 0.15, r = 2.5, h = 0.01, **kwargs ):     #a = 0.2, b = 0.2, r = 5.7
+=======
+def ressler(x, y, z, param, a = .25, b = 0.15, r = 2.5, h = 0.01 ):     #a = 0.2, b = 0.2, r = 5.7
+    if param != None:
+        r = param
+>>>>>>> c5dba9fd19d1fafe106eb017a009f41b039492cc
     new_x = - y - z
     new_y = x + a*y
     new_z = b + (x-r)*z
     return x + h*new_x, y + h*new_y, z + h*new_z
 
+<<<<<<< HEAD
 # def ressler(x, y, z, a=1.4, b=0.3, r=2.5, h=0.01, **kwargs):
+=======
+# def ressler(x, y, z, param, a=1.4, b=0.3, r=2.5, h=0.01):
+#     if param != None:
+#         b = param
+>>>>>>> c5dba9fd19d1fafe106eb017a009f41b039492cc
 #     new_x = 1 - a*x*x + b*y
 #     new_y = x
 #     new_z = 0
@@ -21,16 +33,24 @@ def ressler(x, y, z, a = .25, b = 0.15, r = 2.5, h = 0.01, **kwargs ):     #a = 
 # slicey = [1,2,3,4,5,6,7,8,9]
 # slicez = [1,2,3,4,5,6,7,8,9]
 
+<<<<<<< HEAD
 def doPortret(ressler=ressler, evaluateNum=10000, **kwargs):
+=======
+def doPortret(ressler=ressler, param=None, evaluateNum=20000,):
+>>>>>>> c5dba9fd19d1fafe106eb017a009f41b039492cc
     xyz = numpy.empty((evaluateNum, 3))
     x0 = .1
     y0 = .1
     z0 = .1
     xyz[0] = [x0, y0, z0]
     for i in range(1, evaluateNum):
+<<<<<<< HEAD
         xyz[i] = ressler(*xyz[i - 1], **kwargs) # DONT TOCH!!!!!!!!!!!!!!!!!
+=======
+        xyz[i] = ressler(*xyz[i - 1], param) # DONT TOCH!!!!!!!!!!!!!!!!!
+>>>>>>> c5dba9fd19d1fafe106eb017a009f41b039492cc
 
-    xyz = xyz[(evaluateNum // 10):]  # 0. избавиться - переходный процесс
+    xyz = xyz[(evaluateNum // 2):]  # 0. избавиться - переходный процесс
     xyz = numpy.transpose(xyz)
     x = xyz[0]
     y = xyz[1]
@@ -45,15 +65,16 @@ def slicer(x,y,z, sectionx=0.0):
     slicex = []
     slicey = []
     slicez = []
-    x,y,z = numpy.array(x), numpy.array(y), numpy.array(z)
+    x,y,z = numpy.array(x, dtype=np.float), numpy.array(y, dtype=np.float), numpy.array(z, dtype=np.float)
     for i in range(len(y)):
 
-        if sectionx == numpy.round(y[i], 2):
+        if ( sectionx == numpy.round(y[i], 1) )and( x[i]< 0):
 
             slicex.append(x[i])
             slicey.append(y[i])
             slicez.append(z[i])
 
+<<<<<<< HEAD
 
     return slicex, slicey, slicez
 
@@ -75,7 +96,16 @@ def plotPhase():
 def d3BiffDiagram(PARAM):
     for i in range(PARAM):
         x, y, z = doPortret()
+=======
+    return slicex, slicey, slicez
+
+
+def plotPhase(param=None):
+    x, y, z = doPortret(param=param)
+>>>>>>> c5dba9fd19d1fafe106eb017a009f41b039492cc
     slicex, slicey, slicez = slicer(x,y,z)
+    # print(y)
+    # print(z)
 
     fig = pyplot.figure()
     ax = fig.gca(projection="3d")
@@ -92,30 +122,55 @@ def plotSlice():
     pyplot.plot(slicey, slicez, "ro", label="ressler's attractor")
     pyplot.show()
 
+<<<<<<< HEAD
 
 def plotDiagram(**kwargs):
     fig = pyplot.figure()
     ax = fig.gca(projection="3d")
 
     Range = [r for r in numpy.arange(2, 5, 0.05)]
+=======
+def plotDiagram():
+    fig = pyplot.figure()
+    ax = fig.gca(projection="3d")
+
+    Range = [r for r in numpy.arange(1, 6, 0.1)]
+>>>>>>> c5dba9fd19d1fafe106eb017a009f41b039492cc
     # Range = [b for b in numpy.arange(0.5, 1.7, 0.005)]
     rDiagramData = []
     for param in Range:
 
+<<<<<<< HEAD
         x, y, z = doPortret(ressler, r=param)
         #slicex, slicey, slicez = slicer(x, y, z)
         yzSpace = 1
         slicey, slicez = y[::yzSpace], z[::yzSpace]
         for y, z in zip(slicey, slicez):
+=======
+        x, y, z = doPortret(param=param)
+        slicex, slicey, slicez = slicer(x, y, z) #THERE and 5 rows below IS THE ERROR
+        # yzSpace = 1
+        # print(slicey)
+        # print(slicez)
+        # print("-----")
+        # slicey, slicez = y[::yzSpace], z[::yzSpace]
+        # print(slicey)
+        # print(slicez)
+        for y, z in zip(slicex, slicey):
+>>>>>>> c5dba9fd19d1fafe106eb017a009f41b039492cc
             rDiagramData.append([param,y,z])
 
 
     rDiagramData = numpy.transpose(rDiagramData)
+
     y = rDiagramData[1]
     r = rDiagramData[0]
     z = rDiagramData[2]
+    print(y)
+    print(z)
+    print(r)
 
-    ax.plot(r, y, z, "g.", ms=1, alpha=0.01, label="biffurcation diagram")
+    ax.plot(r, y, z, "g.", ms=2, alpha=1, label="biffurcation diagram")
 
     ax.legend()
     pyplot.show()
@@ -139,6 +194,12 @@ def doLyapunovIndex(f):
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     # plotPhase()
     # plotSlice()
     plotDiagram()
+=======
+    # plotPhase(6)
+    plotSlice()
+    # plotDiagram()
+>>>>>>> c5dba9fd19d1fafe106eb017a009f41b039492cc
