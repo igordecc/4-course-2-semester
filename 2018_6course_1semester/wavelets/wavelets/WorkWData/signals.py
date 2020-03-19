@@ -19,7 +19,7 @@ def constant(n=ITER):
     return np.ones(n)
 
 
-# quadratic signal
+# quadratic_with_noise signal
 def quadratic(n=ITER):
     arr = []
     for i in range(n):

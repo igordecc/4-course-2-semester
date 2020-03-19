@@ -9,9 +9,9 @@ def HaarMatrices(n):
     Level1 = math.log(n, 2)
     Level = int(Level1)+1
 
-    # Initialization, NC - normalization constant
+    # Initialization,
     H = [1]
-    NC = 1 / math.sqrt(2)
+    NC = 1 / math.sqrt(2)   # NC - normalization constant
     LP = [1, 1]
     HP = [1, -1]
 
@@ -26,14 +26,14 @@ def HaarMatrices(n):
 # haar transform
 def haar_1d(n, x):
 
-    # calculating of haar matrices
+    # calculate haar matrices
     H = HaarMatrices(n)
 
-    # new dimension of input parameters // 2
+    # create new input parameters
     x = x[0:len(H)]
     n = len(H)
 
-    # the way of calculate HWT
+    # calculate HWT
     y = H.dot(x)
     y = np.array(y)
 
@@ -43,14 +43,14 @@ def haar_1d(n, x):
 # haar inverse transform
 def haar_1d_inverse(n, y):
 
-    # calculating of haar matrices
+    # calculate haar matrices
     H = HaarMatrices(n)
 
-    # new dimension of input parameters // 2
+    # create new input parameters
     y = y[0:len(H)]
     n = len(H)
 
-    # the way of calculate inverse HWT
+    # calculate HWT
     x1 = H.transpose().dot(y.transpose())
     x1 = np.array(x1)
 
@@ -59,7 +59,7 @@ import random
 
 n = 256
 #u = [i*random.randint(0,1)for i in range(n)]
-u = [math.sin(i/10)+random.randint(0,1)/10 for i in range(n)]
+u = [math.exp(i/10)+random.randint(0,1)/10 for i in range(n)]   # input signal
 v = haar_1d(n, u)
 
 w = haar_1d_inverse(n, v)
@@ -67,9 +67,16 @@ print(u)
 # print(v)
 # print(w)
 import matplotlib.pyplot as plt
+"""
 plt.plot(u)
-#plt.plot(v)
+plt.plot(v) # Detalization
 plt.plot(w)
+plt.grid()
+plt.ylabel('u, H(u), H_inv(H(u))')
+plt.xlabel('x')
 plt.show()
 
-#haar_lib.haar_1d_test()
+"""
+f,a = plt.subplots(1,2)
+
+plt.show()

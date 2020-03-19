@@ -352,10 +352,10 @@ def taskD_doFeig2():
     # no - decreese/increse lambda and repeat
 
 if __name__ == '__main__':
-    # taskA_plot_bifdiag2()
+    taskA_plot_bifdiag2()
     # taskB_plot_iterdiag()
     # taskC_dolyapunov() # TODO fix stf
-    taskD_doFeig2()
+    # taskD_doFeig2()
 
 
 

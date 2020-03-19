@@ -1,4 +1,4 @@
-# single function in this darkness
+# single function
 # one direction coupled ressler
 # be-coupled ressler oscillator
 import numpy
@@ -126,7 +126,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    #part1_x1fromx2(deepcopy(state_d), deepcopy(params))
+    # part1_x1fromx2(deepcopy(state_d), deepcopy(params))
 
     def part2_efromE(state_d, params):
         """
@@ -200,8 +200,7 @@ if __name__ == '__main__':
         plt.show()
         # print(e_list)
 
-    #part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
-
+    # part2_efromE(deepcopy(state_d), deepcopy(params)) # now we can call the function and get all plots!
 
     def part51_phase(state_d, params):
         make_timestep(state_d, params)
@@ -232,7 +231,7 @@ if __name__ == '__main__':
         plt.grid()
         plt.show()
 
-    #part51_phase(deepcopy(state_d), deepcopy(params))
+    # part51_phase(deepcopy(state_d), deepcopy(params))
 
     def diagnose_lagsync(state_d, params):
         """
@@ -379,7 +378,7 @@ if __name__ == '__main__':
             print("exception case")
 
 
-    #diagnose_lagsync(deepcopy(state_d), deepcopy(params))
+    # diagnose_lagsync(deepcopy(state_d), deepcopy(params))
 
     def add_noise_and_plot_all(state_d, params):
         noise_list = np.arange(1,4,0.05)
@@ -420,7 +419,7 @@ if __name__ == '__main__':
         plt.show()
 
 
-    do_phase_plot(deepcopy(state_d), deepcopy(params))
+    # do_phase_plot(deepcopy(state_d), deepcopy(params))
 
     def plot_E_from_D(state_d, params):
 
@@ -456,4 +455,4 @@ if __name__ == '__main__':
         plt.show()
 
 
-    #plot_E_from_D(deepcopy(state_d), deepcopy(params))
+    plot_E_from_D(deepcopy(state_d), deepcopy(params))

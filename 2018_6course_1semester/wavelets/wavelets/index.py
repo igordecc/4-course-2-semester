@@ -12,7 +12,7 @@ def output(type_signal, type_transform, u, x, y):
 
 if __name__ == "__main__":
     # type transform: haar (1), DobWT (2)
-    # type signal: constant, linear, quadratic, linear_with_noise
+    # type signal: constant, linear, quadratic_with_noise, linear_with_noise
     type_transform = "DobWT"; type_signal = "nonlinear_w_noise"
 
     u = output_res.write_to_list('signals/adaptive_func_w_noise.txt')
