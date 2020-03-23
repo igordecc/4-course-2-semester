@@ -85,9 +85,9 @@ def plotSlice():
 
 def plotDiagram():
     fig = pyplot.figure()
-    ax = fig.gca(projection="3d")
+    ax = fig.gca() #( projection="3d")
 
-    Range = [r for r in numpy.arange(1, 6, 0.1)]
+    Range = [r for r in numpy.arange(1, 8, 0.1)]
     # Range = [b for b in numpy.arange(0.5, 1.7, 0.005)]
     rDiagramData = []
     for param in Range:
@@ -114,7 +114,8 @@ def plotDiagram():
     print(z)
     print(r)
 
-    ax.plot(r, y, z, "g.", ms=2, alpha=1, label="biffurcation diagram")
+    # CHANGE HERE to watch axes
+    ax.plot(r, y, "g.", ms=2, alpha=1, label="biffurcation diagram")
 
     ax.legend()
     pyplot.show()
@@ -137,7 +138,7 @@ def doLyapunovIndex(f):
 
 
 if __name__ == '__main__':
-    # plotPhase(6)
-    plotSlice()
+    plotPhase(6)
+    # plotSlice()
     # plotDiagram()
 
